@@ -3,13 +3,12 @@ import Link from "next/link";
 export default function JoinSchool() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col justify-center px-4 py-8">
-          <div className="space-y-3 text-center">
+      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-8">
+          <div className="space-y-3 ">
             <h1 className="text-3xl font-semibold tracking-tight">Join Your School</h1>
-            <p className="text-sm text-slate-500">Enter your school ID to continue.</p>
           </div>
 
-          <div className="mt-8 space-y-5">
+          <div className="mt-8 space-y-10">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-slate-900">Enter School ID</label>
               <input
@@ -22,7 +21,7 @@ export default function JoinSchool() {
 
             <Link
               href="/confirm-school"
-              className="inline-flex w-full items-center justify-center rounded-3xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
+              className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
             >
               Verify School
             </Link>

@@ -4,8 +4,8 @@ import BottomBar from "@/components/BottomBar";
 export default function HomeScreen() {
   return (
     <div className="min-h-[844px] bg-slate-100 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-[844px] w-full max-w-[390px] flex-col gap-4 px-4 py-6">
-        <section className="overflow-hidden rounded-[1.75rem] bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-slate-950/10">
+      <main className="mx-auto flex min-h-[844px] w-full max-w-[390px] flex-col gap-4 px-4 pb-6">
+        <section className="overflow-hidden bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-slate-950/10">
           <div className="flex flex-col gap-3">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-sky-100/80">Melbourne High School</p>

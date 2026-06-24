@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 export default function AdminSidebar({ role = "admin" }: { role?: "admin" | "moderator" }) {
+  const prefix = role === "moderator" ? "/moderator" : "/admin";
+
   const common = [
-    { href: "/admin/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/admin/category", label: "Category", icon: "📚" },
-    { href: "/admin/schools", label: "Schools", icon: "🏫" },
-    { href: "/admin/students", label: "Students", icon: "👥" },
+    { href: `${prefix}/dashboard`, label: "Dashboard", icon: "📊" },
+    { href: `${prefix}/category`, label: "Category", icon: "📚" },
+    { href: `${prefix}/schools`, label: "Schools", icon: "🏫" },
+    { href: `${prefix}/students`, label: "Students", icon: "👥" },
   ];
 
   const adminOnly = [
