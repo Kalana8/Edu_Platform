@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function ConfirmSchool() {
+  const searchParams = useSearchParams();
+  const schoolName = searchParams.get("name") || "Loading...";
+  const tier = searchParams.get("tier") || "Loading...";
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col  px-4 py-8">
@@ -12,11 +19,11 @@ export default function ConfirmSchool() {
           <div>
             <div className="space-y-2 p-1">
               <p className="text-xs   text-slate-500">School Name</p>
-              <p className="text-base font-semibold text-slate-950">Melbourne High School</p>
+              <p className="text-base font-semibold text-slate-950">{schoolName}</p>
             </div>
             <div className="space-y-2 p-1">
               <p className="text-xs   text-slate-500">Tier</p>
-              <p className="text-base font-semibold text-slate-950">Medium School</p>
+              <p className="text-base font-semibold text-slate-950">{tier}</p>
             </div>
           </div>
         </div>
