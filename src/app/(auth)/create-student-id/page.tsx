@@ -1,6 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function CreateStudentId() {
+  const searchParams = useSearchParams();
+  const [schoolCode, setSchoolCode] = useState("");
+  const [studentNumber, setStudentNumber] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setSchoolCode(searchParams.get("code") || "");
+    setMounted(true);
+  }, [searchParams]);
+
+  const fullStudentId = mounted && studentNumber ? `${schoolCode}-${studentNumber}` : "";
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <main className="mx-auto flex min-h-screen w-full max-w-[425px] flex-col  px-4 py-8">
@@ -19,12 +35,24 @@ export default function CreateStudentId() {
               inputMode="numeric"
               pattern="[0-9]*"
               placeholder="e.g. 1, 42, 999"
+              value={studentNumber}
+              onChange={(e) => setStudentNumber(e.target.value)}
               className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-base text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
             />
           </div>
 
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-900">Your Student ID</label>
+            <input
+              type="text"
+              readOnly
+              value={fullStudentId}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-100 p-4 text-base text-slate-900 outline-none cursor-not-allowed"
+            />
+          </div>
+
           <Link
-            href="/credits"
+            href={`/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`}
             className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
           >
             Continue

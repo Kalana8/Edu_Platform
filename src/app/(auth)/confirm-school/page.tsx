@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function ConfirmSchool() {
   const searchParams = useSearchParams();
+  const schoolCode = searchParams.get("code") || "";
   const schoolName = searchParams.get("name") || "Loading...";
   const tier = searchParams.get("tier") || "Loading...";
 
@@ -29,7 +30,7 @@ export default function ConfirmSchool() {
         </div>
 
         <Link
-          href="/create-student-id"
+          href={`/create-student-id?code=${encodeURIComponent(schoolCode)}`}
           className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-blue-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-600"
         >
           Join School Team
