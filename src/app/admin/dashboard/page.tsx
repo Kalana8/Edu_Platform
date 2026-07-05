@@ -1,6 +1,21 @@
-import AdminTopbar from "@/components/AdminTopbar";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  let totalStudents = 0;
+
+  try {
+    const supabase = createAdminClient();
+    const { count, error } = await supabase
+      .from("students")
+      .select("*", { count: "exact", head: true });
+
+    if (!error) {
+      totalStudents = count ?? 0;
+    }
+  } catch (error) {
+    console.error("Failed to load total students", error);
+  }
+
   return (
     <div>
       <section className="mb-6">
@@ -9,7 +24,7 @@ export default function AdminDashboard() {
             <div>
               <p className="text-sm">Active Students Right Now</p>
               <h3 className="text-3xl font-semibold">9,876</h3>
-              <p className="text-sm opacity-80">out of 12,458 total students</p>
+              <p className="text-sm opacity-80">out of {totalStudents.toLocaleString()} total students</p>
             </div>
             <div className="text-right">
               <div className="rounded-md bg-white/10 px-4 py-2">79%</div>
@@ -21,7 +36,7 @@ export default function AdminDashboard() {
       <section className="grid grid-cols-2 gap-4">
         <div className="rounded-lg bg-white p-6 shadow"> 
           <p className="text-sm text-slate-500">Total Students</p>
-          <p className="mt-2 text-2xl font-semibold">12,458</p>
+          <p className="mt-2 text-2xl font-semibold">{totalStudents.toLocaleString()}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow"> 
           <p className="text-sm text-slate-500">Active Students</p>
