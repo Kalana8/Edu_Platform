@@ -86,7 +86,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           {mappedLevels.map((level) => (
             <Link
               key={level.title}
-              href={`/category/${slug}?level=${encodeURIComponent(level.title.toLowerCase())}`}
+              href={`/category/${slug}/${level.title.toLowerCase()}`}
               className="block overflow-hidden rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)] transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="flex items-center gap-4">
