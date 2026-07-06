@@ -216,10 +216,11 @@ export async function PUT(request: NextRequest) {
       }
       else if (target_type === 'content') {
         if (action_type === 'create') {
-          const { category_id, level, title, description, pages, is_published } = change_data;
+          const { category_id, level, description, pages, is_published } = change_data;
           const normalizedPages = (Array.isArray(pages) ? pages : [])
             .map((page: any, index: number) => ({
               page_number: typeof page?.page_number === 'number' ? page.page_number : index + 1,
+              title: typeof page?.title === 'string' ? page.title : '',
               content: typeof page?.content === 'string' ? page.content : (typeof page === 'string' ? page : ''),
             }))
             .filter((page: any) => page.content.trim() !== '');
@@ -229,7 +230,6 @@ export async function PUT(request: NextRequest) {
             .insert({
               category_id,
               level,
-              title: title.trim(),
               description: (description || '').trim(),
               is_published: is_published ?? true,
             })
@@ -247,6 +247,7 @@ export async function PUT(request: NextRequest) {
               .insert(normalizedPages.map((page: any) => ({
                 content_id: content.id,
                 page_number: page.page_number,
+                title: page.title.trim(),
                 content: page.content.trim(),
               })));
 
@@ -258,11 +259,10 @@ export async function PUT(request: NextRequest) {
           }
         } 
         else if (action_type === 'update') {
-          const { category_id, level, title, description, pages, is_published } = change_data;
+          const { category_id, level, description, pages, is_published } = change_data;
           const updateData: any = {};
           if (category_id !== undefined) updateData.category_id = category_id;
           if (level !== undefined) updateData.level = level;
-          if (title !== undefined) updateData.title = title.trim();
           if (description !== undefined) updateData.description = description.trim();
           if (is_published !== undefined) updateData.is_published = is_published;
 
@@ -280,6 +280,7 @@ export async function PUT(request: NextRequest) {
             const normalizedPages = pages
               .map((page: any, index: number) => ({
                 page_number: typeof page?.page_number === 'number' ? page.page_number : index + 1,
+                title: typeof page?.title === 'string' ? page.title : '',
                 content: typeof page?.content === 'string' ? page.content : (typeof page === 'string' ? page : ''),
               }))
               .filter((page: any) => page.content.trim() !== '');
@@ -300,6 +301,7 @@ export async function PUT(request: NextRequest) {
                 .insert(normalizedPages.map((page: any) => ({
                   content_id: target_id,
                   page_number: page.page_number,
+                  title: page.title.trim(),
                   content: page.content.trim(),
                 })));
 

@@ -15,13 +15,12 @@ export type ContentItem = {
   id: string;
   category_id: string;
   level: "Essential" | "Intermediate" | "Advanced";
-  title: string;
   description: string;
   page_count: number;
   is_published: boolean;
   created_at: string;
   updated_at: string;
-  pages: Array<{ page_number: number; content: string }>;
+  pages: Array<{ page_number: number; title: string; content: string }>;
 };
 
 const levelOptions = ["Essential", "Intermediate", "Advanced"] as const;
@@ -39,17 +38,15 @@ export default function ContentManagementPage() {
 
   const blankForm = {
     level: "Essential" as "Essential" | "Intermediate" | "Advanced",
-    title: "",
     description: "",
-    pages: [""] as string[],
+    pages: [{ title: "", content: "" }] as Array<{ title: string; content: string }>,
     is_published: true,
   };
 
   const [form, setForm] = useState<{
     level: "Essential" | "Intermediate" | "Advanced";
-    title: string;
     description: string;
-    pages: string[];
+    pages: Array<{ title: string; content: string }>;
     is_published: boolean;
   }>(blankForm);
 
@@ -115,22 +112,22 @@ export default function ContentManagementPage() {
     setSuccess(null);
   };
 
-  const updatePage = (index: number, value: string) => {
+  const updatePage = (index: number, field: "title" | "content", value: string) => {
     setForm((current) => {
       const next = [...current.pages];
-      next[index] = value;
+      next[index] = { ...next[index], [field]: value };
       return { ...current, pages: next };
     });
   };
 
   const addPage = () => {
-    setForm((current) => ({ ...current, pages: [...current.pages, ""] }));
+    setForm((current) => ({ ...current, pages: [...current.pages, { title: "", content: "" }] }));
   };
 
   const removePage = (index: number) => {
     setForm((current) => {
       const next = current.pages.filter((_, i) => i !== index);
-      return { ...current, pages: next.length ? next : [""] };
+      return { ...current, pages: next.length ? next : [{ title: "", content: "" }] };
     });
   };
 
@@ -148,7 +145,9 @@ export default function ContentManagementPage() {
     e.preventDefault();
     if (!selectedCategory) return;
 
-    const trimmedPages = form.pages.map((page) => page.trim()).filter((page) => page !== "");
+    const trimmedPages = form.pages
+      .map((page) => ({ title: page.title.trim(), content: page.content.trim() }))
+      .filter((page) => page.content !== "");
     if (trimmedPages.length === 0) {
       setError("At least one non-empty page is required.");
       return;
@@ -206,9 +205,8 @@ export default function ContentManagementPage() {
     setEditingContent(item);
     setForm({
       level: item.level,
-      title: item.title,
       description: item.description,
-      pages: item.pages.map((p) => p.content),
+      pages: item.pages.map((p) => ({ title: p.title, content: p.content })),
       is_published: item.is_published,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -379,25 +377,13 @@ export default function ContentManagementPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-slate-700">Title</label>
-                      <input
-                        type="text"
-                        value={form.title}
-                        onChange={(e) => setForm((current) => ({ ...current, title: e.target.value }))}
-                        className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none focus:border-blue-500"
-                        placeholder="Enter content title"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
                       <label className="block text-sm font-medium text-slate-700">Description</label>
                       <input
                         type="text"
                         value={form.description}
                         onChange={(e) => setForm((current) => ({ ...current, description: e.target.value }))}
                         className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none focus:border-blue-500"
-                        placeholder="Brief description"
+                        placeholder="Brief description for this level"
                       />
                     </div>
 
@@ -446,9 +432,16 @@ export default function ContentManagementPage() {
                                 </button>
                               </div>
                             </div>
+                            <input
+                              type="text"
+                              value={page.title}
+                              onChange={(e) => updatePage(index, "title", e.target.value)}
+                              className="mb-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-950 outline-none focus:border-blue-500"
+                              placeholder={`Page ${index + 1} title`}
+                            />
                             <textarea
-                              value={page}
-                              onChange={(e) => updatePage(index, e.target.value)}
+                              value={page.content}
+                              onChange={(e) => updatePage(index, "content", e.target.value)}
                               rows={6}
                               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none focus:border-blue-500"
                               placeholder={`Enter content for page ${index + 1}`}
@@ -491,7 +484,6 @@ export default function ContentManagementPage() {
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-slate-950">{item.title}</h4>
                                 <span
                                   className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
                                     item.level === "Essential"

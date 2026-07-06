@@ -43,15 +43,16 @@ async function submitApprovalRequest(
   return data;
 }
 
-function normalizePages(pages: any): Array<{ page_number: number; content: string }> {
+function normalizePages(pages: any): Array<{ page_number: number; title: string; content: string }> {
   if (!Array.isArray(pages)) return [];
   return pages
     .map((page, index) => {
       if (typeof page === 'string') {
-        return { page_number: index + 1, content: page };
+        return { page_number: index + 1, title: '', content: page };
       }
       return {
         page_number: Number(page.page_number) || index + 1,
+        title: typeof page.title === 'string' ? page.title : '',
         content: typeof page.content === 'string' ? page.content : '',
       };
     })
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     let contentQuery = supabase
       .from('content')
-      .select('id, category_id, level, title, description, page_count, is_published, created_at, updated_at')
+      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
       .order('created_at', { ascending: false });
 
     if (categoryId) {
@@ -87,7 +88,7 @@ export async function GET(request: NextRequest) {
       (contents ?? []).map(async (item: any) => {
         const { data: pages } = await supabase
           .from('content_pages')
-          .select('page_number, content')
+          .select('page_number, title, content')
           .eq('content_id', item.id)
           .order('page_number', { ascending: true });
 
@@ -116,11 +117,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { category_id, level, title, description, pages, is_published } = body;
+    const { category_id, level, description, pages, is_published } = body;
 
-    if (!category_id || !level || !title || !pages || !Array.isArray(pages) || pages.length === 0) {
+    if (!category_id || !level || !pages || !Array.isArray(pages) || pages.length === 0) {
       return NextResponse.json(
-        { error: 'Category, level, title, and at least one page are required.' },
+        { error: 'Category, level, and at least one page are required.' },
         { status: 400 }
       );
     }
@@ -140,7 +141,7 @@ export async function POST(request: NextRequest) {
         'content',
         'create',
         null,
-        { category_id, level, title, description, pages: normalizedPages, is_published }
+        { category_id, level, description, pages: normalizedPages, is_published }
       );
       return NextResponse.json(
         { pendingApproval: true, message: 'Your content creation request has been submitted to the admin for approval.' },
@@ -158,11 +159,10 @@ export async function POST(request: NextRequest) {
       .insert({
         category_id,
         level,
-        title: title.trim(),
         description: (description || '').trim(),
         is_published: is_published ?? true,
       })
-      .select('id, category_id, level, title, description, page_count, is_published, created_at, updated_at')
+      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
       .single();
 
     if (contentError || !content) {
@@ -176,6 +176,7 @@ export async function POST(request: NextRequest) {
     const pageRows = normalizedPages.map((page) => ({
       content_id: content.id,
       page_number: page.page_number,
+      title: page.title.trim(),
       content: page.content.trim(),
     }));
 
@@ -194,7 +195,7 @@ export async function POST(request: NextRequest) {
 
     const { data: savedPages } = await supabase
       .from('content_pages')
-      .select('page_number, content')
+      .select('page_number, title, content')
       .eq('content_id', content.id)
       .order('page_number', { ascending: true });
 
@@ -219,7 +220,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, category_id, level, title, description, pages, is_published } = body;
+    const { id, category_id, level, description, pages, is_published } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -234,7 +235,7 @@ export async function PUT(request: NextRequest) {
         'content',
         'update',
         id,
-        { category_id, level, title, description, pages, is_published }
+        { category_id, level, description, pages, is_published }
       );
       return NextResponse.json(
         { pendingApproval: true, message: 'Your content update request has been submitted to the admin for approval.' },
@@ -251,7 +252,6 @@ export async function PUT(request: NextRequest) {
     const updateData: any = {};
     if (category_id !== undefined) updateData.category_id = category_id;
     if (level !== undefined) updateData.level = level;
-    if (title !== undefined) updateData.title = title.trim();
     if (description !== undefined) updateData.description = description.trim();
     if (is_published !== undefined) updateData.is_published = is_published;
 
@@ -259,7 +259,7 @@ export async function PUT(request: NextRequest) {
       .from('content')
       .update(updateData)
       .eq('id', id)
-      .select('id, category_id, level, title, description, page_count, is_published, created_at, updated_at')
+      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
       .single();
 
     if (contentError || !content) {
@@ -289,6 +289,7 @@ export async function PUT(request: NextRequest) {
       const pageRows = normalizedPages.map((page) => ({
         content_id: id,
         page_number: page.page_number,
+        title: page.title.trim(),
         content: page.content.trim(),
       }));
 
@@ -307,7 +308,7 @@ export async function PUT(request: NextRequest) {
 
     const { data: savedPages } = await supabase
       .from('content_pages')
-      .select('page_number, content')
+      .select('page_number, title, content')
       .eq('content_id', id)
       .order('page_number', { ascending: true });
 
