@@ -214,6 +214,59 @@ export async function PUT(request: NextRequest) {
           }
         }
       }
+      else if (target_type === 'content') {
+        if (action_type === 'create') {
+          const { category_id, level, title, description, content, page_count, is_published } = change_data;
+          const { error: insertError } = await supabase
+            .from('content')
+            .insert({
+              category_id,
+              level,
+              title: title.trim(),
+              description: (description || '').trim(),
+              content: content.trim(),
+              page_count: page_count ? Number(page_count) : 0,
+              is_published: is_published ?? true,
+            });
+
+          if (insertError) {
+            console.error('Approval execution: content insert failed', insertError);
+            return NextResponse.json({ error: `Insert failed: ${insertError.message}` }, { status: 500 });
+          }
+        } 
+        else if (action_type === 'update') {
+          const { category_id, level, title, description, content, page_count, is_published } = change_data;
+          const updateData: any = {};
+          if (category_id !== undefined) updateData.category_id = category_id;
+          if (level !== undefined) updateData.level = level;
+          if (title !== undefined) updateData.title = title.trim();
+          if (description !== undefined) updateData.description = description.trim();
+          if (content !== undefined) updateData.content = content.trim();
+          if (page_count !== undefined) updateData.page_count = Number(page_count);
+          if (is_published !== undefined) updateData.is_published = is_published;
+
+          const { error: updateError } = await supabase
+            .from('content')
+            .update(updateData)
+            .eq('id', target_id);
+
+          if (updateError) {
+            console.error('Approval execution: content update failed', updateError);
+            return NextResponse.json({ error: `Update failed: ${updateError.message}` }, { status: 500 });
+          }
+        } 
+        else if (action_type === 'delete') {
+          const { error: deleteError } = await supabase
+            .from('content')
+            .delete()
+            .eq('id', target_id);
+
+          if (deleteError) {
+            console.error('Approval execution: content delete failed', deleteError);
+            return NextResponse.json({ error: `Delete failed: ${deleteError.message}` }, { status: 500 });
+          }
+        }
+      }
     }
 
     // Update approval request status
