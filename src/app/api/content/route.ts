@@ -154,28 +154,69 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createAdminClient();
-    const { data: content, error: contentError } = await supabase
-      .from('content')
-      .insert({
-        category_id,
-        level,
-        description: (description || '').trim(),
-        is_published: is_published ?? true,
-      })
-      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
-      .single();
 
-    if (contentError || !content) {
-      console.error('Content insert error:', contentError);
+    const { data: existingContent, error: existingError } = await supabase
+      .from('content')
+      .select('id, description, page_count')
+      .eq('category_id', category_id)
+      .eq('level', level)
+      .maybeSingle();
+
+    if (existingError) {
+      console.error('Existing content fetch error:', existingError);
       return NextResponse.json(
-        { error: contentError?.message || 'Unable to add content.' },
+        { error: existingError.message || 'Unable to check existing content.' },
         { status: 500 }
       );
     }
 
-    const pageRows = normalizedPages.map((page) => ({
-      content_id: content.id,
-      page_number: page.page_number,
+    let contentId = existingContent?.id;
+    let startingPageNumber = 1;
+
+    if (contentId) {
+      const { data: maxPage, error: maxPageError } = await supabase
+        .from('content_pages')
+        .select('page_number')
+        .eq('content_id', contentId)
+        .order('page_number', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (maxPageError) {
+        console.error('Max page fetch error:', maxPageError);
+        return NextResponse.json(
+          { error: maxPageError.message || 'Unable to check existing pages.' },
+          { status: 500 }
+        );
+      }
+
+      startingPageNumber = (maxPage?.page_number ?? 0) + 1;
+    } else {
+      const { data: newContent, error: contentError } = await supabase
+        .from('content')
+        .insert({
+          category_id,
+          level,
+          description: (description || '').trim(),
+          is_published: is_published ?? true,
+        })
+        .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
+        .single();
+
+      if (contentError || !newContent) {
+        console.error('Content insert error:', contentError);
+        return NextResponse.json(
+          { error: contentError?.message || 'Unable to add content.' },
+          { status: 500 }
+        );
+      }
+
+      contentId = newContent.id;
+    }
+
+    const pageRows = normalizedPages.map((page, index) => ({
+      content_id: contentId,
+      page_number: startingPageNumber + index,
       title: page.title.trim(),
       content: page.content.trim(),
     }));
@@ -186,22 +227,30 @@ export async function POST(request: NextRequest) {
 
     if (pagesError) {
       console.error('Content pages insert error:', pagesError);
-      await supabase.from('content').delete().eq('id', content.id);
+      if (!existingContent) {
+        await supabase.from('content').delete().eq('id', contentId);
+      }
       return NextResponse.json(
         { error: pagesError.message || 'Unable to add content pages.' },
         { status: 500 }
       );
     }
 
+    const { data: savedContent } = await supabase
+      .from('content')
+      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
+      .eq('id', contentId)
+      .maybeSingle();
+
     const { data: savedPages } = await supabase
       .from('content_pages')
       .select('page_number, title, content')
-      .eq('content_id', content.id)
+      .eq('content_id', contentId)
       .order('page_number', { ascending: true });
 
     return NextResponse.json(
-      { content: { ...content, pages: savedPages ?? [] } },
-      { status: 201 }
+      { content: { ...savedContent, pages: savedPages ?? [] } },
+      { status: existingContent ? 200 : 201 }
     );
   } catch (error) {
     console.error('Content creation error:', error);

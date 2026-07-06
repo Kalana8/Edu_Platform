@@ -225,37 +225,73 @@ export async function PUT(request: NextRequest) {
             }))
             .filter((page: any) => page.content.trim() !== '');
 
-          const { data: content, error: insertError } = await supabase
+          const { data: existingContent, error: existingError } = await supabase
             .from('content')
-            .insert({
-              category_id,
-              level,
-              description: (description || '').trim(),
-              is_published: is_published ?? true,
-            })
-            .select('id')
-            .single();
+            .select('id, description, page_count')
+            .eq('category_id', category_id)
+            .eq('level', level)
+            .maybeSingle();
 
-          if (insertError || !content) {
-            console.error('Approval execution: content insert failed', insertError);
-            return NextResponse.json({ error: `Insert failed: ${insertError?.message || 'Unknown error'}` }, { status: 500 });
+          if (existingError) {
+            console.error('Existing content fetch error:', existingError);
+            return NextResponse.json({ error: existingError.message || 'Unable to check existing content.' }, { status: 500 });
           }
 
-          if (normalizedPages.length > 0) {
-            const { error: pagesError } = await supabase
-              .from('content_pages')
-              .insert(normalizedPages.map((page: any) => ({
-                content_id: content.id,
-                page_number: page.page_number,
-                title: page.title.trim(),
-                content: page.content.trim(),
-              })));
+          let contentId = existingContent?.id;
+          let startingPageNumber = 1;
 
-            if (pagesError) {
-              console.error('Approval execution: content pages insert failed', pagesError);
-              await supabase.from('content').delete().eq('id', content.id);
-              return NextResponse.json({ error: `Pages insert failed: ${pagesError.message}` }, { status: 500 });
+          if (contentId) {
+            const { data: maxPage, error: maxPageError } = await supabase
+              .from('content_pages')
+              .select('page_number')
+              .eq('content_id', contentId)
+              .order('page_number', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            if (maxPageError) {
+              console.error('Max page fetch error:', maxPageError);
+              return NextResponse.json({ error: maxPageError.message || 'Unable to check existing pages.' }, { status: 500 });
             }
+
+            startingPageNumber = (maxPage?.page_number ?? 0) + 1;
+          } else {
+            const { data: content, error: insertError } = await supabase
+              .from('content')
+              .insert({
+                category_id,
+                level,
+                description: (description || '').trim(),
+                is_published: is_published ?? true,
+              })
+              .select('id')
+              .single();
+
+            if (insertError || !content) {
+              console.error('Approval execution: content insert failed', insertError);
+              return NextResponse.json({ error: `Insert failed: ${insertError?.message || 'Unknown error'}` }, { status: 500 });
+            }
+
+            contentId = content.id;
+          }
+
+          const pageRows = normalizedPages.map((page, index) => ({
+            content_id: contentId,
+            page_number: startingPageNumber + index,
+            title: page.title.trim(),
+            content: page.content.trim(),
+          }));
+
+          const { error: pagesError } = await supabase
+            .from('content_pages')
+            .insert(pageRows);
+
+          if (pagesError) {
+            console.error('Approval execution: content pages insert failed', pagesError);
+            if (!existingContent) {
+              await supabase.from('content').delete().eq('id', contentId);
+            }
+            return NextResponse.json({ error: `Pages insert failed: ${pagesError.message}` }, { status: 500 });
           }
         } 
         else if (action_type === 'update') {
