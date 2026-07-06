@@ -230,6 +230,8 @@ export async function PUT(request: NextRequest) {
             .select('id, description, page_count')
             .eq('category_id', category_id)
             .eq('level', level)
+            .order('created_at', { ascending: false })
+            .limit(1)
             .maybeSingle();
 
           if (existingError) {
