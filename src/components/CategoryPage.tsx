@@ -109,6 +109,13 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
         throw new Error(payload.error || "Unable to save category.");
       }
 
+      if (payload.pendingApproval) {
+        setFormState(emptyFormState);
+        setIsModalOpen(false);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
+      }
+
       const category = payload.category as CategoryItem;
       const newCategory: CategoryItem = {
         slug: category.slug,
@@ -176,6 +183,13 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
         throw new Error(payload.error || "Unable to update category.");
       }
 
+      if (payload.pendingApproval) {
+        setEditingCategory(null);
+        setEditFormState(emptyFormState);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
+      }
+
       const updatedCategory = payload.category as CategoryItem;
       const nextCategory: CategoryItem = {
         slug: updatedCategory.slug,
@@ -215,6 +229,12 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
       if (!response.ok) {
         throw new Error(payload.error || "Unable to delete category.");
+      }
+
+      if (payload.pendingApproval) {
+        setDeletingCategory(null);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
       }
 
       setCategories((current) => current.filter((item) => item.slug !== category.slug));

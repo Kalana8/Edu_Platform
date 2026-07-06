@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { setRole as saveRole } from "@/lib/session";
+import { setUser as saveUser } from "@/lib/session";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -13,37 +13,42 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const ADMIN_CREDENTIALS = { email: "admin@example.com", password: "admin123" };
-  const MOD_CREDENTIALS = { email: "moderator@example.com", password: "mod123" };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Simple client-side credential check (temporary until Supabase is integrated)
-    setTimeout(() => {
-      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-        saveRole("admin");
-        setLoading(false);
-        router.replace("/admin/dashboard");
-        // fallback
-        setTimeout(() => (window.location.href = "/admin/dashboard"), 300);
-        return;
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Invalid credentials.");
       }
 
-      if (email === MOD_CREDENTIALS.email && password === MOD_CREDENTIALS.password) {
-        saveRole("moderator");
-        setLoading(false);
-        router.replace("/moderator/dashboard");
-        // fallback
-        setTimeout(() => (window.location.href = "/moderator/dashboard"), 300);
-        return;
+      const user = payload.user;
+      if (user.role !== "admin" && user.role !== "moderator") {
+        throw new Error("Access denied. Authorized personnel only.");
       }
 
+      saveUser(user);
       setLoading(false);
-      setError("Invalid credentials. Use demo credentials shown below.");
-    }, 400);
+      
+      const targetDashboard = user.role === "admin" ? "/admin/dashboard" : "/moderator/dashboard";
+      router.replace(targetDashboard);
+      // fallback
+      setTimeout(() => (window.location.href = targetDashboard), 300);
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message || "An error occurred during sign in.");
+    }
   };
 
   return (
@@ -96,9 +101,9 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-6 border-t border-slate-800 pt-4 text-center text-sm text-slate-500">
-            <p className="font-medium text-slate-300">Demo credentials:</p>
-            <p className="mt-2">Admin: admin@example.com / admin123</p>
-            <p className="mt-1">Moderator: moderator@example.com / mod123</p>
+            <p className="font-medium text-slate-300">Supabase DB credentials:</p>
+            <p className="mt-2">Admin: admin1@schoolhub.com / admin123</p>
+            <p className="mt-1">Moderator: moderator@gmail.com / mod123</p>
           </div>
         </div>
 

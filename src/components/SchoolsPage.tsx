@@ -114,6 +114,13 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
         throw new Error(payload.error || "Unable to create school.");
       }
 
+      if (payload.pendingApproval) {
+        setFormState(emptyFormState);
+        setIsModalOpen(false);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
+      }
+
       setSchools((current) => [payload.school, ...current]);
       setFormState(emptyFormState);
       setIsModalOpen(false);
@@ -147,6 +154,13 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
         throw new Error(payload.error || "Unable to update school.");
       }
 
+      if (payload.pendingApproval) {
+        setEditingSchool(null);
+        setEditFormState(emptyFormState);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
+      }
+
       setSchools((current) => current.map((school) => (school.id === editingSchool.id ? payload.school : school)));
       setEditingSchool(null);
       setEditFormState(emptyFormState);
@@ -172,6 +186,12 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
       const payload = await response.json();
       if (!response.ok) {
         throw new Error(payload.error || "Unable to delete school.");
+      }
+
+      if (payload.pendingApproval) {
+        setDeletingSchool(null);
+        setFeedback({ type: "success", message: payload.message || "Request submitted for approval." });
+        return;
       }
 
       setSchools((current) => current.filter((item) => item.id !== school.id));
