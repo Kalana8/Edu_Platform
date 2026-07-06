@@ -39,7 +39,17 @@ export default function CreateStudentId() {
         return;
       }
 
-      window.location.href = `/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`;
+      const sessionResponse = await fetch("/api/auth/student-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId: fullStudentId }),
+      });
+
+      if (sessionResponse.ok) {
+        window.location.href = "/home";
+      } else {
+        window.location.href = `/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`;
+      }
     } catch (err) {
       console.error("Student registration error:", err);
       setError("An error occurred. Please try again.");

@@ -75,12 +75,13 @@ export async function POST(request: NextRequest) {
       .insert({
         id: randomUUID(),
         student_id: fullStudentId,
+        name: finalName,
         school_id: school.id,
         total_credits: 0,
         available_credits: 0,
         withheld_credits: 0,
       })
-      .select('id, student_id, school_id, total_credits, available_credits, withheld_credits')
+      .select('id, student_id, name, school_id, total_credits, available_credits, withheld_credits')
       .single();
 
     if (studentError || !student) {
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
       {
         student: {
           id: student.id,
-          name: finalName,
+          name: student.name,
           studentId: student.student_id,
           schoolId: student.school_id,
           school: school.name,
