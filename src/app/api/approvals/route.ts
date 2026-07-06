@@ -216,33 +216,54 @@ export async function PUT(request: NextRequest) {
       }
       else if (target_type === 'content') {
         if (action_type === 'create') {
-          const { category_id, level, title, description, content, page_count, is_published } = change_data;
-          const { error: insertError } = await supabase
+          const { category_id, level, title, description, pages, is_published } = change_data;
+          const normalizedPages = (Array.isArray(pages) ? pages : [])
+            .map((page: any, index: number) => ({
+              page_number: typeof page?.page_number === 'number' ? page.page_number : index + 1,
+              content: typeof page?.content === 'string' ? page.content : (typeof page === 'string' ? page : ''),
+            }))
+            .filter((page: any) => page.content.trim() !== '');
+
+          const { data: content, error: insertError } = await supabase
             .from('content')
             .insert({
               category_id,
               level,
               title: title.trim(),
               description: (description || '').trim(),
-              content: content.trim(),
-              page_count: page_count ? Number(page_count) : 0,
               is_published: is_published ?? true,
-            });
+            })
+            .select('id')
+            .single();
 
-          if (insertError) {
+          if (insertError || !content) {
             console.error('Approval execution: content insert failed', insertError);
-            return NextResponse.json({ error: `Insert failed: ${insertError.message}` }, { status: 500 });
+            return NextResponse.json({ error: `Insert failed: ${insertError?.message || 'Unknown error'}` }, { status: 500 });
+          }
+
+          if (normalizedPages.length > 0) {
+            const { error: pagesError } = await supabase
+              .from('content_pages')
+              .insert(normalizedPages.map((page: any) => ({
+                content_id: content.id,
+                page_number: page.page_number,
+                content: page.content.trim(),
+              })));
+
+            if (pagesError) {
+              console.error('Approval execution: content pages insert failed', pagesError);
+              await supabase.from('content').delete().eq('id', content.id);
+              return NextResponse.json({ error: `Pages insert failed: ${pagesError.message}` }, { status: 500 });
+            }
           }
         } 
         else if (action_type === 'update') {
-          const { category_id, level, title, description, content, page_count, is_published } = change_data;
+          const { category_id, level, title, description, pages, is_published } = change_data;
           const updateData: any = {};
           if (category_id !== undefined) updateData.category_id = category_id;
           if (level !== undefined) updateData.level = level;
           if (title !== undefined) updateData.title = title.trim();
           if (description !== undefined) updateData.description = description.trim();
-          if (content !== undefined) updateData.content = content.trim();
-          if (page_count !== undefined) updateData.page_count = Number(page_count);
           if (is_published !== undefined) updateData.is_published = is_published;
 
           const { error: updateError } = await supabase
@@ -253,6 +274,40 @@ export async function PUT(request: NextRequest) {
           if (updateError) {
             console.error('Approval execution: content update failed', updateError);
             return NextResponse.json({ error: `Update failed: ${updateError.message}` }, { status: 500 });
+          }
+
+          if (Array.isArray(pages)) {
+            const normalizedPages = pages
+              .map((page: any, index: number) => ({
+                page_number: typeof page?.page_number === 'number' ? page.page_number : index + 1,
+                content: typeof page?.content === 'string' ? page.content : (typeof page === 'string' ? page : ''),
+              }))
+              .filter((page: any) => page.content.trim() !== '');
+
+            const { error: deleteError } = await supabase
+              .from('content_pages')
+              .delete()
+              .eq('content_id', target_id);
+
+            if (deleteError) {
+              console.error('Approval execution: content pages delete failed', deleteError);
+              return NextResponse.json({ error: `Pages update failed: ${deleteError.message}` }, { status: 500 });
+            }
+
+            if (normalizedPages.length > 0) {
+              const { error: pagesError } = await supabase
+                .from('content_pages')
+                .insert(normalizedPages.map((page: any) => ({
+                  content_id: target_id,
+                  page_number: page.page_number,
+                  content: page.content.trim(),
+                })));
+
+              if (pagesError) {
+                console.error('Approval execution: content pages insert failed', pagesError);
+                return NextResponse.json({ error: `Pages insert failed: ${pagesError.message}` }, { status: 500 });
+              }
+            }
           }
         } 
         else if (action_type === 'delete') {
