@@ -1,26 +1,56 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 export default function CreateStudentId() {
   const searchParams = useSearchParams();
-  const [schoolCode, setSchoolCode] = useState("");
   const [studentNumber, setStudentNumber] = useState("");
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setSchoolCode(searchParams.get("code") || "");
-    setMounted(true);
-  }, [searchParams]);
+  const schoolCode = useMemo(() => searchParams.get("code") || "", [searchParams]);
+  const fullStudentId = studentNumber ? `${schoolCode}-${studentNumber}` : "";
 
-  const fullStudentId = mounted && studentNumber ? `${schoolCode}-${studentNumber}` : "";
+  const handleContinue = async () => {
+    if (!fullStudentId) {
+      setError("Please enter a student number.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/students/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          schoolCode: schoolCode.trim(),
+          studentNumber: studentNumber.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Unable to create student ID.");
+        setLoading(false);
+        return;
+      }
+
+      window.location.href = `/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`;
+    } catch (err) {
+      console.error("Student registration error:", err);
+      setError("An error occurred. Please try again.");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[425px] flex-col  px-4 py-8">
-        <div className="space-y-4 ">
+      <main className="mx-auto flex min-h-screen w-full max-w-[425px] flex-col px-4 py-8">
+        <div className="space-y-4">
           <h1 className="text-3xl font-semibold tracking-tight">Create Your Student ID</h1>
           <div className="mx-auto max-w-xl rounded-2xl border-none bg-blue-50 p-5 text-left text-sm text-gray-700 shadow-none">
             Your Student ID helps track your individual progress. You can customize it later in settings.
@@ -51,12 +81,15 @@ export default function CreateStudentId() {
             />
           </div>
 
-          <Link
-            href={`/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`}
-            className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600"
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <button
+            onClick={handleContinue}
+            disabled={loading || !fullStudentId}
+            className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600 disabled:opacity-50"
           >
-            Continue
-          </Link>
+            {loading ? "Creating..." : "Continue"}
+          </button>
         </div>
       </main>
     </div>
