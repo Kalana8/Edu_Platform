@@ -126,19 +126,23 @@ export default function ReadingPage() {
   };
 
   const goNext = async () => {
-    if (!readingState || currentPageIndex >= pages.length - 1) return;
+    if (!readingState || pages.length === 0) return;
 
-    const nextIndex = currentPageIndex + 1;
-    setCurrentPageIndex(nextIndex);
-
+    const isLastPage = currentPageIndex >= pages.length - 1;
     const newCount = pagesReadThisSession + 1;
     setPagesReadThisSession(newCount);
 
+    await updateProgress(1);
+
+    if (isLastPage) {
+      router.push(`/quiz/${contentId}`);
+      return;
+    }
+
     if (newCount >= 2) {
-      await updateProgress(2);
       router.push(`/quiz/${contentId}`);
     } else {
-      await updateProgress(1);
+      setCurrentPageIndex(currentPageIndex + 1);
     }
   };
 
@@ -172,6 +176,35 @@ export default function ReadingPage() {
     );
   }
 
+  const allPagesRead =
+    !!readingState &&
+    readingState.totalPages > 0 &&
+    readingState.pagesRead >= readingState.totalPages;
+
+  if (allPagesRead) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-950">
+        <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col items-center justify-center gap-6 px-4">
+          <div className="w-full rounded-[1.75rem] bg-white p-6 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-100 text-3xl">✅</div>
+            <h2 className="mt-4 text-xl font-semibold text-slate-950">You&apos;ve finished this content!</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              You have read all {readingState.totalPages} pages. Review with a quiz or pick another topic.
+            </p>
+            <div className="mt-6">
+              <button
+                onClick={() => router.push("/choose-category")}
+                className="w-full rounded-3xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Back to Categories
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   const currentPage = pages[currentPageIndex];
   const progressPercent = readingState.totalPages > 0 ? ((readingState.pagesRead) / readingState.totalPages) * 100 : 0;
 
@@ -184,6 +217,7 @@ export default function ReadingPage() {
           title={readingState.title}
           subtitle={`${readingState.level} · Page ${currentPageIndex + 1} of ${readingState.totalPages}`}
           gradientClass="from-blue-600 via-violet-600 to-fuchsia-600"
+          rounded={false}
         />
 
         <div className="flex-1 overflow-y-auto px-4 pb-6">
@@ -206,10 +240,10 @@ export default function ReadingPage() {
             </span>
             <button
               onClick={goNext}
-              disabled={currentPageIndex >= pages.length - 1 || saving}
+              disabled={saving}
               className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:opacity-40"
             >
-              {currentPageIndex >= pages.length - 1 ? "Finish" : "Next"}
+              {currentPageIndex >= pages.length - 1 ? "Take Quiz" : "Next"}
             </button>
           </div>
         </div>

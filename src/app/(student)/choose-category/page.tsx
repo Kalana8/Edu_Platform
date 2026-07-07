@@ -52,7 +52,7 @@ export default function ChooseCategoryPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col gap-4 px-4 py-6">
-        <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
+        <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" rounded={false} className="-mx-4 -mt-6" />
 
         {error ? (
           <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>

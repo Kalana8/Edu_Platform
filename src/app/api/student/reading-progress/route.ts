@@ -62,18 +62,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { contentId, userId, pagesReadIncrement } = body;
+    const { contentId, pagesReadIncrement } = body;
 
-    if (!contentId || !userId || pagesReadIncrement === undefined) {
+    if (!contentId || pagesReadIncrement === undefined) {
       return NextResponse.json(
-        { error: 'contentId, userId, and pagesReadIncrement are required.' },
+        { error: 'contentId and pagesReadIncrement are required.' },
         { status: 400 }
       );
     }
 
-    if (user.id !== userId) {
-      return NextResponse.json({ error: 'Access denied.' }, { status: 403 });
-    }
+    const userId = user.id;
 
     const supabase = createAdminClient();
 
@@ -89,6 +87,21 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    const { count: pageCount, error: countError } = await supabase
+      .from('content_pages')
+      .select('*', { count: 'exact', head: true })
+      .eq('content_id', contentId);
+
+    if (countError) {
+      console.error('Page count fetch error:', countError);
+      return NextResponse.json(
+        { error: countError.message || 'Unable to load content pages.' },
+        { status: 500 }
+      );
+    }
+
+    const totalPages = Math.max(content.page_count ?? 0, pageCount ?? 0);
 
     const { data: existing, error: fetchError } = await supabase
       .from('reading_progress')
@@ -107,8 +120,8 @@ export async function POST(request: NextRequest) {
 
     const currentPagesRead = existing?.pages_read ?? 0;
     const isCompleted = existing?.is_completed ?? false;
-    const newPagesRead = Math.min(currentPagesRead + pagesReadIncrement, content.page_count);
-    const newlyCompleted = !isCompleted && newPagesRead >= content.page_count;
+    const newPagesRead = Math.min(currentPagesRead + pagesReadIncrement, totalPages);
+    const newlyCompleted = !isCompleted && newPagesRead >= totalPages;
 
     let result;
     if (existing) {
@@ -137,7 +150,7 @@ export async function POST(request: NextRequest) {
         .from('reading_progress')
         .insert({
           user_id: userId,
-          content_id,
+          content_id: contentId,
           pages_read: newPagesRead,
           is_completed: newlyCompleted,
           completed_at: newlyCompleted ? new Date().toISOString() : null,

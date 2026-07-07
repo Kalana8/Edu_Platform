@@ -236,17 +236,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: savedContent } = await supabase
-      .from('content')
-      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
-      .eq('id', contentId)
-      .maybeSingle();
-
     const { data: savedPages } = await supabase
       .from('content_pages')
       .select('page_number, title, content')
       .eq('content_id', contentId)
       .order('page_number', { ascending: true });
+
+    const { error: pageCountUpdateError } = await supabase
+      .from('content')
+      .update({ page_count: savedPages?.length ?? 0 })
+      .eq('id', contentId);
+
+    if (pageCountUpdateError) {
+      console.error('Page count update error:', pageCountUpdateError);
+    }
+
+    const { data: savedContent } = await supabase
+      .from('content')
+      .select('id, category_id, level, description, page_count, is_published, created_at, updated_at')
+      .eq('id', contentId)
+      .maybeSingle();
 
     return NextResponse.json(
       { content: { ...savedContent, pages: savedPages ?? [] } },
