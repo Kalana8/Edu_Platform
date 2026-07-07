@@ -56,6 +56,15 @@ async function fetchStudents() {
 
   const schoolsById = Object.fromEntries((schoolsData ?? []).map((school) => [school.id, school.name]));
 
+  let activeIds = new Set<string>();
+  const { data: progressData } = await supabase
+    .from("reading_progress")
+    .select("user_id");
+
+  if (progressData) {
+    activeIds = new Set(progressData.map((p) => p.user_id));
+  }
+
   return (studentsData ?? []).map((student) => ({
     id: student.id,
     name: student.name,
@@ -66,7 +75,7 @@ async function fetchStudents() {
     totalCredits: student.total_credits ?? 0,
     availableCredits: student.available_credits ?? 0,
     withheldCredits: student.withheld_credits ?? 0,
-    isActive: true,
+    isActive: activeIds.has(student.id),
   }));
 }
 

@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   try {
     const supabase = createAdminClient();
 
-    const [studentsRes, schoolsRes] = await Promise.all([
+    const [studentsRes, schoolsRes, progressRes] = await Promise.all([
       supabase
         .from("students")
         .select("*", { count: "exact", head: true }),
@@ -17,11 +17,15 @@ export default async function AdminDashboard() {
         .from("schools")
         .select("*", { count: "exact", head: true })
         .eq("is_active", true),
+
+      supabase.from("reading_progress").select("user_id"),
     ]);
 
     totalStudents = studentsRes.count ?? 0;
-    activeStudents = totalStudents;
     activeSchools = schoolsRes.count ?? 0;
+
+    const progressData = progressRes.data ?? [];
+    activeStudents = new Set(progressData.map((p) => p.user_id)).size;
   } catch (error) {
     console.error("Failed to load dashboard stats", error);
   }
