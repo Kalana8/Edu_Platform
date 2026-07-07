@@ -39,11 +39,12 @@ export async function GET() {
     const schoolId = student?.school_id ?? null;
     let schoolName = 'Unassigned';
     let schoolTier = 'N/A';
+    let schoolCode = '';
 
     if (schoolId) {
       const { data: school, error: schoolError } = await supabase
         .from('schools')
-        .select('name, tier')
+        .select('name, tier, code')
         .eq('id', schoolId)
         .maybeSingle();
 
@@ -52,6 +53,7 @@ export async function GET() {
       } else if (school) {
         schoolName = school.name;
         schoolTier = school.tier;
+        schoolCode = school.code;
       }
     }
 
@@ -74,6 +76,7 @@ export async function GET() {
           studentId: student?.student_id ?? '',
           schoolName,
           schoolTier,
+          schoolCode,
           totalCredits: student?.total_credits ?? 0,
           availableCredits: student?.available_credits ?? 0,
           withheldCredits: student?.withheld_credits ?? 0,
