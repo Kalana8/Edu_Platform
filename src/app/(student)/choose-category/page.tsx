@@ -32,7 +32,7 @@ export default function ChooseCategoryPage() {
           .filter((category: { status: string }) => category.status === "Active")
           .map((category: { slug: string; code: string; icon: string; status: string }) => ({
             slug: category.slug,
-            label: category.code,
+            label: category.code || category.slug,
             icon: category.icon || "📚",
             color: getColorForSlug(category.slug),
             status: category.status,
@@ -73,7 +73,7 @@ export default function ChooseCategoryPage() {
                 <div className={`flex items-center justify-center rounded-3xl p-3 shadow-sm ${category.color}`}>
                   <span className="text-xl">{category.icon}</span>
                 </div>
-                <p className="mt-4 text-center text-sm font-semibold text-slate-950">{category.label}</p>
+                <p className="mt-4 text-center text-sm font-semibold text-slate-950">{category.slug}</p>
               </Link>
             ))
           )}

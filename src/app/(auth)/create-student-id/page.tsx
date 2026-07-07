@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, useMemo } from "react";
+import { setUser as saveUser } from "@/lib/session";
 
 export default function CreateStudentId() {
   const searchParams = useSearchParams();
@@ -46,6 +47,8 @@ export default function CreateStudentId() {
       });
 
       if (sessionResponse.ok) {
+        const sessionData = await sessionResponse.json();
+        if (sessionData.user) saveUser(sessionData.user);
         window.location.href = "/home";
       } else {
         window.location.href = `/credits?code=${encodeURIComponent(schoolCode)}&studentId=${encodeURIComponent(fullStudentId)}`;

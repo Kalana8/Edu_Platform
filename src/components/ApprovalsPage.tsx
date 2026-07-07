@@ -30,6 +30,7 @@ export default function ApprovalsPage() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<string | null>(null); // holds approval ID being submitted
   const [comments, setComments] = useState<Record<string, string>>({}); // maps approval ID to comment text
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({}); // category id -> code (name)
 
   const fetchApprovals = async () => {
     setIsLoading(true);
@@ -50,6 +51,23 @@ export default function ApprovalsPage() {
 
   useEffect(() => {
     fetchApprovals();
+  }, []);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        const data = await response.json();
+        const map: Record<string, string> = {};
+        (data.categories ?? []).forEach((c: { id: string; code?: string; slug?: string }) => {
+          map[c.id] = c.code || c.slug || c.id;
+        });
+        setCategoryMap(map);
+      } catch {
+        // ignore; category ids will fall back to the raw id
+      }
+    };
+    loadCategories();
   }, []);
 
   const handleResolve = async (id: string, status: "approved" | "rejected") => {
@@ -283,22 +301,48 @@ export default function ApprovalsPage() {
                         </div>
                       )}
 
-                      {Object.entries(req.change_data).map(([key, val]) => {
-                        const displayVal =
-                          typeof val === "boolean"
-                            ? val
-                              ? "✅ Yes/Active"
-                              : "❌ No/Inactive"
-                            : String(val);
-                        return (
-                          <div key={key} className="flex flex-col">
-                            <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                            <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
-                              {displayVal}
-                            </span>
-                          </div>
-                        );
-                      })}
+                       {Object.entries(req.change_data).map(([key, val]) => {
+                         if (key === "is_published") return null;
+
+                         if (key === "pages" && Array.isArray(val)) {
+                           return (
+                             <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3">
+                               <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                               <span className="text-sm font-semibold text-slate-900 mt-0.5 block">
+                                 {val.length} page{val.length !== 1 ? "s" : ""}
+                               </span>
+                               <ul className="mt-1 list-disc pl-5 text-xs text-slate-600">
+                                 {val.slice(0, 10).map((page: any, index: number) => (
+                                   <li key={index}>
+                                     {typeof page?.title === "string" && page.title
+                                       ? page.title
+                                       : `Page ${index + 1}`}
+                                   </li>
+                                 ))}
+                                 {val.length > 10 && <li>…and {val.length - 10} more</li>}
+                               </ul>
+                             </div>
+                           );
+                         }
+
+                         const displayVal =
+                           typeof val === "boolean"
+                             ? val
+                               ? "✅ Yes/Active"
+                               : "❌ No/Inactive"
+                             : key === "category_id"
+                               ? categoryMap[val as string] ?? String(val)
+                               : String(val);
+
+                         return (
+                           <div key={key} className="flex flex-col">
+                             <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                             <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
+                               {displayVal}
+                             </span>
+                           </div>
+                         );
+                       })}
                     </div>
                   </div>
 
