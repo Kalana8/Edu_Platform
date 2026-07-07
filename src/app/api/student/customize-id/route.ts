@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
     }
 
     const trimmedId = studentId.trim();
+    const idParts = trimmedId.split("-");
+    const lastPart = idParts[idParts.length - 1] ?? trimmedId;
+    const displayName = `Student ${lastPart}`;
 
     const supabase = createAdminClient();
 
@@ -60,15 +63,16 @@ export async function POST(request: NextRequest) {
       .from("students")
       .update({
         student_id: trimmedId,
+        name: displayName,
       })
       .eq("id", user.id)
       .select("id, student_id, name, school_id, total_credits, available_credits, withheld_credits")
       .single();
 
     if (studentError || !studentData) {
-      console.error("Student ID update error:", studentError);
+      console.error("Profile update error:", studentError);
       return NextResponse.json(
-        { error: studentError?.message || "Unable to update student ID." },
+        { error: studentError?.message || "Unable to update profile." },
         { status: 500 }
       );
     }
