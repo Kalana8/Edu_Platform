@@ -17,7 +17,7 @@ export default function AdminSidebar({ role = "admin" }: { role?: "admin" | "mod
 
   const moderatorOnly = [
     { href: "/moderator/content", label: "Content Management", icon: "✍️" },
-    { href: "/moderator/support", label: "Dispute & Support", icon: "💬" },
+    // { href: "/moderator/support", label: "Dispute & Support", icon: "💬" },
   ];
 
   return (

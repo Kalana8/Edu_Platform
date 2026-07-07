@@ -100,11 +100,7 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <div className="mt-6 border-t border-slate-800 pt-4 text-center text-sm text-slate-500">
-            <p className="font-medium text-slate-300">Supabase DB credentials:</p>
-            <p className="mt-2">Admin: admin1@schoolhub.com / admin123</p>
-            <p className="mt-1">Moderator: moderator@gmail.com / mod123</p>
-          </div>
+        
         </div>
 
         <Link href="/" className="mt-6 text-sm font-medium text-slate-300 hover:text-white">
