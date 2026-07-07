@@ -25,11 +25,25 @@ export async function proxy(request: NextRequest) {
   const isAdmin = pathname.startsWith("/admin");
   const isModerator = pathname.startsWith("/moderator");
 
-  if (!isAdmin && !isModerator) {
+  const loginPath = "/admin/login";
+
+  // Logged-in users landing on the root page go straight to their home
+  if (pathname === "/") {
+    if (role === "student") {
+      return NextResponse.redirect(new URL("/home", request.url));
+    }
+    if (role === "admin") {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+    if (role === "moderator") {
+      return NextResponse.redirect(new URL("/moderator/dashboard", request.url));
+    }
     return supabaseResponse;
   }
 
-  const loginPath = "/admin/login";
+  if (!isAdmin && !isModerator) {
+    return supabaseResponse;
+  }
 
   // Authenticated staff should not see the login page
   if (pathname === loginPath) {

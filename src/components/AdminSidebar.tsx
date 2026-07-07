@@ -1,6 +1,33 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getUser, clearUser } from "@/lib/session";
 
 export default function AdminSidebar({ role = "admin" }: { role?: "admin" | "moderator" }) {
+  const router = useRouter();
+  const [name, setName] = useState(role === "moderator" ? "Moderator User" : "Admin User");
+
+  useEffect(() => {
+    const session = getUser();
+    if (session?.name) {
+      setName(session.name);
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // ignore network errors; cookie will still be cleared client-side
+    } finally {
+      clearUser();
+      router.push("/admin/login");
+      router.refresh();
+    }
+  };
+
   const prefix = role === "moderator" ? "/moderator" : "/admin";
 
   const common = [
@@ -56,9 +83,11 @@ export default function AdminSidebar({ role = "admin" }: { role?: "admin" | "mod
       </div>
 
       <div className="mt-auto p-6">
-        <div className="text-sm text-slate-400">Moderator User</div>
+        <div className="text-sm text-slate-400">{name}</div>
         <div className="mt-2">
-          <button className="text-red-400">Logout</button>
+          <button onClick={handleLogout} className="text-red-400 hover:text-red-300">
+            Logout
+          </button>
         </div>
       </div>
     </aside>
