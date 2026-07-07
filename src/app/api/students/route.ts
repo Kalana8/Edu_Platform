@@ -2,24 +2,28 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 async function mapStudents(supabase: ReturnType<typeof createAdminClient>) {
-  const { data: usersData, error: usersError } = await supabase
-    .from('users')
-    .select('id, name, email, role')
-    .eq('role', 'student')
-    .order('name', { ascending: true });
-
-  if (usersError) {
-    throw usersError;
-  }
-
-  const userIds = (usersData ?? []).map((user) => user.id);
   const { data: studentsData, error: studentsError } = await supabase
     .from('students')
-    .select('id, student_id, school_id, total_credits, available_credits, withheld_credits')
-    .in('id', userIds);
+    .select('id, student_id, name, school_id, total_credits, available_credits, withheld_credits')
+    .order('name', { ascending: true });
 
   if (studentsError) {
     throw studentsError;
+  }
+
+  const userIds = (studentsData ?? []).map((student) => student.id);
+  let usersEmailMap: Record<string, string> = {};
+
+  if (userIds.length > 0) {
+    const { data: usersData, error: usersError } = await supabase
+      .from('users')
+      .select('id, email')
+      .eq('role', 'student')
+      .in('id', userIds);
+
+    if (!usersError && usersData) {
+      usersEmailMap = Object.fromEntries(usersData.map((user) => [user.id, user.email]));
+    }
   }
 
   const { data: schoolsData, error: schoolsError } = await supabase
@@ -33,19 +37,18 @@ async function mapStudents(supabase: ReturnType<typeof createAdminClient>) {
 
   const schoolsById = Object.fromEntries((schoolsData ?? []).map((school) => [school.id, school.name]));
 
-  return (usersData ?? []).map((user) => {
-    const student = (studentsData ?? []).find((entry) => entry.id === user.id);
+  return (studentsData ?? []).map((student) => {
     return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      studentId: student?.student_id ?? '',
-      schoolId: student?.school_id ?? null,
-      school: student?.school_id ? schoolsById[student.school_id] ?? 'Unassigned' : 'Unassigned',
-      totalCredits: student?.total_credits ?? 0,
-      availableCredits: student?.available_credits ?? 0,
-      withheldCredits: student?.withheld_credits ?? 0,
-      isActive: (student?.available_credits ?? 0) > 0 || (student?.total_credits ?? 0) > 0,
+      id: student.id,
+      name: student.name,
+      email: usersEmailMap[student.id] ?? '',
+      studentId: student.student_id,
+      schoolId: student.school_id,
+      school: student.school_id ? schoolsById[student.school_id] ?? 'Unassigned' : 'Unassigned',
+      totalCredits: student.total_credits ?? 0,
+      availableCredits: student.available_credits ?? 0,
+      withheldCredits: student.withheld_credits ?? 0,
+      isActive: true,
     };
   });
 }
@@ -105,13 +108,14 @@ export async function POST(request: NextRequest) {
         {
           id: createdUser.id,
           student_id: studentId.trim(),
+          name: name.trim(),
           school_id: schoolId,
           total_credits: Number(totalCredits) || 0,
           available_credits: Number(availableCredits) || 0,
           withheld_credits: 0,
         },
       ])
-      .select('id, student_id, school_id, total_credits, available_credits, withheld_credits')
+      .select('id, student_id, name, school_id, total_credits, available_credits, withheld_credits')
       .single();
 
     if (studentError || !studentData) {
@@ -136,7 +140,7 @@ export async function POST(request: NextRequest) {
           totalCredits: studentData.total_credits ?? 0,
           availableCredits: studentData.available_credits ?? 0,
           withheldCredits: studentData.withheld_credits ?? 0,
-          isActive: (studentData.available_credits ?? 0) > 0 || (studentData.total_credits ?? 0) > 0,
+          isActive: true,
         },
       },
       { status: 201 }
@@ -183,11 +187,12 @@ export async function PUT(request: NextRequest) {
       .update({
         student_id: studentId.trim(),
         school_id: schoolId,
+        name: name.trim(),
         total_credits: Number(totalCredits) || 0,
         available_credits: Number(availableCredits) || 0,
       })
       .eq('id', id)
-      .select('id, student_id, school_id, total_credits, available_credits, withheld_credits')
+      .select('id, student_id, name, school_id, total_credits, available_credits, withheld_credits')
       .single();
 
     if (studentError || !studentData) {
@@ -203,8 +208,8 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(
       {
         student: {
-          id: updatedUser.id,
-          name: updatedUser.name,
+          id: studentData.id,
+          name: studentData.name,
           email: updatedUser.email,
           studentId: studentData.student_id,
           schoolId: studentData.school_id,
@@ -212,7 +217,7 @@ export async function PUT(request: NextRequest) {
           totalCredits: studentData.total_credits ?? 0,
           availableCredits: studentData.available_credits ?? 0,
           withheldCredits: studentData.withheld_credits ?? 0,
-          isActive: (studentData.available_credits ?? 0) > 0 || (studentData.total_credits ?? 0) > 0,
+          isActive: true,
         },
       },
       { status: 200 }

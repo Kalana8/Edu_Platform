@@ -36,25 +36,32 @@ const emptyFormState: StudentFormState = {
 interface StudentsPageProps {
   role?: "Admin" | "Moderator";
   basePath?: string;
+  students?: StudentItem[];
+  schools?: Array<{ id: string; name: string }>;
 }
 
-export default function StudentsPage({ role = "Admin", basePath = "/admin" }: StudentsPageProps) {
+export default function StudentsPage({ role = "Admin", basePath = "/admin", students: initialStudents, schools: initialSchools }: StudentsPageProps = {}) {
   void basePath;
 
-  const [students, setStudents] = useState<StudentItem[]>([]);
-  const [schools, setSchools] = useState<Array<{ id: string; name: string }>>([]);
+  const [students, setStudents] = useState<StudentItem[]>(initialStudents ?? []);
+  const [schools, setSchools] = useState<Array<{ id: string; name: string }>>(initialSchools ?? []);
   const [search, setSearch] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null);
   const [editingStudent, setEditingStudent] = useState<StudentItem | null>(null);
   const [deletingStudent, setDeletingStudent] = useState<StudentItem | null>(null);
-  const [formState, setFormState] = useState<StudentFormState>(emptyFormState);
   const [editFormState, setEditFormState] = useState<StudentFormState>(emptyFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
+  const hasInitialData = (initialStudents?.length ?? 0) > 0 || (initialSchools?.length ?? 0) > 0;
+
   useEffect(() => {
+    if (hasInitialData) {
+      setIsLoading(false);
+      return;
+    }
+
     const loadData = async () => {
       try {
         const [studentsResponse, schoolsResponse] = await Promise.all([fetch("/api/students"), fetch("/api/schools")]);
@@ -79,7 +86,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
     };
 
     void loadData();
-  }, []);
+  }, [hasInitialData]);
 
   const filteredStudents = useMemo(() => {
     const value = search.toLowerCase();
@@ -103,39 +110,6 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
       totalCredits: String(student.totalCredits),
       availableCredits: String(student.availableCredits),
     });
-  };
-
-  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!formState.name.trim() || !formState.email.trim() || !formState.studentId.trim() || !formState.schoolId) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    setFeedback(null);
-
-    try {
-      const response = await fetch("/api/students", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formState),
-      });
-
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload.error || "Unable to create student.");
-      }
-
-      setStudents((current) => [payload.student, ...current]);
-      setFormState(emptyFormState);
-      setIsModalOpen(false);
-      setFeedback({ type: "success", message: `${payload.student.name} was added successfully.` });
-    } catch (error) {
-      setFeedback({ type: "error", message: error instanceof Error ? error.message : "Unable to create student." });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleEdit = async (event: FormEvent<HTMLFormElement>) => {
@@ -206,9 +180,6 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage student accounts and progress</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-500">Track students, school assignment, and credits for {role.toLowerCase()} workflows.</p>
           </div>
-          <button type="button" onClick={() => setIsModalOpen(true)} className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700">
-            + Add Student
-          </button>
         </div>
 
         {feedback ? (
@@ -261,7 +232,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
                   <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STUDENT</th>
                   <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">SCHOOL</th>
                   <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STUDENT ID</th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">CREDITS</th>
+                  <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">CREDITS</th>
                   <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STATUS</th>
                   <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">ACTIONS</th>
                 </tr>
@@ -280,7 +251,13 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
                     </td>
                     <td className="px-6 py-4 align-top text-sm text-slate-600">{student.school}</td>
                     <td className="px-6 py-4 align-top text-sm font-medium text-slate-950">{student.studentId}</td>
-                    <td className="px-6 py-4 align-top text-sm font-semibold text-slate-950">{student.availableCredits.toLocaleString()} / {student.totalCredits.toLocaleString()}</td>
+                    <td className="px-6 py-4 align-top text-right text-sm">
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="font-semibold text-slate-950">Available: {student.availableCredits.toLocaleString()}</span>
+                        <span className="text-slate-500">Total: {student.totalCredits.toLocaleString()}</span>
+                        {student.withheldCredits > 0 && <span className="text-amber-600">Withheld: {student.withheldCredits.toLocaleString()}</span>}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 align-top">
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${student.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
                         {student.isActive ? "Active" : "Inactive"}
@@ -299,64 +276,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin" }: St
             </table>
           )}
         </div>
-      </div>
-
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setIsModalOpen(false)}>
-          <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">New student</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add a student</h2>
-              </div>
-              <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
-            </div>
-
-            <form className="mt-6 space-y-4" onSubmit={handleCreate}>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Full name</span>
-                  <input value={formState.name} onChange={(event) => setFormState((current) => ({ ...current, name: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required />
-                </label>
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Email</span>
-                  <input type="email" value={formState.email} onChange={(event) => setFormState((current) => ({ ...current, email: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required />
-                </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Student ID</span>
-                  <input value={formState.studentId} onChange={(event) => setFormState((current) => ({ ...current, studentId: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required />
-                </label>
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">School</span>
-                  <select value={formState.schoolId} onChange={(event) => setFormState((current) => ({ ...current, schoolId: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required>
-                    <option value="">Select school</option>
-                    {schools.map((school) => (<option key={school.id} value={school.id}>{school.name}</option>))}
-                  </select>
-                </label>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Total credits</span>
-                  <input type="number" value={formState.totalCredits} onChange={(event) => setFormState((current) => ({ ...current, totalCredits: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required />
-                </label>
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Available credits</span>
-                  <input type="number" value={formState.availableCredits} onChange={(event) => setFormState((current) => ({ ...current, availableCredits: event.target.value }))} className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200" required />
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
-                <button type="submit" disabled={isSubmitting} className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400">{isSubmitting ? "Saving..." : "Save student"}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : null}
+     </div>
 
       {selectedStudent ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setSelectedStudent(null)}>
