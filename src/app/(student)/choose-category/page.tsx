@@ -79,10 +79,7 @@ export default function ChooseCategoryPage() {
           )}
         </div>
 
-        <div className="rounded-[1.75rem] bg-slate-100 p-4 text-sm leading-6 text-slate-600 shadow-sm">
-          <p className="font-medium text-slate-950">Curriculum-aligned content from grades 6-10.</p>
-          <p className="mt-2">Strengthen knowledge through spaced repetition.</p>
-        </div>
+        
       </main>
     </div>
   );
