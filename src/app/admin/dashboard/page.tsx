@@ -64,7 +64,7 @@ export default async function AdminDashboard() {
         </div>
       </section>
 
-      <section className="mt-6">
+      {/* <section className="mt-6">
         <div className="rounded-lg bg-white p-6 shadow">
           <h4 className="font-semibold">Recent Student Activity</h4>
           <ul className="mt-4 space-y-4">
@@ -77,7 +77,7 @@ export default async function AdminDashboard() {
             </li>
           </ul>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
