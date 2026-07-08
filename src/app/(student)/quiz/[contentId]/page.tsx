@@ -22,6 +22,9 @@ type QuizResult = {
   answered: number;
   passed: boolean;
   earnedCredits: number;
+  availableEarned: number;
+  withheldEarned: number;
+  schoolPoints: number;
 };
 
 const TIME_PER_QUESTION = 60;
@@ -201,6 +204,19 @@ export default function QuizPage() {
             <div className="mt-4 rounded-2xl border border-slate-200 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Credits Earned</p>
               <p className="mt-2 text-3xl font-bold text-blue-600">+{result.earnedCredits}</p>
+              <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl bg-emerald-50 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Available</p>
+                  <p className="mt-1 text-lg font-semibold text-emerald-700">+{result.availableEarned}</p>
+                </div>
+                <div className="rounded-xl bg-amber-50 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Withhold</p>
+                  <p className="mt-1 text-lg font-semibold text-amber-700">+{result.withheldEarned}</p>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-slate-500">
+                School Contribution: <span className="font-semibold text-slate-700">+{result.schoolPoints}</span> points added to your school
+              </p>
             </div>
 
             <div className="mt-6 space-y-3">
