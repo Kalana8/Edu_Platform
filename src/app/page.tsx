@@ -14,15 +14,15 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-10 justify-center">
+        <div className="flex w-full flex-col items-stretch gap-10 justify-center px-6 sm:items-center sm:px-14">
           <Link
-            className="inline-flex h-14 min-w-[24rem] items-center justify-center rounded-lg bg-white px-8 text-base font-semibold text-blue-700 shadow-lg shadow-slate-950/10 transition hover:shadow-slate-950/20"
+            className="inline-flex h-14 w-full max-w-md items-center justify-center rounded-lg bg-white px-8 text-base font-semibold text-blue-700 shadow-lg shadow-slate-950/10 transition hover:shadow-slate-950/20 sm:w-auto sm:min-w-[24rem]"
             href="/join-school"
           >
             Get Started
           </Link>
           <Link
-            className="inline-flex h-14 min-w-[24rem] items-center justify-center rounded-lg border border-white/50 bg-white/10 px-8 text-base font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex h-14 w-full max-w-md items-center justify-center rounded-lg border border-white/50 bg-white/10 px-8 text-base font-semibold text-white transition hover:bg-white/15 sm:w-auto sm:min-w-[24rem]"
             href="/admin/login"
           >
             Admin Login →
