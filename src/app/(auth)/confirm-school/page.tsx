@@ -1,13 +1,22 @@
-"use client";
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
-export default function ConfirmSchool() {
-  const searchParams = useSearchParams();
-  const schoolCode = searchParams.get("code") || "";
-  const schoolName = searchParams.get("name") || "Loading...";
-  const tier = searchParams.get("tier") || "Loading...";
+type SearchParams =
+  | Record<string, string | string[] | undefined>
+  | Promise<Record<string, string | string[] | undefined>>;
+
+function pickValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] || "" : value || "";
+}
+
+export default async function ConfirmSchool({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
+  const params = await Promise.resolve(searchParams ?? {});
+  const schoolCode = pickValue(params.code);
+  const schoolName = pickValue(params.name) || "Loading...";
+  const tier = pickValue(params.tier) || "Loading...";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
