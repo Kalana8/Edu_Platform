@@ -1,6 +1,35 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export default function CreditsPage() {
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get("studentId") || "";
+
+  useEffect(() => {
+    if (!studentId) return;
+
+    const establishSession = async () => {
+      try {
+        const response = await fetch("/api/auth/student-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentId }),
+        });
+
+        if (response.ok) {
+          window.location.href = "/home";
+        }
+      } catch (err) {
+        console.error("Student session error:", err);
+      }
+    };
+
+    establishSession();
+  }, [studentId]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <main className="mx-auto flex min-h-screen w-full max-w-[425px] flex-col px-4 py-8">
@@ -35,7 +64,7 @@ export default function CreditsPage() {
             href="/home"
             className="inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
           >
-            Start Learning
+            Go to Home
           </Link>
         </div>
       </main>
