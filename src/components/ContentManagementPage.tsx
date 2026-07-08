@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { slugToLabel } from "@/lib/slug";
 
 export type CategoryItem = {
   id: string;
@@ -62,10 +63,7 @@ export default function ContentManagementPage() {
           id: category.id,
           slug: category.slug,
           code: category.code,
-          label: category.slug
-            .split("-")
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" "),
+          label: category.label ?? slugToLabel(category.slug),
           icon: category.icon,
           status: category.status,
         }));

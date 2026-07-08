@@ -49,7 +49,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from('categories')
-      .select('id, slug, icon, code, status')
+      .select('id, slug, label, icon, code, status')
       .order('code', { ascending: true });
 
     if (error) {
@@ -106,21 +106,17 @@ export async function PUT(request: NextRequest) {
     }
 
     const supabase = createAdminClient();
-    const nextSlug = label
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '') || 'new-category';
 
     const { data, error } = await supabase
       .from('categories')
       .update({
-        slug: nextSlug,
+        label: label.trim(),
         icon: icon?.trim() || '📚',
         code: code.trim().toUpperCase(),
         status: status || 'Active',
       })
       .eq('slug', slug)
-      .select('id, slug, icon, code, status')
+      .select('id, slug, label, icon, code, status')
       .single();
 
     if (error) {
@@ -261,12 +257,13 @@ export async function POST(request: NextRequest) {
       .insert([
         {
           slug,
+          label: label.trim(),
           icon: icon?.trim() || '📚',
           code: code.trim().toUpperCase(),
           status: status || 'Active',
         },
       ])
-      .select('id, slug, icon, code, status')
+      .select('id, slug, label, icon, code, status')
       .single();
 
     if (error) {

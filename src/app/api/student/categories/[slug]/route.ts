@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { slugToLabel } from '@/lib/slug';
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,7 @@ export async function GET(
 
     const { data: category, error: categoryError } = await supabase
       .from('categories')
-      .select('id, slug, icon, code, status')
+      .select('id, slug, label, icon, code, status')
       .eq('slug', slug)
       .maybeSingle();
 
@@ -79,10 +80,7 @@ export async function GET(
       {
         category: {
           ...category,
-          label: category.slug
-            .split('-')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' '),
+          label: category.label ?? slugToLabel(category.slug),
           levels: mappedLevels,
         },
       },

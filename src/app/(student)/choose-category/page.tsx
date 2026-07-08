@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import { slugToLabel } from "@/lib/slug";
 
 type CategoryItem = {
   slug: string;
@@ -30,9 +31,9 @@ export default function ChooseCategoryPage() {
 
         const mapped: CategoryItem[] = (payload.categories ?? [])
           .filter((category: { status: string }) => category.status === "Active")
-          .map((category: { slug: string; code: string; icon: string; status: string }) => ({
+          .map((category: { slug: string; code: string; icon: string; status: string; label?: string }) => ({
             slug: category.slug,
-            label: category.code || category.slug,
+            label: category.label ?? slugToLabel(category.slug),
             icon: category.icon || "📚",
             color: getColorForSlug(category.slug),
             status: category.status,
@@ -73,7 +74,7 @@ export default function ChooseCategoryPage() {
                 <div className={`flex items-center justify-center rounded-3xl p-3 shadow-sm ${category.color}`}>
                   <span className="text-xl">{category.icon}</span>
                 </div>
-                <p className="mt-4 text-center text-sm font-semibold text-slate-950">{category.slug}</p>
+                <p className="mt-4 text-center text-sm font-semibold text-slate-950">{category.label}</p>
               </Link>
             ))
           )}

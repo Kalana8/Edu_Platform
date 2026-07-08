@@ -121,7 +121,9 @@ export default function ReadingPage() {
     await updateProgress(1);
 
     if (isLastPage) {
-      router.push(`/quiz/${contentId}`);
+      if (pages.length >= 2 && newCount >= 2) {
+        router.push(`/quiz/${contentId}`);
+      }
       return;
     }
 
@@ -229,7 +231,9 @@ export default function ReadingPage() {
               disabled={saving}
               className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:opacity-40"
             >
-              {currentPageIndex >= pages.length - 1 ? "Take Quiz" : "Next"}
+              {currentPageIndex >= pages.length - 1
+                ? (pages.length >= 2 ? "Take Quiz" : "Finish")
+                : "Next"}
             </button>
           </div>
         </div>

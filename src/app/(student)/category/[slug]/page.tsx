@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import { notFound } from "next/navigation";
+import { slugToLabel } from "@/lib/slug";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -9,7 +10,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const { data: category, error: categoryError } = await supabase
     .from("categories")
-    .select("id, slug, icon, code, status")
+    .select("id, slug, label, icon, code, status")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -66,10 +67,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     },
   ];
 
-  const label = category.slug
-    .split("-")
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  const label = category.label ?? slugToLabel(category.slug);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">

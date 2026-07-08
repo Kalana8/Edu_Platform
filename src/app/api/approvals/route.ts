@@ -121,6 +121,7 @@ export async function PUT(request: NextRequest) {
             .from('categories')
             .insert({
               slug,
+              label: label?.trim() || null,
               icon: icon?.trim() || '📚',
               code: code.trim().toUpperCase(),
               status: catStatus || 'Active',
@@ -133,15 +134,11 @@ export async function PUT(request: NextRequest) {
         } 
         else if (action_type === 'update') {
           const { label, code, icon, status: catStatus } = change_data;
-          const nextSlug = label
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '') || 'new-category';
 
           const { error: updateError } = await supabase
             .from('categories')
             .update({
-              slug: nextSlug,
+              label: label?.trim() || null,
               icon: icon?.trim() || '📚',
               code: code.trim().toUpperCase(),
               status: catStatus || 'Active',

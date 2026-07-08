@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { slugToLabel } from "@/lib/slug";
 
 const categoryBadgeClass = (status: CategoryItem["status"]) =>
   status === "Active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700";
@@ -61,7 +62,7 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
         const nextCategories = (payload.categories ?? []).map((category: Partial<CategoryItem> & { slug: string; code: string; icon: string; status: CategoryItem["status"] }) => ({
           slug: category.slug,
           code: category.code,
-          label: category.label ?? category.slug.replace(/-/g, " "),
+          label: category.label ?? slugToLabel(category.slug),
           icon: category.icon,
           status: category.status,
           description: category.description ?? "",
@@ -304,7 +305,7 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-slate-950">{category.label}</div>
-                        <div className="text-xs text-slate-500">{category.slug.replace(/-/g, " ")}</div>
+                        <div className="text-xs text-slate-500">{category.label ?? slugToLabel(category.slug)}</div>
                       </div>
                     </div>
                   </td>
