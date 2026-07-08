@@ -62,24 +62,24 @@ export default function JoinSchool() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-8">
-          <div className="space-y-3 ">
-            <h1 className="text-3xl font-semibold tracking-tight">Join Your School</h1>
+    <div className="min-h-screen  bg-[radial-gradient(circle_at_top,_rgba(59,130,246,.35),_transparent_25%),linear-gradient(180deg,#4f46e5_0%,#8b5cf6_45%,#9333ea_100%)] text-slate-950">
+      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-8 text-white">
+          <div className="space-y-3 text-center mt-18">
+            <h1 className="text-3xl text-white font-semibold tracking-tight">Join Your School</h1>
           </div>
 
-          <div className="mt-8 space-y-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-900">Enter School ID</label>
+          <div className="mt-25 space-y-3 px-6">
+            <div className="space-y-2 mb-13">
+              <label className="block  font-medium ">Enter School ID</label>
               <input
                 value={schoolId}
                 onChange={(e) => setSchoolId(e.target.value)}
                 type="text"
-                placeholder="e.g. SCH-45821"
-                className="w-full rounded-3xl border border-slate-200 bg-slate-50 p-4 text-base text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
+                placeholder="SCH-45821"
+                className="w-full rounded-3xl border border-slate-200 bg-slate-50 p-4 py-3 text-sm text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
               />
-              <p className="text-sm text-slate-500">Ask your school for the ID.</p>
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              <p className=" ">Ask your school for the ID.</p>
+              {error && <p className="text-sm text-red-300 font-bold tracking-wide">{error}</p>}
             </div>
 
             <button
@@ -87,12 +87,12 @@ export default function JoinSchool() {
                 verify();
               }}
               disabled={loading}
-              className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600 disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold rounded-lg bg-white px-8 text-base font-semibold text-blue-700 hover:cursor-pointer"
             >
               {loading ? "Verifying..." : "Verify School"}
             </button>
 
-            <Link href="/" className="block text-center text-sm text-slate-500">Cancel</Link>
+            <Link href="/" className="block text-center text-sm ">Cancel</Link>
           </div>
       </main>
     </div>
