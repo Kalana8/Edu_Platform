@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { setUser as saveUser } from "@/lib/session";
+import Link from "next/link";
 
 export default function CreateStudentIdClient({ schoolCode }: { schoolCode: string }) {
     const [studentNumber, setStudentNumber] = useState("");
@@ -58,48 +59,54 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-950">
-            <main className="mx-auto flex min-h-screen w-full max-w-[425px] flex-col px-4 py-8">
-                <div className="space-y-4">
-                    <h1 className="text-3xl font-semibold tracking-tight">Create Your Student ID</h1>
-                    <div className="mx-auto max-w-xl rounded-2xl border-none bg-blue-50 p-5 text-left text-sm text-gray-700 shadow-none">
-                        Your Student ID helps track your individual progress. You can customize it later in settings.
-                    </div>
+        <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,.35),_transparent_25%),linear-gradient(180deg,#4f46e5_0%,#8b5cf6_45%,#9333ea_100%)] text-slate-950">
+            <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-8 text-white">
+                <div className="space-y-3 text-center mt-18">
+                    <h1 className="text-3xl text-white font-semibold tracking-tight">Create Your Student ID</h1>
                 </div>
 
-                <div className="mt-8 space-y-5">
+                <div className="mt-25 space-y-3 px-6">
+                    
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-900">Enter Student Number</label>
+                        <label className="block font-medium">Enter Student Number</label>
                         <input
                             type="text"
                             inputMode="numeric"
                             pattern="[0-9]*"
-                            placeholder="e.g. 1, 42, 999"
+                            placeholder=" 1, 42, 999"
                             value={studentNumber}
                             onChange={(e) => setStudentNumber(e.target.value)}
-                            className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-base text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 py-3 text-sm text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-slate-900">Your Student ID</label>
+                        <label className="block font-medium">Your Student ID</label>
                         <input
                             type="text"
                             readOnly
                             value={fullStudentId}
-                            className="w-full rounded-2xl border border-slate-200 bg-slate-100 p-4 text-base text-slate-900 outline-none cursor-not-allowed"
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-100 p-4 py-3 text-sm text-slate-900 outline-none cursor-not-allowed"
                         />
                     </div>
 
-                    {error && <p className="text-sm text-red-500">{error}</p>}
+                    {error && <p className="text-sm text-red-300 font-bold tracking-wide">{error}</p>}
 
                     <button
                         onClick={handleContinue}
                         disabled={loading || !fullStudentId}
-                        className="inline-flex w-full items-center justify-center rounded-2xl bg-sky-500 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-600 disabled:opacity-50"
+                        className="inline-flex w-full items-center justify-center px-5 py-3 text-base font-semibold rounded-lg bg-white  text-blue-700 hover:cursor-pointer"
                     >
                         {loading ? "Creating..." : "Continue"}
                     </button>
+                    <Link href="/" className="block text-center text-sm ">Cancel</Link>
+
+                    <div className="overflow-hidden rounded-2xl border border-white/40 bg-white/10 p-1 shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur-md ring-1 ring-white/30">
+                        <div className="rounded-xl bg-white/85 p-5 text-left text-xs text-slate-700 backdrop-blur-sm">
+                            Your Student ID helps track your individual progress. You can customize it later in settings.
+                        </div>
+                    </div>
+
                 </div>
             </main>
         </div>
