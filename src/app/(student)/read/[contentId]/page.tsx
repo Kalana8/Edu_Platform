@@ -38,19 +38,6 @@ export default function ReadingPage() {
     setError(null);
 
     try {
-      const cookieStore = document.cookie;
-      const match = cookieStore.match(/session_user=([^;]+)/);
-      const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-
-      if (!sessionUserStr) {
-        setError("Please sign in to read content.");
-        setLoading(false);
-        return;
-      }
-
-      const session = JSON.parse(sessionUserStr);
-      const userId = session.id;
-
       const [contentRes, progressRes, pagesRes] = await Promise.all([
         fetch(`/api/content/${contentId}`),
         fetch(`/api/student/reading-progress?contentId=${contentId}`),
@@ -93,17 +80,11 @@ export default function ReadingPage() {
   const updateProgress = async (increment: number) => {
     setSaving(true);
     try {
-      const cookieStore = document.cookie;
-      const match = cookieStore.match(/session_user=([^;]+)/);
-      const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-      const session = JSON.parse(sessionUserStr!);
-
       const res = await fetch("/api/student/reading-progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contentId,
-          userId: session.id,
           pagesReadIncrement: increment,
         }),
       });

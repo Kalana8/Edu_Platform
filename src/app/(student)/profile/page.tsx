@@ -55,21 +55,11 @@ export default function ProfilePage() {
       }
     }
 
-    setSaving(true);
-    setFeedback(null);
+      setSaving(true);
+      setFeedback(null);
 
-    try {
-      const cookieStore = document.cookie;
-      const match = cookieStore.match(/session_user=([^;]+)/);
-      const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-
-      if (!sessionUserStr) {
-        setFeedback({ type: "error", message: "Please sign in." });
-        setSaving(false);
-        return;
-      }
-
-      const response = await fetch("/api/student/customize-id", {
+      try {
+        const response = await fetch("/api/student/customize-id", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentId: editStudentId.trim() }),
@@ -100,16 +90,6 @@ export default function ProfilePage() {
       setError(null);
 
       try {
-        const cookieStore = document.cookie;
-        const match = cookieStore.match(/session_user=([^;]+)/);
-        const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-
-        if (!sessionUserStr) {
-          setError("Please sign in to view your profile.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch("/api/student/me", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -118,7 +98,11 @@ export default function ProfilePage() {
         const payload = await response.json();
 
         if (!response.ok) {
-          throw new Error(payload.error || "Unable to load profile.");
+          throw new Error(
+            response.status === 401
+              ? "Please sign in to view your profile."
+              : payload.error || "Unable to load profile."
+          );
         }
 
         if (payload.profile) {

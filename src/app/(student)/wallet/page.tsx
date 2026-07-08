@@ -20,16 +20,6 @@ export default function WalletPage() {
       setError(null);
 
       try {
-        const cookieStore = document.cookie;
-        const match = cookieStore.match(/session_user=([^;]+)/);
-        const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-
-        if (!sessionUserStr) {
-          setError("Please sign in to view your wallet.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch("/api/student/me", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -38,7 +28,11 @@ export default function WalletPage() {
         const payload = await response.json();
 
         if (!response.ok) {
-          throw new Error(payload.error || "Unable to load wallet.");
+          throw new Error(
+            response.status === 401
+              ? "Please sign in to view your wallet."
+              : payload.error || "Unable to load wallet."
+          );
         }
 
         const profile = payload.profile;

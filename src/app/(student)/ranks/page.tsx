@@ -35,15 +35,6 @@ export default function RanksPage() {
       setError(null);
 
       try {
-        const cookieStore = document.cookie;
-        const match = cookieStore.match(/session_user=([^;]+)/);
-        const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-        if (!sessionUserStr) {
-          setError("Please sign in to view leaderboard.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch(`/api/ranks?type=${activeTab}`);
         const payload = await response.json();
 

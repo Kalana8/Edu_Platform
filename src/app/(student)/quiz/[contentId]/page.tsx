@@ -46,16 +46,6 @@ export default function QuizPage() {
       setError(null);
 
       try {
-        const cookieStore = document.cookie;
-        const match = cookieStore.match(/session_user=([^;]+)/);
-        const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-
-        if (!sessionUserStr) {
-          setError("Please sign in to take the quiz.");
-          setLoading(false);
-          return;
-        }
-
         const response = await fetch("/api/quiz/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -95,13 +85,8 @@ export default function QuizPage() {
     setSubmitting(true);
     setError(null);
 
-    try {
-      const cookieStore = document.cookie;
-      const match = cookieStore.match(/session_user=([^;]+)/);
-      const sessionUserStr = match ? decodeURIComponent(match[1]) : localStorage.getItem("user_session");
-      const session = JSON.parse(sessionUserStr!);
-
-      const response = await fetch("/api/quiz/submit", {
+      try {
+        const response = await fetch("/api/quiz/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
