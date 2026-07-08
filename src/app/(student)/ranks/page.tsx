@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 
 type SchoolRank = {
@@ -23,6 +24,7 @@ type RanksResponse = {
 };
 
 export default function RanksPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"tier" | "national" | "students">("tier");
   const [data, setData] = useState<RanksResponse>({ schools: [], students: [] });
   const [userSchoolId, setUserSchoolId] = useState<string | null>(null);
@@ -36,6 +38,12 @@ export default function RanksPage() {
 
       try {
         const response = await fetch(`/api/ranks?type=${activeTab}`);
+
+        if (response.status === 401) {
+          router.replace("/");
+          return;
+        }
+
         const payload = await response.json();
 
         if (!response.ok) {

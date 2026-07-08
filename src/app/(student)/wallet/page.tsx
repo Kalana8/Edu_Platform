@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 
 type WalletData = {
@@ -10,6 +11,7 @@ type WalletData = {
 };
 
 export default function WalletPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<WalletData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -25,14 +27,15 @@ export default function WalletPage() {
           headers: { "Content-Type": "application/json" },
         });
 
+        if (response.status === 401) {
+          router.replace("/");
+          return;
+        }
+
         const payload = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            response.status === 401
-              ? "Please sign in to view your wallet."
-              : payload.error || "Unable to load wallet."
-          );
+          throw new Error(payload.error || "Unable to load wallet.");
         }
 
         const profile = payload.profile;

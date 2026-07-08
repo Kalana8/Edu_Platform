@@ -44,6 +44,11 @@ export default function ReadingPage() {
         fetch(`/api/content/${contentId}/pages`),
       ]);
 
+      if (contentRes.status === 401 || progressRes.status === 401 || pagesRes.status === 401) {
+        router.replace("/");
+        return;
+      }
+
       if (!contentRes.ok) throw new Error("Content not found");
       if (!progressRes.ok) throw new Error("Failed to load reading progress");
       if (!pagesRes.ok) throw new Error("Failed to load pages");

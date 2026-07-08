@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 
 type ProfileData = {
@@ -21,6 +22,7 @@ type ReadingStats = {
 };
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [reading, setReading] = useState<ReadingStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -95,14 +97,15 @@ export default function ProfilePage() {
           headers: { "Content-Type": "application/json" },
         });
 
+        if (response.status === 401) {
+          router.replace("/");
+          return;
+        }
+
         const payload = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            response.status === 401
-              ? "Please sign in to view your profile."
-              : payload.error || "Unable to load profile."
-          );
+          throw new Error(payload.error || "Unable to load profile.");
         }
 
         if (payload.profile) {

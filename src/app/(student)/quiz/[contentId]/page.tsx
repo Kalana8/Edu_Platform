@@ -52,6 +52,11 @@ export default function QuizPage() {
           body: JSON.stringify({ contentId }),
         });
 
+        if (response.status === 401) {
+          router.replace("/");
+          return;
+        }
+
         const payload = await response.json();
 
         if (!response.ok) {
@@ -97,6 +102,11 @@ export default function QuizPage() {
       });
 
       const payload = await response.json();
+
+      if (response.status === 401) {
+        router.replace("/");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(payload.error || "Unable to submit quiz.");

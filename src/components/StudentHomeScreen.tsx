@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import BottomBar from "@/components/BottomBar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cookies } from "next/headers";
@@ -17,6 +18,9 @@ async function getSessionUser() {
 export default async function StudentHomeScreen() {
   const user = await getSessionUser();
 
+  if (!user || user.role !== "student") {
+    redirect("/");
+  }
   let schoolName = "Unassigned School";
   let schoolTier = "N/A";
   let availableCredits = 0;
