@@ -100,7 +100,7 @@ export default async function StudentHomeScreen() {
 
   return (
     <div className="min-h-[844px] bg-slate-100 text-slate-950 ">
-      <main className="mx-auto flex min-h-[844px] w-full max-w-[450px] flex-col gap-4 ">
+      <main className="mx-auto flex min-h-[844px] w-full max-w-[450px] flex-col gap-1 ">
         <section className="overflow-hidden bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 px-5 py-15 text-white shadow-lg shadow-slate-950/10">
           <div className="flex flex-col gap-3">
             <div>
@@ -146,7 +146,7 @@ export default async function StudentHomeScreen() {
 
         </section>
 
-        <section className="mx-5 mt-5 grid grid-cols-2 gap-4">
+        <section className="mx-5 mt-1 grid grid-cols-2 gap-4">
 
           <div className="rounded-3xl bg-white p-5 shadow-sm">
 

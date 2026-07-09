@@ -60,7 +60,7 @@ export default function ChooseCategoryPage() {
           <div className="rounded-[1.75rem] bg-rose-50 p-5 text-sm text-rose-700 shadow-sm border border-rose-100">{error}</div>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3 px-3 mt-5">
+        <div className="grid grid-cols-2 gap-3 px-3 mt-1">
           {isLoading ? (
             <div className="col-span-2 rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading categories…</div>
           ) : categories.length === 0 ? (
@@ -72,10 +72,10 @@ export default function ChooseCategoryPage() {
                 href={`/category/${category.slug}`}
                 className="group overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-lg hover:-translate-y-0.5"
               >
-                <div className={`flex items-center justify-center rounded-lg p-4  transition group-hover:scale-105 `}>
+                <div className={`flex items-center justify-center rounded-lg p-4 py-1 transition group-hover:scale-105 `}>
                   <span className="text-2xl">{category.icon}</span>
                 </div>
-                <p className="mt-4 text-center text-sm font-semibold text-slate-950">{category.label}</p>
+                <p className="mt-1 text-center text-sm font-semibold text-slate-950">{category.label}</p>
               </Link>
             ))
           )}
