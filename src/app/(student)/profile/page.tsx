@@ -153,14 +153,14 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
+    <div className="min-h-screen bg-slate-50 text-slate-950 pb-16">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Profile" subtitle="Manage your account" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
         </div>
 
-        <div className="flex flex-col gap-3 px-4 py-6">
-          <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+        <div className="flex flex-col gap-3 px-4 py-2">
+          <div className="rounded-[1.75rem] bg-white p-5 py-3 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 to-violet-600 text-3xl text-white shadow-lg shadow-blue-600/20">
                 <span>{profile.name.charAt(0).toUpperCase()}</span>
@@ -173,51 +173,57 @@ export default function ProfilePage() {
 
             <button
               onClick={openModal}
-              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
             >
               <span className="text-base">✏️</span>
               Customize Name
             </button>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-3xl bg-white p-5 py-2 shadow-sm">
 
             <div className="mb-5">
               <h2 className="text-lg font-bold">
                 Your Statistics
               </h2>
-              <p className="text-sm text-slate-500">
-                Track your learning progress
-              </p>
+
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-1">
 
-              <div className="rounded-3xl bg-blue-50 p-5">
-                <div className="text-2xl">🏫</div>
-                <p className="mt-3 text-xs uppercase tracking-wider text-blue-600">
-                  School Rank
-                </p>
+              <div className="rounded-3xl bg-blue-50 p-5 py-1">
+                <div className="text-2xl">
+                  <p className="mt-3 text-xs uppercase tracking-wider text-blue-600">
+                    <span className="text-2xl">🏫</span>  School Rank
+                  </p></div>
+
                 <p className="mt-2 text-3xl font-bold text-blue-900">
                   {profile.schoolRank ? `#${profile.schoolRank}` : "#--"}
                 </p>
               </div>
 
-              <div className="rounded-3xl bg-amber-50 p-5">
-                <div className="text-2xl">🏆</div>
-                <p className="mt-3 text-xs uppercase tracking-wider text-amber-700">
-                  Student Rank
-                </p>
+              <div className="rounded-3xl bg-amber-50 p-5 py-1">
+                <div className="text-2xl">
+
+                  <p className="mt-3 text-xs uppercase tracking-wider text-amber-700">
+                    <span className="text-2xl">🏆</span>
+                    Student Rank
+                  </p>
+                </div>
+
                 <p className="mt-2 text-3xl font-bold text-amber-900">
                   {profile.studentRank ? `#${profile.studentRank}` : "#--"}
                 </p>
               </div>
 
-              <div className="col-span-2 rounded-3xl bg-emerald-50 p-5">
-                <div className="text-2xl">⭐</div>
-                <p className="mt-3 text-xs uppercase tracking-wider text-emerald-700">
+              <div className="col-span-2 rounded-3xl bg-emerald-50 p-5  pt-1">
+                <div className="text-2xl"> <p className="mt-3 text-xs uppercase tracking-wider text-emerald-700">
+                  <span className="text-2xl">
+                    ⭐
+                  </span>
+
                   Total Learning Credits
-                </p>
+                </p></div>
                 <p className="mt-2 text-4xl font-bold text-emerald-900">
                   {profile.totalCredits.toLocaleString()}
                 </p>
@@ -225,18 +231,16 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 shadow-sm">
+          <div className="rounded-3xl bg-white p-5 py-2 shadow-sm">
             <div className="mb-5">
               <h2 className="text-lg font-bold">
                 School Information
               </h2>
-              <p className="text-sm text-slate-500">
-                Your registered school details
-              </p>
+
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 py-2">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-slate-400">
                     School
@@ -248,7 +252,7 @@ export default function ProfilePage() {
                 <span className="text-xl">🏫</span>
               </div>
 
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 py-2">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-slate-400">
                     School ID
@@ -260,7 +264,7 @@ export default function ProfilePage() {
                 <span className="text-xl">🆔</span>
               </div>
 
-              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 py-2">
                 <div>
                   <p className="text-xs uppercase tracking-wider text-slate-400">
                     Tier
