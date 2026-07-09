@@ -30,6 +30,8 @@ export default function ContentManagementPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
   const [contents, setContents] = useState<ContentItem[]>([]);
+  const [pendingItems, setPendingItems] = useState<Array<{ id: string; action_type: string; level: string; description: string; pages: any[]; created_at: string; category_id: string }>>([]);
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingContents, setLoadingContents] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -76,6 +78,37 @@ export default function ContentManagementPage() {
     }
     loadCategories();
   }, []);
+
+  useEffect(() => {
+    async function loadPendingContent() {
+      try {
+        const response = await fetch("/api/approvals");
+        const payload = await response.json();
+        if (response.ok) {
+          const all = payload.approvals ?? [];
+          const contentPending = all
+            .filter((req: any) => req.target_type === "content" && req.status === "pending")
+            .map((req: any) => {
+              const change = req.change_data || {};
+              return {
+                id: req.id,
+                action_type: req.action_type,
+                level: change.level || "",
+                description: change.description || "",
+                pages: Array.isArray(change.pages) ? change.pages : [],
+                created_at: req.created_at,
+                category_id: change.category_id || "",
+                category_name: categoryMap[change.category_id] || "",
+              };
+            });
+          setPendingItems(contentPending);
+        }
+      } catch {
+        // ignore
+      }
+    }
+    loadPendingContent();
+  }, [categoryMap]);
 
   useEffect(() => {
     if (!selectedCategory) {
@@ -183,9 +216,10 @@ export default function ContentManagementPage() {
           : "Content created successfully."
       );
 
-      if (!payload.pendingApproval) {
-        setForm(blankForm);
-        setEditingContent(null);
+      setForm(blankForm);
+      setEditingContent(null);
+
+      if (selectedCategory) {
         const updatedResponse = await fetch(`/api/content?category_id=${selectedCategory.id}`);
         const updatedPayload = await updatedResponse.json();
         if (updatedResponse.ok) {
@@ -470,73 +504,117 @@ export default function ContentManagementPage() {
                 </div>
 
                 <div className="rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
-                  <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
-                    Existing Content ({contents.length})
-                  </h3>
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
+                      Content ({contents.length + pendingItems.filter((p) => p.category_id === selectedCategory?.id).length})
+                    </h3>
+                  </div>
                   {loadingContents ? (
                     <div className="px-6 py-10 text-center text-sm text-slate-500">Loading content…</div>
-                  ) : contents.length === 0 ? (
-                    <div className="px-6 py-10 text-center text-sm text-slate-500">
-                      No content added yet for this category.
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {contents.map((item) => (
-                        <div
-                          key={item.id}
-                          className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
-                                    item.level === "Essential"
-                                      ? "bg-sky-100 text-sky-700"
-                                      : item.level === "Intermediate"
-                                      ? "bg-amber-100 text-amber-700"
-                                      : "bg-rose-100 text-rose-700"
-                                  }`}
-                                >
-                                  {item.level}
-                                </span>
-                                {item.is_published ? (
-                                  <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
-                                    Published
+                  ) : (() => {
+                    const categoryPending = pendingItems.filter((p) => p.category_id === selectedCategory?.id);
+                    if (contents.length === 0 && categoryPending.length === 0) {
+                      return (
+                        <div className="px-6 py-10 text-center text-sm text-slate-500">
+                          No content added yet for this category.
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="space-y-4">
+                        {contents.map((item) => (
+                          <div
+                            key={item.id}
+                            className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                                      item.level === "Essential"
+                                        ? "bg-sky-100 text-sky-700"
+                                        : item.level === "Intermediate"
+                                        ? "bg-amber-100 text-amber-700"
+                                        : "bg-rose-100 text-rose-700"
+                                    }`}
+                                  >
+                                    {item.level}
                                   </span>
-                                ) : (
-                                  <span className="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
-                                    Draft
-                                  </span>
+                                  {item.is_published ? (
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+                                      Published
+                                    </span>
+                                  ) : (
+                                    <span className="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                      Draft
+                                    </span>
+                                  )}
+                                </div>
+                                {item.description && (
+                                  <p className="mt-1 text-sm text-slate-500">{item.description}</p>
                                 )}
+                                <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
+                                  <span>{item.pages.length} pages</span>
+                                  <span>Updated {new Date(item.updated_at).toLocaleDateString()}</span>
+                                </div>
                               </div>
-                              {item.description && (
-                                <p className="mt-1 text-sm text-slate-500">{item.description}</p>
-                              )}
-                              <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
-                                <span>{item.pages.length} pages</span>
-                                <span>Updated {new Date(item.updated_at).toLocaleDateString()}</span>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleEdit(item)}
+                                  className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:border-slate-300"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(item.id)}
+                                  className="rounded-2xl border border-red-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:border-red-300"
+                                >
+                                  Delete
+                                </button>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleEdit(item)}
-                                className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:border-slate-300"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDelete(item.id)}
-                                className="rounded-2xl border border-red-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:border-red-300"
-                              >
-                                Delete
-                              </button>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+
+                        {categoryPending.map((pending) => (
+                          <div
+                            key={pending.id}
+                            className="rounded-3xl border border-amber-200 bg-amber-50/50 p-5"
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                                      pending.level === "Essential"
+                                        ? "bg-sky-100 text-sky-700"
+                                        : pending.level === "Intermediate"
+                                        ? "bg-amber-100 text-amber-700"
+                                        : "bg-rose-100 text-rose-700"
+                                    }`}
+                                  >
+                                    {pending.level}
+                                  </span>
+                                  <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-700">
+                                    {pending.action_type === "create" ? "Pending Approval" : pending.action_type === "update" ? "Update Pending" : "Delete Pending"}
+                                  </span>
+                                </div>
+                                {pending.description && (
+                                  <p className="mt-1 text-sm text-slate-500">{pending.description}</p>
+                                )}
+                                <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
+                                  <span>{pending.pages.length} pages</span>
+                                  <span>Submitted {new Date(pending.created_at).toLocaleDateString()}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </>
             )}

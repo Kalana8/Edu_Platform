@@ -30,7 +30,8 @@ export default function ApprovalsPage() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<string | null>(null); // holds approval ID being submitted
   const [comments, setComments] = useState<Record<string, string>>({}); // maps approval ID to comment text
-  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({}); // category id -> code (name)
+    const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+ // category id -> code (name)
 
   const fetchApprovals = async () => {
     setIsLoading(true);
@@ -59,8 +60,8 @@ export default function ApprovalsPage() {
         const response = await fetch("/api/categories");
         const data = await response.json();
         const map: Record<string, string> = {};
-        (data.categories ?? []).forEach((c: { id: string; code?: string; slug?: string }) => {
-          map[c.id] = c.code || c.slug || c.id;
+        (data.categories ?? []).forEach((c: { id: string; code?: string; slug?: string; label?: string }) => {
+          map[c.id] = c.label || c.code || c.slug || c.id;
         });
         setCategoryMap(map);
       } catch {
@@ -301,48 +302,70 @@ export default function ApprovalsPage() {
                         </div>
                       )}
 
-                       {Object.entries(req.change_data).map(([key, val]) => {
-                         if (key === "is_published") return null;
+                        {Object.entries(req.change_data).map(([key, val]) => {
+                          if (key === "is_published") return null;
 
-                         if (key === "pages" && Array.isArray(val)) {
-                           return (
-                             <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3">
-                               <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                               <span className="text-sm font-semibold text-slate-900 mt-0.5 block">
-                                 {val.length} page{val.length !== 1 ? "s" : ""}
-                               </span>
-                               <ul className="mt-1 list-disc pl-5 text-xs text-slate-600">
-                                 {val.slice(0, 10).map((page: any, index: number) => (
-                                   <li key={index}>
-                                     {typeof page?.title === "string" && page.title
-                                       ? page.title
-                                       : `Page ${index + 1}`}
-                                   </li>
-                                 ))}
-                                 {val.length > 10 && <li>…and {val.length - 10} more</li>}
-                               </ul>
-                             </div>
-                           );
-                         }
+                          const displayVal =
+                            typeof val === "boolean"
+                              ? val
+                                ? "✅ Yes/Active"
+                                : "❌ No/Inactive"
+                              : key === "category_id"
+                                ? categoryMap[val as string] ?? String(val)
+                                : String(val);
 
-                         const displayVal =
-                           typeof val === "boolean"
-                             ? val
-                               ? "✅ Yes/Active"
-                               : "❌ No/Inactive"
-                             : key === "category_id"
-                               ? categoryMap[val as string] ?? String(val)
-                               : String(val);
+                          if (key === "pages" && Array.isArray(val)) {
+                            const pageItems = val.filter(
+                              (page: any) => typeof page?.content === "string" && page.content.trim() !== ""
+                            );
+                            if (pageItems.length === 0) {
+                              return (
+                                <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3">
+                                  <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                                  <span className="text-sm font-semibold text-slate-900 mt-0.5 block">No pages included</span>
+                                </div>
+                              );
+                            }
 
-                         return (
-                           <div key={key} className="flex flex-col">
-                             <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                             <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
-                               {displayVal}
-                             </span>
-                           </div>
-                         );
-                       })}
+                            return (
+                              <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-3">
+                                <span className="text-xs text-slate-400 capitalize block">{key.replace(/([A-Z])/g, " $1")}</span>
+                                {pageItems.map((page: any, index: number) => {
+                                  const pageContent = typeof page.content === "string" ? page.content.trim() : "";
+                                  const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
+                                  return (
+                                    <div key={index} className="rounded-2xl border border-slate-200 bg-white p-4">
+                                      <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1">
+                                          <p className="text-sm font-semibold text-slate-900">
+                                            {pageTitle}
+                                          </p>
+                                          {page.page_number && (
+                                            <span className="mt-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                                              Page {page.page_number}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-700">
+                                        {pageContent}
+                                      </p>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div key={key} className="flex flex-col">
+                              <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                              <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
+                                {displayVal}
+                              </span>
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
 
