@@ -25,10 +25,25 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
 
+    const { data: studentData, error: studentError } = await supabase
+      .from("students")
+      .select("id, school_id")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (studentError || !studentData) {
+      console.error("Student fetch error:", studentError);
+      return NextResponse.json(
+        { error: "Unable to load student data." },
+        { status: 500 }
+      );
+    }
+
     if (type === "students") {
       const { data: studentsData, error: studentsError } = await supabase
         .from("students")
         .select("id, name, total_credits")
+        .eq("school_id", studentData.school_id)
         .order("total_credits", { ascending: false })
         .limit(100);
 
@@ -49,20 +64,6 @@ export async function GET(request: NextRequest) {
           })),
         },
         { status: 200 }
-      );
-    }
-
-    const { data: studentData, error: studentError } = await supabase
-      .from("students")
-      .select("school_id")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (studentError || !studentData) {
-      console.error("Student fetch error:", studentError);
-      return NextResponse.json(
-        { error: "Unable to load student data." },
-        { status: 500 }
       );
     }
 

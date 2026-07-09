@@ -111,11 +111,19 @@ export default function RanksPage() {
   const items = isSchoolTab ? data.schools : data.students;
   const scoreLabel = isSchoolTab ? "Points" : "Credits";
 
+  const getSubtitle = () => {
+    if (isSchoolTab) {
+      if (activeTab === "tier") return "See how your tier ranks";
+      return "See how schools rank nationally";
+    }
+    return "See how students in your school rank";
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Leaderboard" subtitle={isSchoolTab ? "See how schools rank" : "See how students rank"} gradientClass="from-amber-500 via-orange-500 to-rose-500" />
+          <PageHeader title="Leaderboard" subtitle={getSubtitle()} gradientClass="from-amber-500 via-orange-500 to-rose-500" />
         </div>
 
         <div className="flex flex-col gap-4 px-4 py-6">
@@ -168,9 +176,11 @@ export default function RanksPage() {
                 <h3 className="mt-4 text-lg font-semibold text-slate-900">
                   No Rankings Yet
                 </h3>
-                <p className="mt-2 text-sm text-slate-500">
-                  Rankings will appear once students start earning points.
-                </p>
+                  <p className="mt-2 text-sm text-slate-500">
+                    {isSchoolTab
+                      ? "Rankings will appear once schools start earning points."
+                      : "No students from your school yet."}
+                  </p>
               </div>
             ) : (
               items.map((item, index) => {
