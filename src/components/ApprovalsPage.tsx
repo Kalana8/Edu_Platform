@@ -32,6 +32,27 @@ export default function ApprovalsPage() {
   const [comments, setComments] = useState<Record<string, string>>({});
   const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
   const [modalRequest, setModalRequest] = useState<ApprovalRequest | null>(null);
+  const [resetRequests, setResetRequests] = useState<Array<{
+    id: string;
+    studentId: string;
+    studentName: string;
+    schoolId: string;
+    schoolName: string;
+    status: string;
+    comment: string | null;
+    reviewedBy: string | null;
+    reviewedAt: string | null;
+    createdAt: string;
+  }>>([]);
+  const [activeResetTab, setActiveResetTab] = useState<"Pending" | "All">("Pending");
+  const [resetModal, setResetModal] = useState<{
+    id: string;
+    studentId: string;
+    studentName: string;
+  } | null>(null);
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [resetFeedback, setResetFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const fetchApprovals = async () => {
     setIsLoading(true);
@@ -50,8 +71,21 @@ export default function ApprovalsPage() {
     }
   };
 
+  const fetchResetRequests = async () => {
+    try {
+      const response = await fetch("/api/admin/password-reset-requests");
+      const data = await response.json();
+      if (response.ok) {
+        setResetRequests(data.requests ?? []);
+      }
+    } catch (err) {
+      console.error("Failed to load password reset requests:", err);
+    }
+  };
+
   useEffect(() => {
     fetchApprovals();
+    fetchResetRequests();
   }, []);
 
   useEffect(() => {
@@ -96,14 +130,12 @@ export default function ApprovalsPage() {
         message: `Request was successfully ${status}.`,
       });
 
-      // Clear comment for this request
       setComments((prev) => {
         const next = { ...prev };
         delete next[id];
         return next;
       });
 
-      // Reload approvals lists
       await fetchApprovals();
     } catch (err: any) {
       setFeedback({
@@ -112,6 +144,59 @@ export default function ApprovalsPage() {
       });
     } finally {
       setIsSubmitting(null);
+    }
+  };
+
+  const handleResetAction = async (action: "approve" | "reject") => {
+    if (!resetModal) return;
+
+    setResetSubmitting(true);
+    setResetFeedback(null);
+
+    try {
+      const body: any = {
+        requestId: resetModal.id,
+        action,
+      };
+
+      if (action === "approve") {
+        if (!resetNewPassword || resetNewPassword.length < 6) {
+          setResetFeedback({ type: "error", message: "Password must be at least 6 characters." });
+          setResetSubmitting(false);
+          return;
+        }
+        body.newPassword = resetNewPassword;
+      }
+
+      const response = await fetch("/api/admin/password-reset-requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Failed to ${action} password reset request.`);
+      }
+
+      setResetFeedback({
+        type: "success",
+        message: data.message || `Password reset request ${action === "approve" ? "approved" : "rejected"}.`,
+      });
+
+      setResetModal(null);
+      setResetNewPassword("");
+      await fetchResetRequests();
+    } catch (err: any) {
+      setResetFeedback({
+        type: "error",
+        message: err.message || `An error occurred while trying to ${action} request.`,
+      });
+    } finally {
+      setResetSubmitting(false);
     }
   };
 
@@ -140,6 +225,21 @@ export default function ApprovalsPage() {
     { label: "Rejected", icon: "❌" },
     { label: "All", icon: "📂" },
   ];
+
+  const resetPendingCount = resetRequests.filter((r) => r.status === "pending").length;
+  const resetApprovedCount = resetRequests.filter((r) => r.status === "approved").length;
+  const resetRejectedCount = resetRequests.filter((r) => r.status === "rejected").length;
+  const resetTotalCount = resetRequests.length;
+
+  const getResetTabCount = (tab: "Pending" | "All") => {
+    if (tab === "Pending") return resetPendingCount;
+    return resetTotalCount;
+  };
+
+  const filteredResetRequests = resetRequests.filter((r) => {
+    if (activeResetTab === "Pending") return r.status === "pending";
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
@@ -439,68 +539,171 @@ export default function ApprovalsPage() {
             })}
           </div>
         )}
+
+        {/* Password Reset Requests Section */}
+        <div className="mt-10 rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset Requests</p>
+              <h2 className="mt-2 text-xl font-semibold text-slate-950">Student password reset requests</h2>
+              <p className="mt-1 text-sm text-slate-500">Review and process student password reset requests.</p>
+            </div>
+          </div>
+
+          {/* Reset Request Tab Filters */}
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            {(["Pending", "All"] as const).map((tab) => {
+              const count = getResetTabCount(tab);
+              const isActive = activeResetTab === tab;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveResetTab(tab)}
+                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
+                    isActive
+                      ? "border-amber-400 bg-amber-50 text-amber-700 shadow-sm"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{tab === "Pending" ? "⏳" : "📂"}</span>
+                  <span>{tab}</span>
+                  <span
+                    className={`inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold ${
+                      isActive ? "bg-amber-200 text-amber-800" : "bg-slate-200 text-slate-700"
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {filteredResetRequests.length === 0 ? (
+            <div className="rounded-[1.75rem] bg-white p-8 text-center text-sm text-slate-500 shadow-sm border border-slate-200">
+              No password reset requests found.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredResetRequests.map((req) => {
+                const statusBadgeColor =
+                  req.status === "pending"
+                    ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                    : req.status === "approved"
+                    ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                    : "bg-rose-100 text-rose-800 border-rose-200";
+
+                return (
+                  <div
+                    key={req.id}
+                    className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:shadow-md"
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
+                          🔑
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">
+                            {req.studentName || "Unknown Student"}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            {req.studentId} · {req.schoolName}
+                          </div>
+                          {req.comment && (
+                            <div className="mt-1 text-xs text-slate-600 italic">"{req.comment}"</div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${statusBadgeColor}`}>
+                          {req.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {req.status === "pending" && (
+                      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="text-xs text-slate-500">
+                          Submitted {new Date(req.createdAt).toLocaleString()}
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setResetModal({ id: req.id, studentId: req.studentId, studentName: req.studentName });
+                              setResetNewPassword("");
+                              setResetFeedback(null);
+                            }}
+                            className="rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                          >
+                            Approve & Set Password
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {req.status !== "pending" && (
+                      <div className="mt-3 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                        Reviewed {req.reviewedAt ? new Date(req.reviewedAt).toLocaleString() : "N/A"}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
-      {modalRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setModalRequest(null)}>
-          <div className="max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-6">
+      {/* Password Reset Modal */}
+      {resetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setResetModal(null)}>
+          <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">Full Content Preview</p>
-                <h2 className="mt-2 text-xl font-semibold text-slate-950">
-                  {modalRequest.change_data?.level || "Content"} Submission
-                </h2>
+                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Set New Password</h2>
                 <p className="mt-1 text-sm text-slate-500">
-                  {modalRequest.users?.name || "Moderator"} · {new Date(modalRequest.created_at).toLocaleString()}
+                  {resetModal.studentName} ({resetModal.studentId})
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setModalRequest(null)}
-                className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-              >
-                ✕
-              </button>
+              <button type="button" onClick={() => setResetModal(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
-            <div className="max-h-[60vh] overflow-y-auto p-6">
-              {modalRequest.change_data?.description && (
-                <div className="mb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Description</p>
-                  <p className="mt-1 text-sm text-slate-700">{modalRequest.change_data.description}</p>
-                </div>
-              )}
-              {modalRequest.change_data?.pages && Array.isArray(modalRequest.change_data.pages) && (
-                <div className="space-y-4">
-                  {modalRequest.change_data.pages
-                    .filter((page: any) => typeof page?.content === "string" && page.content.trim() !== "")
-                    .map((page: any, index: number) => {
-                      const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
-                      return (
-                        <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                          <p className="text-sm font-semibold text-slate-900">{pageTitle}</p>
-                          {page.page_number && (
-                            <span className="mt-1 inline-flex rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
-                              Page {page.page_number}
-                            </span>
-                          )}
-                          <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-700">
-                            {typeof page.content === "string" ? page.content.trim() : ""}
-                          </p>
-                        </div>
-                      );
-                    })}
-                </div>
-              )}
-            </div>
-            <div className="border-t border-slate-100 p-6">
-              <button
-                type="button"
-                onClick={() => setModalRequest(null)}
-                className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Close Preview
-              </button>
-            </div>
+
+            {resetFeedback && (
+              <div className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${resetFeedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+                {resetFeedback.message}
+              </div>
+            )}
+
+            <form
+              className="mt-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleResetAction("approve");
+              }}
+            >
+              <label className="block text-sm font-medium text-slate-700">
+                <span className="mb-2 block">New Password</span>
+                <input
+                  type="password"
+                  value={resetNewPassword}
+                  onChange={(e) => setResetNewPassword(e.target.value)}
+                  placeholder="At least 6 characters"
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  required
+                  minLength={6}
+                />
+              </label>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setResetModal(null)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                <button type="submit" disabled={resetSubmitting} className="rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400">
+                  {resetSubmitting ? "Saving..." : "Approve & Save"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

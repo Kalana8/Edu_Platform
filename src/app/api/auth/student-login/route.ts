@@ -52,9 +52,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (!passwordMatch) {
+      const authEmail = user?.email?.trim() || `${student.student_id}@student.local`;
       try {
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email: `${student.student_id}@student.local`,
+          email: authEmail,
           password: trimmedPassword,
         });
         if (authData?.user && !authError) {
