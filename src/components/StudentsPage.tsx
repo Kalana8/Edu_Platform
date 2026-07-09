@@ -223,24 +223,22 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
         </div>
 
         <div className="overflow-hidden rounded-[2rem] bg-white shadow ring-1 ring-slate-200">
-          {isLoading ? (
-            <div className="px-6 py-10 text-center text-sm text-slate-500">Loading students…</div>
-          ) : (
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
             <table className="min-w-full divide-y divide-slate-200">
               <thead className="bg-slate-50">
                 <tr>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STUDENT</th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">SCHOOL</th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STUDENT ID</th>
-                  <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">CREDITS</th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">STATUS</th>
-                  <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">ACTIONS</th>
+                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT</th>
+                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">SCHOOL</th>
+                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT ID</th>
+                  <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">CREDITS</th>
+                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STATUS</th>
+                  <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 bg-white">
                 {filteredStudents.map((student) => (
                   <tr key={student.id} className="transition hover:bg-slate-50">
-                    <td className="px-6 py-4 align-top">
+                    <td className="px-4 py-4 align-top sm:px-6">
                       <div className="flex items-start gap-3">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg">👤</div>
                         <div>
@@ -249,22 +247,22 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 align-top text-sm text-slate-600">{student.school}</td>
-                    <td className="px-6 py-4 align-top text-sm font-medium text-slate-950">{student.studentId}</td>
-                    <td className="px-6 py-4 align-top text-right text-sm">
+                    <td className="px-4 py-4 align-top text-xs text-slate-600 sm:text-sm sm:px-6">{student.school}</td>
+                    <td className="px-4 py-4 align-top text-xs font-medium text-slate-950 sm:text-sm sm:px-6">{student.studentId}</td>
+                    <td className="px-4 py-4 align-top text-right text-xs sm:text-sm sm:px-6">
                       <div className="flex flex-col items-end gap-1">
                         <span className="font-semibold text-slate-950">Available: {student.availableCredits.toLocaleString()}</span>
                         <span className="text-slate-500">Total: {student.totalCredits.toLocaleString()}</span>
                         {student.withheldCredits > 0 && <span className="text-amber-600">Withheld: {student.withheldCredits.toLocaleString()}</span>}
                       </div>
                     </td>
-                    <td className="px-6 py-4 align-top">
+                    <td className="px-4 py-4 align-top sm:px-6">
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${student.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
                         {student.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 align-top text-right text-sm font-medium text-slate-600">
-                      <div className="flex justify-end gap-3">
+                    <td className="px-4 py-4 align-top text-right text-xs font-medium text-slate-600 sm:text-sm sm:px-6">
+                      <div className="flex justify-end gap-2 sm:gap-3">
                         <button type="button" onClick={() => setSelectedStudent(student)} className="transition hover:text-slate-950">View</button>
                         <button type="button" onClick={() => openEditModal(student)} className="transition hover:text-slate-950">Edit</button>
                         <button type="button" onClick={() => setDeletingStudent(student)} className="text-red-500 transition hover:text-red-700">Delete</button>
@@ -274,7 +272,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
                 ))}
               </tbody>
             </table>
-          )}
+          </div>
         </div>
      </div>
 

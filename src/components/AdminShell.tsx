@@ -15,6 +15,7 @@ export default function AdminShell({
 }) {
   const pathname = usePathname();
   const [displayName, setDisplayName] = useState(role === "moderator" ? "Moderator User" : "Admin User");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const session = getUser();
@@ -23,20 +24,52 @@ export default function AdminShell({
     }
   }, [role]);
 
-  // Do not render the admin chrome for the login page.
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
+
+  const pageTitle =
+    pathname?.split("/").filter(Boolean).pop()?.replace(/-/g, " ") ?? "";
+
+  const capitalizedTitle = pageTitle
+    ? pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1)
+    : "Dashboard";
+
   const isLogin = pathname?.startsWith("/admin/login") || pathname?.startsWith("/moderator/login") || false;
 
   if (isLogin) return <>{children}</>;
 
   return (
     <div className="min-h-screen flex bg-slate-50">
-      <AdminSidebar role={role} />
-      <div className="flex-1">
+      <AdminSidebar role={role} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} name={displayName} />
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex flex-1 flex-col">
         <AdminTopbar
           name={displayName}
           role={role === "moderator" ? "Moderator" : "Admin"}
+          onMenuClick={() => setSidebarOpen((prev) => !prev)}
+          pageTitle={capitalizedTitle}
         />
-        <main className="p-6">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-7xl">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

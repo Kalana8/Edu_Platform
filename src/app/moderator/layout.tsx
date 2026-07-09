@@ -1,29 +1,51 @@
-import { cookies } from "next/headers";
+"use client";
+
+import { useEffect, useState } from "react";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminTopbar from "@/components/AdminTopbar";
+import { getUser } from "@/lib/session";
 
-export default async function ModeratorLayout({ children }: { children: React.ReactNode }) {
-  let name = "Moderator User";
-  let role = "Moderator";
+export default function ModeratorLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [displayName, setDisplayName] = useState("Moderator User");
 
-  const cookieStore = await cookies();
-  const sessionUserStr = cookieStore.get("session_user")?.value;
-  if (sessionUserStr) {
-    try {
-      const user = JSON.parse(sessionUserStr);
-      name = user.name ?? name;
-      role = user.role ?? role;
-    } catch {
-      // ignore malformed session
+  useEffect(() => {
+    const session = getUser();
+    if (session?.name) {
+      setDisplayName(session.name);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
 
   return (
     <div className="min-h-screen flex bg-slate-50">
-      <AdminSidebar role="moderator" />
-      <div className="flex-1">
-        <AdminTopbar name={name} role={role} />
-        <main className="p-6">{children}</main>
+      <AdminSidebar role="moderator" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} name={displayName} />
+
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex flex-1 flex-col">
+        <AdminTopbar
+          name={displayName}
+          role="Moderator"
+          onMenuClick={() => setSidebarOpen((prev) => !prev)}
+          pageTitle="Moderator"
+        />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-7xl">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

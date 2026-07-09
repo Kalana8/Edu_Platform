@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
+import EmojiPicker from "./EmojiPicker";
 
 const categoryBadgeClass = (status: CategoryItem["status"]) =>
   status === "Active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700";
@@ -374,15 +375,11 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Icon</span>
-                  <input
-                    value={formState.icon}
-                    onChange={(event) => setFormState((current) => ({ ...current, icon: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                    placeholder="📚"
-                  />
-                </label>
+                <EmojiPicker
+                  value={formState.icon}
+                  onChange={(icon) => setFormState((current) => ({ ...current, icon }))}
+                  label="Icon"
+                />
                 <label className="block text-sm font-medium text-slate-700">
                   <span className="mb-2 block">Status</span>
                   <select
@@ -511,14 +508,11 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Icon</span>
-                  <input
-                    value={editFormState.icon}
-                    onChange={(event) => setEditFormState((current) => ({ ...current, icon: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                  />
-                </label>
+                <EmojiPicker
+                  value={editFormState.icon}
+                  onChange={(icon) => setEditFormState((current) => ({ ...current, icon }))}
+                  label="Icon"
+                />
                 <label className="block text-sm font-medium text-slate-700">
                   <span className="mb-2 block">Status</span>
                   <select

@@ -388,13 +388,13 @@ export default function ContentManagementPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <label className="block text-sm font-medium text-slate-700">Pages</label>
-                        <button
+                        {/* <button
                           type="button"
                           onClick={addPage}
                           className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:border-slate-300"
                         >
                           + Add Page
-                        </button>
+                        </button> */}
                       </div>
                       <div className="space-y-3">
                         {form.pages.map((page, index) => (
@@ -450,7 +450,14 @@ export default function ContentManagementPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-end gap-4">
+                       <button
+                          type="button"
+                          onClick={addPage}
+                          className="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:border-slate-300"
+                        >
+                          + Add Page
+                        </button>
                       <button
                         type="submit"
                         disabled={saving}
