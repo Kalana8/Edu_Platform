@@ -184,9 +184,9 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 rounded-[2rem] bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Moderator Management</p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Add and manage moderator accounts</h1>
@@ -213,7 +213,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
         ) : null}
 
         {/* Stats Card */}
-        <div className="mb-6 rounded-[2rem] bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200">
+        <div className="mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-slate-600">Active Moderators</p>
@@ -224,7 +224,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
         </div>
 
         {/* Search */}
-        <div className="mb-6">
+        <div className="mb-4">
           <input
             type="text"
             value={search}

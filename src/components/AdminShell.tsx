@@ -65,7 +65,7 @@ export default function AdminShell({
           onMenuClick={() => setSidebarOpen((prev) => !prev)}
           pageTitle={capitalizedTitle}
         />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 p-2 sm:p-3 lg:p-4">
           <div className="mx-auto w-full max-w-7xl">
             {children}
           </div>

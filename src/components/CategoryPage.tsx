@@ -251,47 +251,47 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-4xl bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mb-3 flex flex-col gap-3 rounded-4xl bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Category</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage curriculum categories</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+            <h1 className="mt-1 text-2xl font-semibold text-slate-950">Manage curriculum categories</h1>
+            <p className="mt-1 max-w-2xl text-sm text-slate-500">
               View categories, manage status, and access content tiers for {role.toLowerCase()} workflows.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700"
+            className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700"
           >
             + Add Category
           </button>
         </div>
 
         {feedback ? (
-          <div className={`mb-4 rounded-2xl border px-4 py-3 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+          <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
             {feedback.message}
           </div>
         ) : null}
 
         <div className="overflow-hidden rounded-4xl bg-white shadow ring-1 ring-slate-200">
           {isLoading ? (
-            <div className="px-6 py-10 text-center text-sm text-slate-500">Loading categories…</div>
+            <div className="px-6 py-8 text-center text-sm text-slate-500">Loading categories…</div>
           ) : (
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
-                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
+                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
                   Category
                 </th>
-                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
+                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
                   Code
                 </th>
-                <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
+                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
                   Status
                 </th>
-                <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">
+                <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-slate-600 sm:px-6">
                   Actions
                 </th>
               </tr>
@@ -299,10 +299,10 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
             <tbody className="divide-y divide-slate-200 bg-white">
               {categories.map((category) => (
                 <tr key={category.slug} className="transition hover:bg-slate-50">
-                  <td className="px-6 py-4 align-top">
+                  <td className="px-4 py-3 align-top sm:px-6">
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-3xl ${category.badgeClass}`}>
-                        <span className="text-xl">{category.icon}</span>
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${category.badgeClass}`}>
+                        <span className="text-lg">{category.icon}</span>
                       </div>
                       <div>
                         <div className="text-sm font-semibold text-slate-950">{category.label}</div>
@@ -310,23 +310,17 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 align-top text-sm text-slate-600">{category.code}</td>
-                  <td className="px-6 py-4 align-top">
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${categoryBadgeClass(category.status)}`}>
+                  <td className="px-4 py-3 align-top text-xs text-slate-600 sm:text-sm sm:px-6">{category.code}</td>
+                  <td className="px-4 py-3 align-top sm:px-6">
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${categoryBadgeClass(category.status)}`}>
                       {category.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 align-top text-right text-sm font-medium text-slate-600">
-                    <div className="flex justify-end gap-3">
-                      <button type="button" onClick={() => openViewModal(category)} className="transition hover:text-slate-950">
-                        View
-                      </button>
-                      <button type="button" onClick={() => openEditModal(category)} className="transition hover:text-slate-950">
-                        Edit
-                      </button>
-                      <button type="button" onClick={() => setDeletingCategory(category)} className="text-red-500 transition hover:text-red-700">
-                        Delete
-                      </button>
+                  <td className="px-4 py-3 align-top text-right text-xs font-medium text-slate-600 sm:px-6">
+                    <div className="flex justify-end gap-2 sm:gap-3">
+                      <button type="button" onClick={() => openViewModal(category)} className="transition hover:text-slate-950">View</button>
+                      <button type="button" onClick={() => openEditModal(category)} className="transition hover:text-slate-950">Edit</button>
+                      <button type="button" onClick={() => setDeletingCategory(category)} className="text-red-500 transition hover:text-red-700">Delete</button>
                     </div>
                   </td>
                 </tr>
@@ -339,53 +333,51 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
       {isModalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setIsModalOpen(false)}>
-          <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">New category</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add a curriculum category</h2>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">Add a curriculum category</h2>
               </div>
-              <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
-                ✕
-              </button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Category name</span>
+                  <span className="mb-1.5 block">Category name</span>
                   <input
                     value={formState.label}
                     onChange={(event) => setFormState((current) => ({ ...current, label: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                     placeholder="e.g. Climate Science"
                     required
                   />
                 </label>
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Category code</span>
+                  <span className="mb-1.5 block">Category code</span>
                   <input
                     value={formState.code}
                     onChange={(event) => setFormState((current) => ({ ...current, code: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                     placeholder="e.g. CAT-009"
                     required
                   />
                 </label>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <EmojiPicker
                   value={formState.icon}
                   onChange={(icon) => setFormState((current) => ({ ...current, icon }))}
                   label="Icon"
                 />
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Status</span>
+                  <span className="mb-1.5 block">Status</span>
                   <select
                     value={formState.status}
                     onChange={(event) => setFormState((current) => ({ ...current, status: event.target.value as CategoryItem["status"] }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -393,13 +385,9 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
                 </label>
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                  Cancel
-                </button>
-                <button type="submit" disabled={isSubmitting} className="rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-400">
-                  {isSubmitting ? "Saving..." : "Save category"}
-                </button>
+              <div className="flex justify-end gap-2 pt-1">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                <button type="submit" disabled={isSubmitting} className="rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-400">{isSubmitting ? "Saving..." : "Save category"}</button>
               </div>
             </form>
           </div>
@@ -408,35 +396,33 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
       {selectedCategory ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setSelectedCategory(null)}>
-          <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Category details</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedCategory.label}</h2>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">{selectedCategory.label}</h2>
               </div>
-              <button type="button" onClick={() => setSelectedCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
-                ✕
-              </button>
+              <button type="button" onClick={() => setSelectedCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
 
-            <div className="mt-6 space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 p-4">
+            <div className="mt-4 space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 p-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Code</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{selectedCategory.code}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.code}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 p-4">
+                <div className="rounded-2xl border border-slate-200 p-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Status</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{selectedCategory.status}</p>
+                  <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.status}</p>
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
+              <div className="rounded-2xl border border-slate-200 p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Icon</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">{selectedCategory.icon}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.icon}</p>
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
+              <div className="rounded-2xl border border-slate-200 p-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Slug</p>
-                <p className="mt-2 text-sm font-semibold text-slate-900">{selectedCategory.slug}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.slug}</p>
               </div>
             </div>
           </div>
@@ -445,28 +431,22 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
       {deletingCategory ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setDeletingCategory(null)}>
-          <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-md rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Confirm delete</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Delete {deletingCategory.label}?</h2>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">Delete {deletingCategory.label}?</h2>
               </div>
-              <button type="button" onClick={() => setDeletingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
-                ✕
-              </button>
+              <button type="button" onClick={() => setDeletingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
 
-            <p className="mt-4 text-sm text-slate-600">
+            <p className="mt-3 text-sm text-slate-600">
               This action will remove the category from the database. This cannot be undone.
             </p>
 
-            <div className="mt-6 flex justify-end gap-3">
-              <button type="button" onClick={() => setDeletingCategory(null)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                Cancel
-              </button>
-              <button type="button" onClick={() => handleDelete(deletingCategory)} disabled={isSubmitting} className="rounded-2xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-400">
-                {isSubmitting ? "Deleting..." : "Delete"}
-              </button>
+            <div className="mt-4 flex justify-end gap-2">
+              <button type="button" onClick={() => setDeletingCategory(null)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+              <button type="button" onClick={() => handleDelete(deletingCategory)} disabled={isSubmitting} className="rounded-2xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:bg-slate-400">{isSubmitting ? "Deleting..." : "Delete"}</button>
             </div>
           </div>
         </div>
@@ -474,51 +454,49 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
 
       {editingCategory ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setEditingCategory(null)}>
-          <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Edit category</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">{editingCategory.label}</h2>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">{editingCategory.label}</h2>
               </div>
-              <button type="button" onClick={() => setEditingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
-                ✕
-              </button>
+              <button type="button" onClick={() => setEditingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={handleEditSubmit}>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <form className="mt-4 space-y-3" onSubmit={handleEditSubmit}>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Category name</span>
+                  <span className="mb-1.5 block">Category name</span>
                   <input
                     value={editFormState.label}
                     onChange={(event) => setEditFormState((current) => ({ ...current, label: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                     required
                   />
                 </label>
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Category code</span>
+                  <span className="mb-1.5 block">Category code</span>
                   <input
                     value={editFormState.code}
                     onChange={(event) => setEditFormState((current) => ({ ...current, code: event.target.value }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                     required
                   />
                 </label>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <EmojiPicker
                   value={editFormState.icon}
                   onChange={(icon) => setEditFormState((current) => ({ ...current, icon }))}
                   label="Icon"
                 />
                 <label className="block text-sm font-medium text-slate-700">
-                  <span className="mb-2 block">Status</span>
+                  <span className="mb-1.5 block">Status</span>
                   <select
                     value={editFormState.status}
                     onChange={(event) => setEditFormState((current) => ({ ...current, status: event.target.value as CategoryItem["status"] }))}
-                    className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                    className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -526,13 +504,9 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
                 </label>
               </div>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setEditingCategory(null)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                  Cancel
-                </button>
-                <button type="submit" disabled={isSubmitting} className="rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-400">
-                  {isSubmitting ? "Saving..." : "Save changes"}
-                </button>
+              <div className="flex justify-end gap-2 pt-1">
+                <button type="button" onClick={() => setEditingCategory(null)} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+                <button type="submit" disabled={isSubmitting} className="rounded-2xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:bg-slate-400">{isSubmitting ? "Saving..." : "Save changes"}</button>
               </div>
             </form>
           </div>

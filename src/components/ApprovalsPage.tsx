@@ -243,9 +243,9 @@ export default function ApprovalsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         {/* Page Header */}
-        <div className="mb-6 flex flex-col gap-4 rounded-[2rem] bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Approvals Manager</p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Review and resolve change requests</h1>
@@ -258,7 +258,7 @@ export default function ApprovalsPage() {
         {/* Feedback Alert */}
         {feedback && (
           <div
-            className={`mb-6 rounded-2xl border px-4 py-3 text-sm flex items-center justify-between ${
+            className={`mb-4 rounded-2xl border px-4 py-2.5 text-sm flex items-center justify-between ${
               feedback.type === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                 : "border-rose-200 bg-rose-50 text-rose-700"
@@ -275,7 +275,7 @@ export default function ApprovalsPage() {
         )}
 
         {/* Tab Filters */}
-        <div className="mb-6 rounded-[2rem] bg-white px-4 py-4 shadow-sm ring-1 ring-slate-200 sm:px-6">
+        <div className="mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200 sm:px-5">
           <div className="flex flex-wrap items-center gap-3">
             {tabs.map((tab) => {
               const count = getTabCount(tab.label);
@@ -322,7 +322,7 @@ export default function ApprovalsPage() {
             </button>
           </div>
         ) : filteredApprovals.length === 0 ? (
-          <div className="rounded-[2rem] bg-white p-12 shadow ring-1 ring-slate-200">
+          <div className="rounded-[2rem] bg-white p-8 shadow ring-1 ring-slate-200">
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-2xl text-slate-500">
                 📭
@@ -361,7 +361,7 @@ export default function ApprovalsPage() {
               return (
                 <div
                   key={req.id}
-                  className="rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200 transition hover:shadow-md"
+                  className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 transition hover:shadow-md sm:p-5"
                 >
                   {/* Card Header Info */}
                   <div className="flex flex-col gap-4 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -541,8 +541,8 @@ export default function ApprovalsPage() {
         )}
 
         {/* Password Reset Requests Section */}
-        <div className="mt-10 rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-6 rounded-[2rem] bg-white p-5 shadow ring-1 ring-slate-200">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset Requests</p>
               <h2 className="mt-2 text-xl font-semibold text-slate-950">Student password reset requests</h2>
@@ -551,7 +551,7 @@ export default function ApprovalsPage() {
           </div>
 
           {/* Reset Request Tab Filters */}
-          <div className="mb-6 flex flex-wrap items-center gap-3">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
             {(["Pending", "All"] as const).map((tab) => {
               const count = getResetTabCount(tab);
               const isActive = activeResetTab === tab;
@@ -559,7 +559,7 @@ export default function ApprovalsPage() {
                 <button
                   key={tab}
                   onClick={() => setActiveResetTab(tab)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
+                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-semibold transition cursor-pointer ${
                     isActive
                       ? "border-amber-400 bg-amber-50 text-amber-700 shadow-sm"
                       : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
@@ -596,9 +596,9 @@ export default function ApprovalsPage() {
                 return (
                   <div
                     key={req.id}
-                    className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-5 shadow-sm transition hover:shadow-md"
+                    className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-4 shadow-sm transition hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
                           🔑
@@ -623,7 +623,7 @@ export default function ApprovalsPage() {
                     </div>
 
                     {req.status === "pending" && (
-                      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="text-xs text-slate-500">
                           Submitted {new Date(req.createdAt).toLocaleString()}
                         </div>
@@ -644,7 +644,7 @@ export default function ApprovalsPage() {
                     )}
 
                     {req.status !== "pending" && (
-                      <div className="mt-3 text-xs text-slate-500 border-t border-slate-100 pt-3">
+                      <div className="mt-2 text-xs text-slate-500 border-t border-slate-100 pt-2">
                         Reviewed {req.reviewedAt ? new Date(req.reviewedAt).toLocaleString() : "N/A"}
                       </div>
                     )}

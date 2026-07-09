@@ -173,8 +173,8 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-4xl bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mb-4 flex flex-col gap-3 rounded-4xl bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Students</p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage student accounts and progress</h1>
@@ -183,12 +183,12 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
         </div>
 
         {feedback ? (
-          <div className={`mb-4 rounded-2xl border px-4 py-3 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+          <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
             {feedback.message}
           </div>
         ) : null}
 
-        <div className="mb-6 rounded-[2rem] bg-gradient-to-br from-blue-50 to-indigo-50 px-6 py-6 shadow-sm ring-1 ring-blue-200">
+        <div className="mb-4 rounded-[2rem] bg-gradient-to-br from-blue-50 to-indigo-50 px-5 py-4 shadow-sm ring-1 ring-blue-200">
           <div className="flex items-center justify-between">
             <div className="flex items-start gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">
@@ -206,7 +206,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
           </div>
         </div>
 
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
             <input
               type="text"
@@ -227,7 +227,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
             <table className="min-w-full divide-y divide-slate-200">
               <thead className="bg-slate-50">
                 <tr>
-                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT</th>
                   <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">SCHOOL</th>
                   <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT ID</th>
                   <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">CREDITS</th>

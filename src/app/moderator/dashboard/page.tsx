@@ -37,8 +37,8 @@ export default async function ModeratorDashboard() {
 
   return (
     <div>
-      <section className="mb-6">
-        <div className="rounded-lg bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-6 text-white shadow-lg">
+      <section className="mb-4">
+        <div className="rounded-lg bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-3 text-white shadow-lg sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm">Active Students Right Now</p>
@@ -52,18 +52,18 @@ export default async function ModeratorDashboard() {
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-4">
-        <div className="rounded-lg bg-white p-6 shadow">
+      <section className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-slate-500">Total Students</p>
-          <p className="mt-2 text-2xl font-semibold">{totalStudents.toLocaleString()}</p>
+          <p className="mt-1 text-lg font-bold text-slate-950 sm:mt-2 sm:text-xl">{totalStudents.toLocaleString()}</p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-slate-500">Active Students</p>
-          <p className="mt-2 text-2xl font-semibold">{activeStudents.toLocaleString()}</p>
+          <p className="mt-1 text-lg font-bold text-slate-950 sm:mt-2 sm:text-xl">{activeStudents.toLocaleString()}</p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow">
+        <div className="rounded-lg bg-white p-4 shadow">
           <p className="text-sm text-slate-500">Active Schools</p>
-          <p className="mt-2 text-2xl font-semibold">{activeSchools.toLocaleString()}</p>
+          <p className="mt-1 text-lg font-bold text-slate-950 sm:mt-2 sm:text-xl">{activeSchools.toLocaleString()}</p>
         </div>
         
       </section>

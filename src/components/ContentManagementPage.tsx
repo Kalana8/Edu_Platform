@@ -292,8 +292,8 @@ export default function ContentManagementPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-[2rem] bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Content Management</p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Add and manage reading content for each category and tier</h1>
@@ -302,14 +302,14 @@ export default function ContentManagementPage() {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-[1.75rem] bg-red-50 px-6 py-4 text-sm text-red-600">{error}</div>
+          <div className="mb-4 rounded-[1.5rem] bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
         )}
         {success && (
-          <div className="mb-6 rounded-[1.75rem] bg-emerald-50 px-6 py-4 text-sm text-emerald-700">{success}</div>
+          <div className="mb-4 rounded-[1.5rem] bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{success}</div>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-          <div className="rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
+        <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
+          <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Categories</h2>
             {loadingCategories ? (
               <div className="px-6 py-10 text-center text-sm text-slate-500">Loading categories…</div>
@@ -349,9 +349,9 @@ export default function ContentManagementPage() {
             )}
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {!selectedCategory ? (
-              <div className="rounded-[2rem] bg-white p-12 text-center shadow ring-1 ring-slate-200">
+              <div className="rounded-[2rem] bg-white p-8 text-center shadow ring-1 ring-slate-200">
                 <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-slate-100 text-4xl">
                   📖
                 </div>
@@ -361,9 +361,9 @@ export default function ContentManagementPage() {
                 </p>
               </div>
             ) : (
-              <>
-                <div className="rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
-                  <div className="mb-6 flex items-center justify-between">
+                <>
+                  <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 sm:p-5">
+                  <div className="mb-4 flex items-center justify-between">
                     <div>
                       <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
                         {selectedCategory.label}
@@ -510,7 +510,7 @@ export default function ContentManagementPage() {
                   </form>
                 </div>
 
-                <div className="rounded-[2rem] bg-white p-6 shadow ring-1 ring-slate-200">
+                <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 sm:p-5">
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
                       Content ({contents.length + pendingItems.filter((p) => p.category_id === selectedCategory?.id).length})

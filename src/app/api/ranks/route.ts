@@ -13,6 +13,31 @@ async function getSessionUser() {
   }
 }
 
+function pickWindow<T extends { id: string }>(all: T[], userId: string | undefined, maxTotal = 10): T[] {
+  if (!userId || all.length === 0) {
+    return all.slice(0, maxTotal);
+  }
+
+  const userIndex = all.findIndex((item) => item.id === userId);
+  if (userIndex === -1) {
+    return all.slice(0, maxTotal);
+  }
+
+  if (userIndex < 3) {
+    return all.slice(0, maxTotal);
+  }
+
+  let start = userIndex - 3;
+  let end = start + maxTotal;
+
+  if (end > all.length) {
+    end = all.length;
+    start = Math.max(0, end - maxTotal);
+  }
+
+  return all.slice(start, end);
+}
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getSessionUser();
@@ -44,8 +69,7 @@ export async function GET(request: NextRequest) {
         .from("students")
         .select("id, name, total_credits")
         .eq("school_id", studentData.school_id)
-        .order("total_credits", { ascending: false })
-        .limit(100);
+        .order("total_credits", { ascending: false });
 
       if (studentsError) {
         console.error("Student ranks fetch error:", studentsError);
@@ -55,13 +79,22 @@ export async function GET(request: NextRequest) {
         );
       }
 
+      const allStudents = (studentsData ?? []).map((s) => ({
+        id: s.id,
+        name: s.name,
+        credits: s.total_credits ?? 0,
+      }));
+
+      const visible = pickWindow(allStudents, studentData.id, 10);
+
       return NextResponse.json(
         {
-          students: (studentsData ?? []).map((s) => ({
+          students: visible.map((s) => ({
             id: s.id,
             name: s.name,
-            totalCredits: s.total_credits ?? 0,
+            totalCredits: s.credits,
           })),
+          userStudentId: studentData.id,
         },
         { status: 200 }
       );
@@ -80,34 +113,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const allSchools = schoolsData ?? [];
+    const allSchools = (schoolsData ?? []).map((s) => ({
+      id: s.id,
+      name: s.name,
+      tier: s.tier,
+      points: s.total_points ?? 0,
+    }));
 
-    if (type === "tier" && studentData.school_id) {
+    let visible = allSchools;
+
+    if (type === "tier") {
       const userSchool = allSchools.find((s) => s.id === studentData.school_id);
       if (userSchool) {
-        const filtered = allSchools.filter((s) => s.tier === userSchool.tier);
-        return NextResponse.json(
-          {
-            schools: filtered.map((s) => ({
-              id: s.id,
-              name: s.name,
-              tier: s.tier,
-              points: s.total_points ?? 0,
-            })),
-            userSchoolId: studentData.school_id,
-          },
-          { status: 200 }
-        );
+        const tierSchools = allSchools.filter((s) => s.tier === userSchool.tier);
+        visible = pickWindow(tierSchools, studentData.school_id, 10);
       }
+    } else {
+      visible = pickWindow(allSchools, studentData.school_id, 10);
     }
 
     return NextResponse.json(
       {
-        schools: allSchools.map((s) => ({
+        schools: visible.map((s) => ({
           id: s.id,
           name: s.name,
           tier: s.tier,
-          points: s.total_points ?? 0,
+          points: s.points,
         })),
         userSchoolId: studentData.school_id,
       },

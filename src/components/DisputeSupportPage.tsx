@@ -90,8 +90,8 @@ export default function DisputeSupportPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-[2rem] bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Dispute & Support</p>
             <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage student disputes and support requests</h1>
@@ -99,20 +99,20 @@ export default function DisputeSupportPage() {
           </div>
         </div>
 
-        <div className="mb-6 grid gap-4 sm:grid-cols-4">
-          <div className="rounded-[1.5rem] border border-blue-500 bg-white px-6 py-5 shadow-sm">
+        <div className="mb-4 grid gap-3 sm:grid-cols-4">
+          <div className="rounded-[1.5rem] border border-blue-500 bg-white px-4 py-3 shadow-sm">
             <p className="text-sm font-medium text-slate-500">Total Tickets</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950">{totals.total}</p>
           </div>
-          <div className="rounded-[1.5rem] bg-white px-6 py-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">Open</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950">{totals.open}</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-white px-6 py-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">In Progress</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950">{totals.inProgress}</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-white px-6 py-5 shadow-sm">
+          <div className="rounded-[1.5rem] bg-white px-4 py-3 shadow-sm">
+              <p className="text-sm font-medium text-slate-500">Open</p>
+              <p className="mt-1 text-3xl font-semibold text-slate-950">{totals.open}</p>
+            </div>
+            <div className="rounded-[1.5rem] bg-white px-4 py-3 shadow-sm">
+              <p className="text-sm font-medium text-slate-500">In Progress</p>
+              <p className="mt-1 text-3xl font-semibold text-slate-950">{totals.inProgress}</p>
+            </div>
+            <div className="rounded-[1.5rem] bg-white px-4 py-3 shadow-sm">
             <p className="text-sm font-medium text-slate-500">Resolved</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950">{totals.resolved}</p>
           </div>

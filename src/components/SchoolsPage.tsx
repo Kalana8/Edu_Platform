@@ -206,105 +206,105 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-4xl bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-7xl px-4 py-1 sm:px-6 lg:px-8">
+        <div className="mb-3 flex flex-col gap-2 rounded-3xl bg-white px-4 py-2 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Schools</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage participating schools</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
+            <h1 className="mt-1 text-2xl font-semibold text-slate-950">Manage participating schools</h1>
+            <p className="mt-1 max-w-2xl text-sm text-slate-500">
               View schools, manage performance, and track student engagement for {role.toLowerCase()} workflows.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+            className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
           >
             + Add School
           </button>
         </div>
 
         {feedback ? (
-          <div className={`mb-4 rounded-2xl border px-4 py-3 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+          <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
             {feedback.message}
           </div>
         ) : null}
 
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-[1.5rem] bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200">
+        <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-[1.5rem] bg-white px-3 py-2.5 shadow-sm ring-1 ring-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Total Schools</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{schools.length}</p>
+                <p className="text-xs font-medium text-slate-600">Total Schools</p>
+                <p className="mt-1 text-lg font-semibold text-slate-950">{schools.length}</p>
               </div>
-              <span className="text-3xl">📚</span>
+              <span className="text-xl">📚</span>
             </div>
           </div>
 
-          <div className="rounded-[1.5rem] bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-[1.5rem] bg-white px-3 py-2.5 shadow-sm ring-1 ring-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Total Students</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{totalStudents.toLocaleString()}</p>
+                <p className="text-xs font-medium text-slate-600">Total Students</p>
+                <p className="mt-1 text-lg font-semibold text-slate-950">{totalStudents.toLocaleString()}</p>
               </div>
-              <span className="text-3xl">👥</span>
+              <span className="text-xl">👥</span>
             </div>
           </div>
 
-          <div className="rounded-[1.5rem] bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-[1.5rem] bg-white px-3 py-2.5 shadow-sm ring-1 ring-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Total Points</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{totalPoints.toLocaleString()}</p>
+                <p className="text-xs font-medium text-slate-600">Total Points</p>
+                <p className="mt-1 text-lg font-semibold text-slate-950">{totalPoints.toLocaleString()}</p>
               </div>
-              <span className="text-3xl">💰</span>
+              <span className="text-xl">💰</span>
             </div>
           </div>
 
-          <div className="rounded-[1.5rem] bg-white px-6 py-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-[1.5rem] bg-white px-3 py-2.5 shadow-sm ring-1 ring-slate-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Active</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{activeSchools}</p>
+                <p className="text-xs font-medium text-slate-600">Active</p>
+                <p className="mt-1 text-lg font-semibold text-slate-950">{activeSchools}</p>
               </div>
-              <span className="text-3xl">✅</span>
+              <span className="text-xl">✅</span>
             </div>
           </div>
         </div>
 
         <div className="rounded-[2rem] bg-white shadow ring-1 ring-slate-200">
-          <div className="border-b border-slate-200 px-6 py-4">
+          <div className="border-b border-slate-200 px-4 py-3 sm:px-6">
             <input
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search schools..."
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm placeholder-slate-500 transition focus:border-slate-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm placeholder-slate-500 transition focus:border-slate-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {isLoading ? (
-            <div className="px-4 py-10 text-center text-sm text-slate-500 sm:px-6">Loading schools…</div>
+            <div className="px-4 py-8 text-center text-sm text-slate-500 sm:px-6">Loading schools…</div>
           ) : (
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="min-w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">SCHOOL</th>
-                    <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">TIER</th>
-                    <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENTS</th>
-                    <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">POINTS</th>
-                    <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STATUS</th>
-                    <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">ACTIONS</th>
+                    <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-slate-600 sm:px-6">SCHOOL</th>
+                    <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-slate-600 sm:px-6">TIER</th>
+                    <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENTS</th>
+                    <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-slate-600 sm:px-6">POINTS</th>
+                    <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-slate-600 sm:px-6">STATUS</th>
+                    <th scope="col" className="px-4 py-2.5 text-right text-xs font-semibold text-slate-600 sm:px-6">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {filteredSchools.map((school) => (
                     <tr key={school.id} className="transition hover:bg-slate-50">
-                      <td className="px-4 py-4 align-top sm:px-6">
+                      <td className="px-4 py-3 align-top sm:px-6">
                         <div className="flex items-start gap-3">
-                          <div className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl ${school.tier === "Large" ? "bg-blue-100 text-blue-700" : school.tier === "Medium" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                            <span className="text-xl">🏫</span>
+                          <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl ${school.tier === "Large" ? "bg-blue-100 text-blue-700" : school.tier === "Medium" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                            <span className="text-lg">🏫</span>
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-slate-950">{school.name}</div>
@@ -312,19 +312,19 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 align-top sm:px-6">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${school.tier === "Large" ? "bg-blue-100 text-blue-700" : school.tier === "Medium" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                      <td className="px-4 py-3 align-top sm:px-6">
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${school.tier === "Large" ? "bg-blue-100 text-blue-700" : school.tier === "Medium" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
                           {school.tier}
                         </span>
                       </td>
-                      <td className="px-4 py-4 align-top text-sm font-medium text-slate-950 sm:px-6">{school.students}</td>
-                      <td className="px-4 py-4 align-top text-sm font-medium text-slate-950 sm:px-6">{school.points.toLocaleString()}</td>
-                      <td className="px-4 py-4 align-top sm:px-6">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${school.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
+                      <td className="px-4 py-3 align-top text-sm font-medium text-slate-950 sm:px-6">{school.students}</td>
+                      <td className="px-4 py-3 align-top text-sm font-medium text-slate-950 sm:px-6">{school.points.toLocaleString()}</td>
+                      <td className="px-4 py-3 align-top sm:px-6">
+                        <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${school.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
                           {school.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
-                      <td className="px-4 py-4 align-top text-right text-sm font-medium text-slate-600 sm:px-6">
+                      <td className="px-4 py-3 align-top text-right text-sm font-medium text-slate-600 sm:px-6">
                         <div className="flex justify-end gap-2 sm:gap-3">
                           <button type="button" onClick={() => setSelectedSchool(school)} className="transition hover:text-slate-950">View</button>
                           <button type="button" onClick={() => openEditModal(school)} className="transition hover:text-slate-950">Edit</button>
@@ -337,6 +337,7 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
               </table>
             </div>
           )}
+        </div>
       </div>
 
       {isModalOpen ? (
@@ -503,6 +504,5 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
         </div>
       ) : null}
       </div>
-    </div>
-  );
-}
+    );
+  }
