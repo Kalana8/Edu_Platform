@@ -31,13 +31,13 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editStudentId, setEditStudentId] = useState("");
+  const [editName, setEditName] = useState("");
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const openModal = () => {
     if (profile) {
-      setEditStudentId(profile.studentId);
+      setEditName(profile.name);
       setFeedback(null);
       setIsModalOpen(true);
     }
@@ -46,44 +46,35 @@ export default function ProfilePage() {
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!editStudentId.trim()) {
-      setFeedback({ type: "error", message: "Student ID cannot be empty." });
+    if (!editName.trim()) {
+      setFeedback({ type: "error", message: "Name cannot be empty." });
       return;
-    }
-
-    if (profile) {
-      const currentPrefix = profile.studentId.split("-").slice(0, -1).join("-");
-      const newPrefix = editStudentId.trim().split("-").slice(0, -1).join("-");
-      if (newPrefix !== currentPrefix) {
-        setFeedback({ type: "error", message: `Student ID must start with ${currentPrefix}-` });
-        return;
-      }
     }
 
     setSaving(true);
     setFeedback(null);
 
     try {
-      const response = await fetch("/api/student/customize-id", {
+      const response = await fetch("/api/student/update-name", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId: editStudentId.trim() }),
+        body: JSON.stringify({ name: editName.trim() }),
       });
 
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || "Unable to update student ID.");
+        throw new Error(payload.error || "Unable to update name.");
       }
 
       if (payload.student) {
-        setProfile((prev) => prev ? { ...prev, studentId: payload.student.studentId } : prev);
+        setProfile((prev) => prev ? { ...prev, name: payload.student.name } : prev);
       }
 
       setIsModalOpen(false);
-      setFeedback({ type: "success", message: "Student ID updated successfully." });
+      setFeedback({ type: "success", message: "Name updated successfully." });
     } catch (err) {
-      setFeedback({ type: "error", message: err instanceof Error ? err.message : "Failed to update student ID." });
+      setFeedback({ type: "error", message: err instanceof Error ? err.message : "Failed to update name." });
     } finally {
       setSaving(false);
     }
@@ -185,7 +176,7 @@ export default function ProfilePage() {
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
             >
               <span className="text-base">✏️</span>
-              Customize Student ID
+              Customize Name
             </button>
           </div>
 
@@ -294,7 +285,7 @@ export default function ProfilePage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Customize profile</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Customize Student ID</h2>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Customize Name</h2>
               </div>
               <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
@@ -307,11 +298,11 @@ export default function ProfilePage() {
 
             <form className="mt-6 space-y-4" onSubmit={handleSave}>
               <label className="block text-sm font-medium text-slate-700">
-                <span className="mb-2 block">Student ID</span>
+                <span className="mb-2 block">Name</span>
                 <input
                   type="text"
-                  value={editStudentId}
-                  onChange={(event) => setEditStudentId(event.target.value)}
+                  value={editName}
+                  onChange={(event) => setEditName(event.target.value)}
                   className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                   required
                 />
