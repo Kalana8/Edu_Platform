@@ -14,6 +14,8 @@ type ProfileData = {
   totalCredits: number;
   availableCredits: number;
   withheldCredits: number;
+  schoolRank: number | null;
+  studentRank: number | null;
 };
 
 type ReadingStats = {
@@ -206,7 +208,7 @@ export default function ProfilePage() {
                   School Rank
                 </p>
                 <p className="mt-2 text-3xl font-bold text-blue-900">
-                  #--
+                  {profile.schoolRank ? `#${profile.schoolRank}` : "#--"}
                 </p>
               </div>
 
@@ -216,7 +218,7 @@ export default function ProfilePage() {
                   Student Rank
                 </p>
                 <p className="mt-2 text-3xl font-bold text-amber-900">
-                  #--
+                  {profile.studentRank ? `#${profile.studentRank}` : "#--"}
                 </p>
               </div>
 

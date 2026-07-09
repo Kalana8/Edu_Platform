@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useCallback, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
 
 export type CategoryItem = {
@@ -79,36 +79,37 @@ export default function ContentManagementPage() {
     loadCategories();
   }, []);
 
-  useEffect(() => {
-    async function loadPendingContent() {
-      try {
-        const response = await fetch("/api/approvals");
-        const payload = await response.json();
-        if (response.ok) {
-          const all = payload.approvals ?? [];
-          const contentPending = all
-            .filter((req: any) => req.target_type === "content" && req.status === "pending")
-            .map((req: any) => {
-              const change = req.change_data || {};
-              return {
-                id: req.id,
-                action_type: req.action_type,
-                level: change.level || "",
-                description: change.description || "",
-                pages: Array.isArray(change.pages) ? change.pages : [],
-                created_at: req.created_at,
-                category_id: change.category_id || "",
-                category_name: categoryMap[change.category_id] || "",
-              };
-            });
-          setPendingItems(contentPending);
-        }
-      } catch {
-        // ignore
+  const loadPendingContent = useCallback(async () => {
+    try {
+      const response = await fetch("/api/approvals");
+      const payload = await response.json();
+      if (response.ok) {
+        const all = payload.approvals ?? [];
+        const contentPending = all
+          .filter((req: any) => req.target_type === "content" && req.status === "pending")
+          .map((req: any) => {
+            const change = req.change_data || {};
+            return {
+              id: req.id,
+              action_type: req.action_type,
+              level: change.level || "",
+              description: change.description || "",
+              pages: Array.isArray(change.pages) ? change.pages : [],
+              created_at: req.created_at,
+              category_id: change.category_id || "",
+              category_name: categoryMap[change.category_id] || "",
+            };
+          });
+        setPendingItems(contentPending);
       }
+    } catch {
+      // ignore
     }
-    loadPendingContent();
   }, [categoryMap]);
+
+  useEffect(() => {
+    loadPendingContent();
+  }, [loadPendingContent]);
 
   useEffect(() => {
     if (!selectedCategory) {
@@ -226,6 +227,8 @@ export default function ContentManagementPage() {
           setContents(updatedPayload.content ?? []);
         }
       }
+
+      await loadPendingContent();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to save content.");
     } finally {
@@ -275,6 +278,8 @@ export default function ContentManagementPage() {
           setContents(updatedPayload.content ?? []);
         }
       }
+
+      await loadPendingContent();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to delete content.");
     }
@@ -322,20 +327,22 @@ export default function ContentManagementPage() {
                         : "border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <div className="grid h-12 w-12 place-items-center rounded-3xl bg-slate-100 text-xl">
                         {category.icon}
                       </div>
                       <div>
                         <div className="font-semibold text-slate-950">{category.label}</div>
                         <div className="text-xs text-slate-500">{category.code}</div>
-                      </div>
-                    </div>
-                    {category.status === "Active" && (
+                          {category.status === "Active" && (
                       <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
                         Active
                       </span>
                     )}
+                      </div>
+                      
+                    </div>
+                  
                   </button>
                 ))}
               </div>
@@ -567,12 +574,7 @@ export default function ContentManagementPage() {
                                 >
                                   Edit
                                 </button>
-                                <button
-                                  onClick={() => handleDelete(item.id)}
-                                  className="rounded-2xl border border-red-200 bg-white px-3 py-2 text-xs font-medium text-red-600 hover:border-red-300"
-                                >
-                                  Delete
-                                </button>
+                              
                               </div>
                             </div>
                           </div>

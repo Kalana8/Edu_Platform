@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 type ApprovalRequest = {
   id: string;
   user_id: string;
-  target_type: 'category' | 'school';
+  target_type: 'category' | 'school' | 'content';
   action_type: 'create' | 'update' | 'delete';
   target_id: string | null;
   change_data: Record<string, any>;
@@ -28,10 +28,10 @@ export default function ApprovalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<string | null>(null); // holds approval ID being submitted
-  const [comments, setComments] = useState<Record<string, string>>({}); // maps approval ID to comment text
-    const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
- // category id -> code (name)
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
+  const [comments, setComments] = useState<Record<string, string>>({});
+  const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+  const [modalRequest, setModalRequest] = useState<ApprovalRequest | null>(null);
 
   const fetchApprovals = async () => {
     setIsLoading(true);
@@ -292,81 +292,96 @@ export default function ApprovalsPage() {
                   </div>
 
                   {/* Change details grid */}
-                  <div className="py-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Proposed Data changes:</p>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 rounded-2xl bg-slate-50 p-4 border border-slate-100">
-                      {req.target_id && (
-                        <div className="col-span-1 sm:col-span-2 lg:col-span-3 border-b border-slate-200 pb-2 mb-1">
-                          <span className="text-xs text-slate-500 font-semibold block">Target Identifier (ID / Slug):</span>
-                          <span className="text-sm font-mono text-slate-800 break-all">{req.target_id}</span>
-                        </div>
-                      )}
+                  <div className="py-4 space-y-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Proposed Data changes:</p>
 
+                    {req.target_type === "content" && (
+                      <div className="rounded-2xl bg-white border border-slate-200 p-4 space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {req.change_data?.category_id && (
+                            <div>
+                              <span className="text-xs text-slate-400 uppercase tracking-wider">Category</span>
+                              <p className="mt-1 text-sm font-semibold text-slate-900 break-words">
+                                {categoryMap[req.change_data.category_id as string] ?? String(req.change_data.category_id)}
+                              </p>
+                            </div>
+                          )}
+                          {req.change_data?.level && (
+                            <div>
+                              <span className="text-xs text-slate-400 uppercase tracking-wider">Level</span>
+                              <p className="mt-1 text-sm font-semibold text-slate-900">{req.change_data.level}</p>
+                            </div>
+                          )}
+                        </div>
+                        {req.change_data?.description && (
+                          <div>
+                            <span className="text-xs text-slate-400 uppercase tracking-wider">Description</span>
+                            <p className="mt-1 text-sm text-slate-700">{req.change_data.description}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {req.target_type !== "content" && (
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                        {req.target_id && (
+                          <div className="col-span-1 sm:col-span-2 lg:col-span-3 border-b border-slate-200 pb-2 mb-1">
+                            <span className="text-xs text-slate-500 font-semibold block">Target Identifier (ID / Slug):</span>
+                            <span className="text-sm font-mono text-slate-800 break-all">{req.target_id}</span>
+                          </div>
+                        )}
                         {Object.entries(req.change_data).map(([key, val]) => {
                           if (key === "is_published") return null;
-
                           const displayVal =
                             typeof val === "boolean"
                               ? val
                                 ? "✅ Yes/Active"
                                 : "❌ No/Inactive"
-                              : key === "category_id"
-                                ? categoryMap[val as string] ?? String(val)
-                                : String(val);
-
-                          if (key === "pages" && Array.isArray(val)) {
-                            const pageItems = val.filter(
-                              (page: any) => typeof page?.content === "string" && page.content.trim() !== ""
-                            );
-                            if (pageItems.length === 0) {
-                              return (
-                                <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3">
-                                  <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                                  <span className="text-sm font-semibold text-slate-900 mt-0.5 block">No pages included</span>
-                                </div>
-                              );
-                            }
-
-                            return (
-                              <div key={key} className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-3">
-                                <span className="text-xs text-slate-400 capitalize block">{key.replace(/([A-Z])/g, " $1")}</span>
-                                {pageItems.map((page: any, index: number) => {
-                                  const pageContent = typeof page.content === "string" ? page.content.trim() : "";
-                                  const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
-                                  return (
-                                    <div key={index} className="rounded-2xl border border-slate-200 bg-white p-4">
-                                      <div className="flex items-start justify-between gap-3">
-                                        <div className="flex-1">
-                                          <p className="text-sm font-semibold text-slate-900">
-                                            {pageTitle}
-                                          </p>
-                                          {page.page_number && (
-                                            <span className="mt-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                                              Page {page.page_number}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                      <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-700">
-                                        {pageContent}
-                                      </p>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            );
-                          }
-
+                              : String(val);
                           return (
                             <div key={key} className="flex flex-col">
                               <span className="text-xs text-slate-400 capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                              <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">
-                                {displayVal}
-                              </span>
+                              <span className="text-sm font-semibold text-slate-900 mt-0.5 break-words">{displayVal}</span>
                             </div>
                           );
                         })}
-                    </div>
+                      </div>
+                    )}
+
+                    {req.target_type === "content" && req.change_data?.pages && Array.isArray(req.change_data.pages) && (() => {
+                      const pageItems = req.change_data.pages.filter(
+                        (page: any) => typeof page?.content === "string" && page.content.trim() !== ""
+                      );
+                      if (pageItems.length === 0) return null;
+                      return (
+                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                          <span className="text-xs text-slate-400 uppercase tracking-wider block mb-3">Pages ({pageItems.length})</span>
+                          <div className="space-y-2">
+                            {pageItems.slice(0, 3).map((page: any, index: number) => {
+                              const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
+                              return (
+                                <div key={index} className="rounded-xl border border-slate-200 bg-white p-3">
+                                  <p className="text-sm font-semibold text-slate-900">{pageTitle}</p>
+                                  <p className="mt-1 text-xs text-slate-500 line-clamp-2">
+                                    {typeof page.content === "string" ? page.content.trim() : ""}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                            {pageItems.length > 3 && (
+                              <p className="text-xs text-slate-500">+{pageItems.length - 3} more page{pageItems.length - 3 > 1 ? "s" : ""}</p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setModalRequest(req)}
+                            className="mt-3 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300"
+                          >
+                            View all content
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Resolution comment and buttons */}
@@ -425,6 +440,70 @@ export default function ApprovalsPage() {
           </div>
         )}
       </div>
+
+      {modalRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setModalRequest(null)}>
+          <div className="max-h-[85vh] w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4 border-b border-slate-100 p-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">Full Content Preview</p>
+                <h2 className="mt-2 text-xl font-semibold text-slate-950">
+                  {modalRequest.change_data?.level || "Content"} Submission
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  {modalRequest.users?.name || "Moderator"} · {new Date(modalRequest.created_at).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalRequest(null)}
+                className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto p-6">
+              {modalRequest.change_data?.description && (
+                <div className="mb-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Description</p>
+                  <p className="mt-1 text-sm text-slate-700">{modalRequest.change_data.description}</p>
+                </div>
+              )}
+              {modalRequest.change_data?.pages && Array.isArray(modalRequest.change_data.pages) && (
+                <div className="space-y-4">
+                  {modalRequest.change_data.pages
+                    .filter((page: any) => typeof page?.content === "string" && page.content.trim() !== "")
+                    .map((page: any, index: number) => {
+                      const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
+                      return (
+                        <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                          <p className="text-sm font-semibold text-slate-900">{pageTitle}</p>
+                          {page.page_number && (
+                            <span className="mt-1 inline-flex rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                              Page {page.page_number}
+                            </span>
+                          )}
+                          <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-700">
+                            {typeof page.content === "string" ? page.content.trim() : ""}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+            <div className="border-t border-slate-100 p-6">
+              <button
+                type="button"
+                onClick={() => setModalRequest(null)}
+                className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

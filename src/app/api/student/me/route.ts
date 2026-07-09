@@ -58,16 +58,45 @@ export async function GET() {
     }
 
     const { data: progressItems, error: progressError } = await supabase
-      .from('reading_progress')
-      .select('pages_read, is_completed, content_id')
-      .eq('user_id', user.id);
+      .from("reading_progress")
+      .select("pages_read, is_completed, content_id")
+      .eq("user_id", user.id);
 
     if (progressError) {
-      console.error('Reading progress fetch error:', progressError);
+      console.error("Reading progress fetch error:", progressError);
     }
 
     const activeReading = (progressItems ?? []).filter((p) => !p.is_completed);
     const completedReading = (progressItems ?? []).filter((p) => p.is_completed);
+
+    let schoolRank: number | null = null;
+    let studentRank: number | null = null;
+
+    if (schoolId) {
+      const { data: schoolsData, error: schoolsError } = await supabase
+        .from("schools")
+        .select("id, total_points")
+        .order("total_points", { ascending: false });
+
+      if (!schoolsError && schoolsData) {
+        const schoolIndex = schoolsData.findIndex((s) => s.id === schoolId);
+        if (schoolIndex >= 0) {
+          schoolRank = schoolIndex + 1;
+        }
+      }
+    }
+
+    const { data: studentsData, error: studentsError } = await supabase
+      .from("students")
+      .select("id, total_credits")
+      .order("total_credits", { ascending: false });
+
+    if (!studentsError && studentsData) {
+      const studentIndex = studentsData.findIndex((s) => s.id === user.id);
+      if (studentIndex >= 0) {
+        studentRank = studentIndex + 1;
+      }
+    }
 
     return NextResponse.json(
       {
@@ -80,6 +109,8 @@ export async function GET() {
           totalCredits: student?.total_credits ?? 0,
           availableCredits: student?.available_credits ?? 0,
           withheldCredits: student?.withheld_credits ?? 0,
+          schoolRank,
+          studentRank,
         },
         reading: {
           activeCount: activeReading.length,

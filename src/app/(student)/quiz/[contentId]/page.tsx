@@ -247,10 +247,16 @@ export default function QuizPage() {
               })}
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
+              <button
+                onClick={() => router.push("/home")}
+                className="flex-1 rounded-3xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-[0.98]"
+              >
+                Go to Home
+              </button>
               <button
                 onClick={() => router.push(`/read/${contentId}`)}
-                className="w-full rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
+                className="flex-1 rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
               >
                 Continue Reading
               </button>
