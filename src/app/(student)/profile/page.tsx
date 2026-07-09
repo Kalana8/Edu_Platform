@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import BottomBar from "@/components/BottomBar";
 
 type ProfileData = {
   name: string;
@@ -57,11 +58,11 @@ export default function ProfilePage() {
       }
     }
 
-      setSaving(true);
-      setFeedback(null);
+    setSaving(true);
+    setFeedback(null);
 
-      try {
-        const response = await fetch("/api/student/customize-id", {
+    try {
+      const response = await fetch("/api/student/customize-id", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentId: editStudentId.trim() }),
@@ -160,69 +161,130 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Profile" subtitle="Manage your account" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
         </div>
 
-        <div className="flex flex-col gap-4 px-4 py-6">
+        <div className="flex flex-col gap-3 px-4 py-6">
           <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
             <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-100 text-sky-700">
-                <span className="text-2xl">👤</span>
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 to-violet-600 text-3xl text-white shadow-lg shadow-blue-600/20">
+                <span>{profile.name.charAt(0).toUpperCase()}</span>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Student ID</p>
-                <p className="mt-2 text-sm font-semibold text-slate-950">{profile.studentId}</p>
+                <p className="mt-2 text-lg font-bold text-slate-950 tracking-tight">{profile.studentId}</p>
               </div>
             </div>
 
             <button
               onClick={openModal}
-              className="mt-4 inline-flex items-center gap-2 rounded-3xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700"
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
             >
-              <span>✏️</span>
+              <span className="text-base">✏️</span>
               Customize Student ID
             </button>
           </div>
 
-        <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-          <p className="text-lg font-semibold text-slate-950">Your Stats</p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <p className="text-sm text-slate-500">School Rank</p>
-              <p className="mt-2 text-2xl font-semibold text-slate-950">#--</p>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500">User Rank</p>
-              <p className="mt-2 text-2xl font-semibold text-sky-600">#--</p>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500">Total Credits</p>
-              <p className="mt-2 text-2xl font-semibold text-slate-950">{profile.totalCredits.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
+          <div className="rounded-3xl bg-white p-5 shadow-sm">
 
-        <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-          <p className="text-lg font-semibold text-slate-950">School Info</p>
-          <div className="mt-4 space-y-3 text-sm text-slate-600">
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 p-4">
-              <span>School</span>
-              <span className="font-semibold text-slate-950">{profile.schoolName}</span>
+            <div className="mb-5">
+              <h2 className="text-lg font-bold">
+                Your Statistics
+              </h2>
+              <p className="text-sm text-slate-500">
+                Track your learning progress
+              </p>
             </div>
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 p-4">
-              <span>School ID</span>
-              <span className="font-semibold text-slate-950">{profile.schoolCode || profile.studentId.split("-").slice(0, -1).join("-")}</span>
-            </div>
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 p-4">
-              <span>Tier</span>
-              <span className="font-semibold text-slate-950">{profile.schoolTier}</span>
+
+            <div className="grid grid-cols-2 gap-4">
+
+              <div className="rounded-3xl bg-blue-50 p-5">
+                <div className="text-2xl">🏫</div>
+                <p className="mt-3 text-xs uppercase tracking-wider text-blue-600">
+                  School Rank
+                </p>
+                <p className="mt-2 text-3xl font-bold text-blue-900">
+                  #--
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-amber-50 p-5">
+                <div className="text-2xl">🏆</div>
+                <p className="mt-3 text-xs uppercase tracking-wider text-amber-700">
+                  Student Rank
+                </p>
+                <p className="mt-2 text-3xl font-bold text-amber-900">
+                  #--
+                </p>
+              </div>
+
+              <div className="col-span-2 rounded-3xl bg-emerald-50 p-5">
+                <div className="text-2xl">⭐</div>
+                <p className="mt-3 text-xs uppercase tracking-wider text-emerald-700">
+                  Total Learning Credits
+                </p>
+                <p className="mt-2 text-4xl font-bold text-emerald-900">
+                  {profile.totalCredits.toLocaleString()}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="rounded-3xl bg-white p-5 shadow-sm">
+            <div className="mb-5">
+              <h2 className="text-lg font-bold">
+                School Information
+              </h2>
+              <p className="text-sm text-slate-500">
+                Your registered school details
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-slate-400">
+                    School
+                  </p>
+                  <p className="mt-1 font-semibold text-slate-900">
+                    {profile.schoolName}
+                  </p>
+                </div>
+                <span className="text-xl">🏫</span>
+              </div>
+
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-slate-400">
+                    School ID
+                  </p>
+                  <p className="mt-1 font-semibold text-slate-900">
+                    {profile.schoolCode || profile.studentId.split("-").slice(0, -1).join("-")}
+                  </p>
+                </div>
+                <span className="text-xl">🆔</span>
+              </div>
+
+              <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-slate-400">
+                    Tier
+                  </p>
+                  <p className="mt-1 font-semibold text-slate-900">
+                    {profile.schoolTier}
+                  </p>
+                </div>
+                <span className="text-xl">🎓</span>
+              </div>
+            </div>
+
+          </div>
         </div>
       </main>
+
+      <BottomBar />
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setIsModalOpen(false)}>

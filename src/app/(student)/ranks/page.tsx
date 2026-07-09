@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import BottomBar from "@/components/BottomBar";
 
 type SchoolRank = {
   id: string;
@@ -112,47 +113,64 @@ export default function RanksPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Leaderboard" subtitle={isSchoolTab ? "See how schools rank" : "See how students rank"} gradientClass="from-amber-500 via-orange-500 to-rose-500" />
         </div>
 
-        <div className="px-4 py-6">
-          <div className="rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="grid gap-3">
-              <div className="flex items-center justify-between rounded-[1.5rem] bg-slate-100 p-4">
-                <span className="text-sm font-semibold text-slate-700">View</span>
-                <span className="rounded-full bg-blue-600 px-3 py-1 text-sm font-semibold text-white capitalize">
-                  {activeTab === "national" ? "National" : activeTab === "tier" ? "Tier" : "Students"}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-2 rounded-[1.5rem] bg-slate-100 p-2 text-center text-sm font-medium text-slate-600">
-                <button
-                  onClick={() => setActiveTab("tier")}
-                  className={`rounded-3xl py-3 transition ${activeTab === "tier" ? "bg-white shadow-sm" : ""}`}
-                >
-                  Tier
-                </button>
-                <button
-                  onClick={() => setActiveTab("national")}
-                  className={`rounded-3xl py-3 transition ${activeTab === "national" ? "bg-white shadow-sm" : ""}`}
-                >
-                  National
-                </button>
-                <button
-                  onClick={() => setActiveTab("students")}
-                  className={`rounded-3xl py-3 transition ${activeTab === "students" ? "bg-white shadow-sm" : ""}`}
-                >
-                  Students
-                </button>
-              </div>
+        <div className="flex flex-col gap-4 px-4 py-6">
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+
+
+            <div className="grid grid-cols-3 rounded-2xl bg-slate-100 p-1.5">
+
+              <button
+                onClick={() => setActiveTab("tier")}
+                className={`rounded-xl py-3 text-sm font-medium transition-all duration-200 ${activeTab === "tier"
+                    ? "bg-white text-blue-600 shadow"
+                    : "text-slate-600 hover:text-slate-900"
+                  }`}
+              >
+                🏫
+                <div className="mt-1 text-xs">Tier</div>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("national")}
+                className={`rounded-xl py-3 text-sm font-medium transition-all duration-200 ${activeTab === "national"
+                    ? "bg-white text-blue-600 shadow"
+                    : "text-slate-600 hover:text-slate-900"
+                  }`}
+              >
+                🌍
+                <div className="mt-1 text-xs">National</div>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("students")}
+                className={`rounded-xl py-3 text-sm font-medium transition-all duration-200 ${activeTab === "students"
+                    ? "bg-white text-blue-600 shadow"
+                    : "text-slate-600 hover:text-slate-900"
+                  }`}
+              >
+                👨‍🎓
+                <div className="mt-1 text-xs">Students</div>
+              </button>
+
             </div>
+
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="space-y-4">
             {items.length === 0 ? (
-              <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">
-                No rankings available yet.
+              <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+                <div className="text-5xl">🏆</div>
+                <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                  No Rankings Yet
+                </h3>
+                <p className="mt-2 text-sm text-slate-500">
+                  Rankings will appear once students start earning points.
+                </p>
               </div>
             ) : (
               items.map((item, index) => {
@@ -160,37 +178,108 @@ export default function RanksPage() {
                 const schoolItem = isSchoolTab ? (item as SchoolRank) : null;
                 const studentItem = !isSchoolTab ? (item as StudentRank) : null;
 
+                const isTopThree = index < 3;
+
                 return (
                   <div
                     key={item.id}
-                    className={`flex items-center justify-between rounded-[1.75rem] border px-4 py-4 shadow-sm ${
-                      isCurrent ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-white"
-                    }`}
+                    className={`relative overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
+          ${isCurrent
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-slate-200 bg-white"
+                      }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${getRankBadge(index, item.id)} font-bold text-lg`}>
-                        {index + 1}
+                    {isTopThree && (
+                      <div
+                        className={`absolute left-0 top-0 h-full w-1.5
+                ${index === 0
+                            ? "bg-yellow-400"
+                            : index === 1
+                              ? "bg-slate-400"
+                              : "bg-amber-700"
+                          }`}
+                      />
+                    )}
+
+                    <div className="flex items-center justify-between p-5">
+
+                      <div className="flex items-center gap-4">
+
+                        <div
+                          className={`flex h-14 w-14 items-center justify-center rounded-2xl text-lg font-bold
+                  ${index === 0
+                              ? "bg-yellow-100 text-yellow-700"
+                              : index === 1
+                                ? "bg-slate-200 text-slate-700"
+                                : index === 2
+                                  ? "bg-orange-100 text-orange-700"
+                                  : "bg-slate-100 text-slate-700"
+                            }`}
+                        >
+                          {index === 0
+                            ? "🥇"
+                            : index === 1
+                              ? "🥈"
+                              : index === 2
+                                ? "🥉"
+                                : `#${index + 1}`}
+                        </div>
+
+                        <div>
+
+                          <div className="flex items-center gap-2">
+
+                            <p className="text-base font-semibold text-slate-900">
+                              {item.name}
+                            </p>
+
+                            {isCurrent && (
+                              <span className="rounded-full bg-blue-600 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                                You
+                              </span>
+                            )}
+
+                          </div>
+
+                          {schoolItem && (
+                            <p className="mt-1 text-sm text-slate-500">
+                              {schoolItem.tier} • {schoolItem.points.toLocaleString()} Points
+                            </p>
+                          )}
+
+                          {studentItem && (
+                            <p className="mt-1 text-sm text-slate-500">
+                              {studentItem.totalCredits.toLocaleString()} Learning Credits
+                            </p>
+                          )}
+
+                        </div>
+
                       </div>
-                      <div>
-                        <p className="font-semibold text-slate-950">{item.name}</p>
-                        {schoolItem && (
-                          <p className="text-xs text-slate-500 capitalize">{schoolItem.tier} · {schoolItem.points.toLocaleString()} pts</p>
-                        )}
-                        {studentItem && (
-                          <p className="text-xs text-slate-500">{studentItem.totalCredits.toLocaleString()} credits</p>
-                        )}
+
+                      <div className="text-right">
+
+                        <p className="text-2xl font-bold text-slate-900">
+                          {schoolItem
+                            ? schoolItem.points.toLocaleString()
+                            : studentItem?.totalCredits.toLocaleString()}
+                        </p>
+
+                        <p className="text-xs uppercase tracking-wider text-slate-400">
+                          Points
+                        </p>
+
                       </div>
+
                     </div>
-                    <p className="font-semibold text-slate-950">
-                      {schoolItem ? schoolItem.points.toLocaleString() : studentItem ? studentItem.totalCredits.toLocaleString() : ""}
-                    </p>
                   </div>
                 );
-              }              )
+              })
             )}
           </div>
         </div>
       </main>
+      <BottomBar />
     </div>
   );
 }

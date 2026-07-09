@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import BottomBar from "@/components/BottomBar";
 
 type WalletData = {
   availableCredits: number;
@@ -109,32 +110,32 @@ export default function BoostPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" gradientClass="from-fuchsia-500 via-violet-600 to-blue-700" />
         </div>
 
-        <div className="flex flex-col gap-4 px-4 py-6">
-          <div className="rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <p className="text-sm text-slate-500">Available Credits</p>
-            <p className="mt-3 text-3xl font-semibold text-slate-950">{data?.availableCredits.toLocaleString() ?? 0}</p>
+        <div className="flex flex-col gap-2 px-4 py-6">
+          <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)] transition hover:shadow-lg">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Available Credits</p>
+            <p className="mt-3 text-4xl font-bold text-slate-950 tracking-tight">{data?.availableCredits.toLocaleString() ?? 0}</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {boostItems.map((item) => (
-              <div key={item.title} className="rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+              <div key={item.title} className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5">
                 <div className="flex items-start gap-4">
-                  <div className={`mt-1 flex h-12 w-12 items-center justify-center rounded-3xl ${item.color}`}>
-                    <span className="text-xl">⚡</span>
+                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl transition ${item.color}`}>
+                    <span className="text-2xl">⚡</span>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p className="text-base font-semibold text-slate-950">{item.title}</p>
                     <p className="mt-1 text-sm leading-6 text-slate-500">{item.description}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
-                  <p className="text-lg font-semibold text-slate-950">{item.cost} credits</p>
-                  <button className="rounded-3xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700">
+                  <p className="text-xl font-bold text-slate-950">{item.cost} credits</p>
+                  <button className="rounded-3xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95">
                     Purchase
                   </button>
                 </div>
@@ -143,6 +144,7 @@ export default function BoostPage() {
           </div>
         </div>
       </main>
+      <BottomBar />
     </div>
   );
 }

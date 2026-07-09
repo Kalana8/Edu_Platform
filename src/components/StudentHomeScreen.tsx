@@ -99,52 +99,95 @@ export default async function StudentHomeScreen() {
   const greeting = studentName ? `Hello, ${studentName}` : "";
 
   return (
-    <div className="min-h-[844px] bg-slate-100 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-[844px] w-full max-w-[390px] flex-col gap-4 px-4 pb-6">
-        <section className="overflow-hidden bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-slate-950/10">
+    <div className="min-h-[844px] bg-slate-100 text-slate-950 ">
+      <main className="mx-auto flex min-h-[844px] w-full max-w-[450px] flex-col gap-4 ">
+        <section className="overflow-hidden bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 px-5 py-15 text-white shadow-lg shadow-slate-950/10">
           <div className="flex flex-col gap-3">
             <div>
-              {greeting && <p className="text-sm uppercase tracking-[0.24em] text-sky-100/80">{greeting}</p>}
-              <p className="text-sm uppercase tracking-[0.24em] text-sky-100/80">{schoolName}</p>
-              <h1 className="mt-2 text-3xl font-semibold">{schoolName}</h1>
-              <p className="mt-1 text-sm text-sky-100/90">Tier: {schoolTier}</p>
+              {greeting && <p className="uppercase tracking-[0.24em] text-sky-100/80">{greeting}</p>}
             </div>
           </div>
         </section>
 
-        <section className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Today&apos;s Task</p>
-                <h2 className="text-2xl font-semibold text-slate-950">{taskPages}</h2>
-              </div>
-              <p className="text-sm font-medium text-slate-500">Progress: {totalPagesRead} pages</p>
+        <section className="mx-5 rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-6 text-white shadow-xl">
+
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-100">
+            Continue Learning
+          </p>
+
+          <h2 className="mt-3 text-3xl font-bold">
+            {totalPagesRead} Pages Read
+          </h2>
+
+          <p className="mt-2 text-sm text-blue-100">
+            You're making great progress. Keep reading to earn more learning credits.
+          </p>
+
+          <div className="mt-6">
+            <div className="mb-2 flex justify-between text-xs text-blue-100">
+              <span>Today's Goal</span>
+              <span>{Math.min(totalPagesRead, 100)}%</span>
             </div>
 
-            <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-              <div className="h-full rounded-full bg-sky-500" style={{ width: `${Math.min(totalPagesRead, 100)}%` }} />
+            <div className="h-3 overflow-hidden rounded-full bg-white/20">
+              <div
+                className="h-full rounded-full bg-white transition-all duration-500"
+                style={{ width: `${Math.min(totalPagesRead, 100)}%` }}
+              />
             </div>
-
-            <Link
-              href="/choose-category"
-              className="inline-flex w-full items-center justify-center rounded-3xl bg-blue-600 px-5 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
-            >
-              Choose Category & Start Reading
-            </Link>
           </div>
+
+          <Link
+            href="/choose-category"
+            className="mt-6 flex items-center justify-center rounded-2xl bg-white py-3 font-semibold text-blue-700 transition hover:bg-blue-50"
+          >
+            Continue Reading →
+          </Link>
+
         </section>
 
-        <section className="grid gap-4 grid-cols-1">
-          <div className="rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <p className="text-sm text-slate-500">Available Credits</p>
-            <p className="mt-3 text-3xl font-semibold text-slate-950">{availableCredits}</p>
+        <section className="mx-5 mt-5 grid grid-cols-2 gap-4">
+
+          <div className="rounded-3xl bg-white p-5 shadow-sm">
+
+            <div className="text-3xl">
+              ⭐
+            </div>
+
+            <p className="mt-3 text-xs uppercase tracking-widest text-slate-500">
+              Learning Credits
+            </p>
+
+            <p className="mt-2 text-4xl font-bold text-slate-900">
+              {availableCredits}
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Ready to redeem
+            </p>
+
           </div>
-          <div className="rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <p className="text-sm text-slate-500">Withhold (Locked)</p>
-            <p className="mt-3 text-3xl font-semibold text-amber-600">{withheldCredits}</p>
-            <p className="mt-2 text-sm text-slate-500">Total: {totalCredits}</p>
+
+          <div className="rounded-3xl bg-white p-5 shadow-sm">
+
+            <div className="text-3xl">
+              🔒
+            </div>
+
+            <p className="mt-3 text-xs uppercase tracking-widest text-slate-500">
+              Withheld
+            </p>
+
+            <p className="mt-2 text-4xl font-bold text-amber-600">
+              {withheldCredits}
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Total Earned: {totalCredits}
+            </p>
+
           </div>
+
         </section>
 
         {!user && (

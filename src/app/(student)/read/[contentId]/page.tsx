@@ -137,7 +137,7 @@ export default function ReadingPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-500">
-        Loading reading material…
+        <p className="text-sm font-medium animate-pulse">Loading reading material…</p>
       </div>
     );
   }
@@ -145,8 +145,8 @@ export default function ReadingPage() {
   if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-4">
-        <p className="text-sm text-rose-600">{error}</p>
-        <Link href="/choose-category" className="text-sm font-medium text-blue-600 underline">
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>
+        <Link href="/choose-category" className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]">
           Back to Categories
         </Link>
       </div>
@@ -157,7 +157,7 @@ export default function ReadingPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-4">
         <p className="text-sm text-slate-600">No pages available for this content yet.</p>
-        <Link href="/choose-category" className="text-sm font-medium text-blue-600 underline">
+        <Link href="/choose-category" className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]">
           Back to Categories
         </Link>
       </div>
@@ -172,17 +172,17 @@ export default function ReadingPage() {
   if (allPagesRead) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
-        <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col items-center justify-center gap-6 px-4">
-          <div className="w-full rounded-[1.75rem] bg-white p-6 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-100 text-3xl">✅</div>
-            <h2 className="mt-4 text-xl font-semibold text-slate-950">You&apos;ve finished this content!</h2>
-            <p className="mt-1 text-sm text-slate-500">
+        <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-6 px-4">
+          <div className="w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-8 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-blue-500 text-3xl text-white shadow-lg shadow-emerald-500/20">✅</div>
+            <h2 className="mt-5 text-xl font-bold text-slate-950 tracking-tight">You&apos;ve finished this content!</h2>
+            <p className="mt-2 text-sm text-slate-500">
               You have read all {readingState.totalPages} pages. Review with a quiz or pick another topic.
             </p>
             <div className="mt-6">
               <button
                 onClick={() => router.push("/choose-category")}
-                className="w-full rounded-3xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
               >
                 Back to Categories
               </button>
@@ -193,12 +193,34 @@ export default function ReadingPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-4">
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>
+        <Link href="/choose-category" className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]">
+          Back to Categories
+        </Link>
+      </div>
+    );
+  }
+
+  if (!readingState || pages.length === 0) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 px-4">
+        <p className="text-sm text-slate-600">No pages available for this content yet.</p>
+        <Link href="/choose-category" className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]">
+          Back to Categories
+        </Link>
+      </div>
+    );
+  }
+
   const currentPage = pages[currentPageIndex];
   const progressPercent = readingState.totalPages > 0 ? ((readingState.pagesRead) / readingState.totalPages) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <PageHeader
           backHref="/choose-category"
           backLabel="Back to Categories"
@@ -209,27 +231,27 @@ export default function ReadingPage() {
         />
 
         <div className="flex-1 overflow-y-auto px-4 pb-6">
-          <div className="mb-4 h-2 overflow-hidden rounded-full bg-slate-200">
-            <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
+          <div className="sticky top-0 z-10 bg-slate-50 pb-3 pt-2">
+            <div className="h-2 overflow-hidden rounded-full bg-slate-200 shadow-inner">
+              <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-300" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
+            </div>
           </div>
 
           <div className="rounded-[1.75rem] bg-white p-6 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <h2 className="text-xl font-semibold text-slate-950">{currentPage.title}</h2>
-            <div className="mt-4 whitespace-pre-line text-sm leading-6 text-slate-700">
-              {currentPage.content}
-            </div>
+            <h2 className="text-xl font-semibold text-slate-950 tracking-tight">{currentPage.title}</h2>
+            <div className="mt-4 whitespace-pre-line text-sm leading-7 text-slate-600">{currentPage.content}</div>
           </div>
         </div>
 
-        <div className="sticky bottom-0 border-t border-slate-200 bg-white/80 px-4 py-4 backdrop-blur">
+        <div className="sticky bottom-0 border-t border-slate-200/80 bg-white/90 px-4 py-4 backdrop-blur-lg">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-slate-500">
+            <span className="text-xs font-medium text-slate-500">
               {pagesReadThisSession}/2 read this session
             </span>
             <button
               onClick={goNext}
               disabled={saving}
-              className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:opacity-40"
+              className="rounded-3xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-95 disabled:opacity-40 disabled:active:scale-100"
             >
               {currentPageIndex >= pages.length - 1
                 ? (pages.length >= 2 ? "Take Quiz" : "Finish")

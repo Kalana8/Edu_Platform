@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import BottomBar from "@/components/BottomBar";
 
 type WalletData = {
   availableCredits: number;
@@ -10,7 +11,7 @@ type WalletData = {
   withheldCredits: number;
 };
 
-export default function WalletPage() {
+function WalletPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<WalletData | null>(null);
@@ -91,36 +92,81 @@ export default function WalletPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-950 pb-2">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Wallet" subtitle="Manage your credits" gradientClass="from-blue-600 via-cyan-600 to-sky-500" />
         </div>
 
-        <div className="px-4 py-6">
-          <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="rounded-[1.75rem] bg-slate-100 p-4">
-              <p className="text-sm text-slate-500">Available Credits</p>
-              <div className="mt-3 flex items-center justify-between">
-                <p className="text-3xl font-semibold text-slate-950">{data.availableCredits.toLocaleString()}</p>
-                <span className="rounded-3xl bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">Active</span>
-              </div>
-            </div>
+        <div className="flex flex-col gap-5 bg-slate-50 px-4 py-6">
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-6 text-white shadow-xl">
+            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
+            <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-white/5" />
+            <div className="relative">
 
-            <div className="mt-4 grid gap-4">
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-sm font-semibold text-slate-950">Total Credits</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">{data.totalCredits.toLocaleString()}</p>
-                <p className="mt-1 text-sm text-slate-500">{data.availableCredits.toLocaleString()} available · {data.withheldCredits.toLocaleString()} withheld</p>
-              </div>
-              <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm">
-                <p className="text-sm font-semibold text-slate-950">Spend Credits</p>
-                <p className="mt-2 text-sm text-slate-500">Use credits for boosts and premium features.</p>
+              <div className="flex items-start justify-between">
+
+                <div>
+                  <p className="text-m uppercase tracking-[0.3em] text-blue-100 font-semibold">
+                    Available Credits
+                  </p>
+
+                  <h2 className="mt-4 text-5xl font-bold">
+                    {data.availableCredits.toLocaleString()}
+                  </h2>
+
+                  <p className="mt-2 text-sm text-blue-100">
+                    Earn credits by completing quizzes.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-white/15 p-4 backdrop-blur">
+                  ⭐
+                </div>
+
               </div>
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            <div className="rounded-3xl bg-white p-5 shadow-sm">
+              <div className="text-2xl">🏆</div>
+
+              <p className="mt-3 text-xs uppercase tracking-widest text-slate-500">
+                Total Earned
+              </p>
+
+              <p className="mt-2 text-3xl font-bold">
+                {data.totalCredits.toLocaleString()}
+              </p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                All time
+              </p>
+
+            </div>
+
+            <div className="rounded-3xl bg-white p-5 shadow-sm">
+              <div className="text-2xl">🔒</div>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                Withheld
+              </p>
+              <p className="mt-2 text-3xl font-bold text-slate-900">
+                {data.withheldCredits.toLocaleString()}
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                Pending release
+              </p>
+            </div>
+
+          </div>
+
         </div>
       </main>
+      <BottomBar />
     </div>
   );
 }
+
+export default WalletPage;

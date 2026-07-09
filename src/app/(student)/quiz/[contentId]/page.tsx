@@ -162,7 +162,7 @@ export default function QuizPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
-        <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col items-center justify-center px-4">
+        <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center px-4 py-6">
           <div className="text-center">
             <p className="text-lg font-semibold text-slate-950">Generating quiz…</p>
             <p className="mt-2 text-sm text-slate-500">This may take a few seconds.</p>
@@ -175,11 +175,11 @@ export default function QuizPage() {
   if (error && !result) {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
-        <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col items-center justify-center gap-4 px-4">
+        <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-4 px-4 py-6">
           <p className="text-sm text-rose-600">{error}</p>
           <button
             onClick={() => router.push(`/read/${contentId}`)}
-            className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+            className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
           >
             Back to Reading
           </button>
@@ -192,16 +192,16 @@ export default function QuizPage() {
     const optionLabels = ["a", "b", "c", "d"];
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
-        <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col items-center justify-center gap-6 px-4">
-          <div className="w-full rounded-[1.75rem] bg-white p-6 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Quiz Result</p>
-            <h2 className="mt-2 text-2xl font-semibold text-slate-950">
+        <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-6 px-4 py-6">
+          <div className="w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-6 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">Quiz Result</p>
+            <h2 className="mt-2 text-2xl font-bold text-slate-950 tracking-tight">
               {result.total > 0 ? `${result.score} / ${result.total}` : "Completed"}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
               {result.passed ? "You passed!" : "Keep trying! You need at least 3 correct answers to unlock the next chapter."}
             </p>
-            <div className="mt-4 rounded-2xl border border-slate-200 p-4">
+            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Credits Earned</p>
               <p className="mt-2 text-3xl font-bold text-blue-600">+{result.earnedCredits}</p>
               <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
@@ -219,7 +219,7 @@ export default function QuizPage() {
               </p>
             </div>
 
-            <div className="mt-6 space-y-3">
+            <div className="mt-6 space-y-2.5">
               {questions.map((q, idx) => {
                 const userOptionId = selectedAnswers[q.id];
                 const userIndex = q.options.findIndex((o) => o.id === userOptionId);
@@ -229,9 +229,7 @@ export default function QuizPage() {
                 return (
                   <div
                     key={q.id}
-                    className={`rounded-2xl border p-4 ${
-                      isCorrect ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"
-                    }`}
+                    className={`rounded-2xl border p-4 ${isCorrect ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}
                   >
                     <p className="text-sm font-semibold text-slate-950">
                       {idx + 1}. {q.question}
@@ -252,7 +250,7 @@ export default function QuizPage() {
             <div className="mt-6">
               <button
                 onClick={() => router.push(`/read/${contentId}`)}
-                className="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
+                className="w-full rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
               >
                 Continue Reading
               </button>
@@ -270,7 +268,7 @@ export default function QuizPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-6">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col px-4 py-6">
         <PageHeader
           backHref={`/read/${contentId}`}
           backLabel="Back to Reading"
@@ -281,19 +279,17 @@ export default function QuizPage() {
           className="-mx-4 -mt-6"
         />
 
-        <div className="mt-4">
+        <div className="mt-4 rounded-[1.5rem] border border-slate-200/80 bg-white p-4 shadow-sm">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-            <div className="h-full rounded-full bg-blue-600 transition-all duration-500" style={{ width: `${progress}%` }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
         {error && (
-          <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {error}
-          </div>
+          <div className="mt-4 rounded-[1.5rem] border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700 shadow-sm">{error}</div>
         )}
 
-        <div className="mt-4 rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
+        <div className="mt-4 rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Time left</p>
             <p className={`text-lg font-bold tabular-nums ${timeLeft <= 10 ? "text-rose-600" : "text-slate-950"}`}>
@@ -302,19 +298,19 @@ export default function QuizPage() {
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
             <div
-              className={`h-full rounded-full transition-all duration-1000 ${timeLeft <= 10 ? "bg-rose-500" : "bg-blue-500"}`}
+              className={`h-full rounded-full transition-all duration-1000 ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-blue-600 to-violet-600"}`}
               style={{ width: `${timerPercent}%` }}
             />
           </div>
 
-          <p className="mt-4 text-base font-semibold text-slate-950">{currentQuestion.question}</p>
-          <div className="mt-3 space-y-2">
+          <p className="mt-5 text-base font-semibold text-slate-950 leading-relaxed">{currentQuestion.question}</p>
+          <div className="mt-4 space-y-2.5">
             {currentQuestion.options.map((opt) => {
               const isSelected = selectedAnswers[currentQuestion.id] === opt.id;
               return (
                 <label
                   key={opt.id}
-                  className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition cursor-pointer ${
+                  className={`flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-sm transition cursor-pointer ${
                     isSelected
                       ? "border-blue-500 bg-blue-50 text-blue-700"
                       : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -341,7 +337,7 @@ export default function QuizPage() {
           type="button"
           onClick={handleNext}
           disabled={submitting}
-          className="mt-4 w-full rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+          className="mt-5 w-full rounded-3xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-400 disabled:active:scale-100"
         >
           {isLast ? (submitting ? "Submitting…" : "Submit Quiz") : "Next"}
         </button>

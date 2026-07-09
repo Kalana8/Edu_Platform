@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import BottomBar from "@/components/BottomBar";
 import { notFound } from "next/navigation";
 import { slugToLabel } from "@/lib/slug";
 
@@ -71,7 +72,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col gap-4 px-4 py-6">
+      <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col gap-3 px-4 py-6">
         <PageHeader
           backHref="/choose-category"
           backLabel="Back to Categories"
@@ -83,30 +84,68 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         />
 
         <div className="space-y-4">
-          {mappedLevels.map((level) => (
+
+          {mappedLevels.map((level, index) => (
             <Link
               key={level.title}
               href={`/category/${slug}/${level.title.toLowerCase()}`}
-              className="block overflow-hidden rounded-[1.75rem] bg-white p-4 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)] transition hover:-translate-y-1 hover:shadow-lg"
+              className="group relative block overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl"
             >
-              <div className="flex items-center gap-4">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-3xl ${level.color}`}>
-                  <span className="text-xl">{level.icon}</span>
+
+              {/* Decorative background */}
+              <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-blue-50 opacity-70 transition group-hover:scale-150" />
+
+              <div className="relative flex items-center gap-4">
+
+                {/* Level Icon */}
+                <div
+                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl text-3xl transition-transform duration-300 group-hover:scale-110 ${level.color}`}
+                >
+                  {level.icon}
                 </div>
-                <div>
-                  <p className="font-semibold text-slate-950">{level.title}</p>
-                  <p className="text-xs text-slate-500">{level.subtitle}</p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    {level.count > 0
-                      ? `${level.count} item${level.count > 1 ? 's' : ''} · ${level.pages} page${level.pages !== 1 ? 's' : ''}`
-                      : 'No content yet'}
+
+
+                <div className="min-w-0 flex-1">
+
+                  <div className="flex items-center justify-between">
+
+                    <h3 className="text-lg font-bold text-slate-900">
+                      {level.title}
+                    </h3>
+
+
+                    <div className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      Level {index + 1}
+                    </div>
+
+                  </div>
+
+
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
+                    {level.subtitle}
                   </p>
+
+
+
+
                 </div>
+
+
+                {/* Arrow */}
+                <div className="rounded-full p-2 text-slate-600 transition group-hover:bg-blue-600 group-hover:text-white">
+                  →
+                </div>
+
+
               </div>
+
+
             </Link>
           ))}
+
         </div>
       </main>
+      <BottomBar />
     </div>
   );
 }
