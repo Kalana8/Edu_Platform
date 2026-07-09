@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { hashPassword } from '@/lib/password';
 
 async function mapStudents(supabase: ReturnType<typeof createAdminClient>) {
   const { data: studentsData, error: studentsError } = await supabase
@@ -70,7 +71,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, studentId, schoolId, totalCredits, availableCredits } = await request.json();
+    const { name, email, studentId, schoolId, totalCredits, availableCredits, password } = await request.json();
 
     if (!name || !email || !studentId || !schoolId) {
       return NextResponse.json(
@@ -81,14 +82,26 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
+    const trimmedEmail = email.trim().toLowerCase();
+    const existingUser = await supabase.from('users').select('id').eq('email', trimmedEmail).maybeSingle();
+    if (existingUser.data && !existingUser.error) {
+      return NextResponse.json(
+        { error: 'A user with this email already exists.' },
+        { status: 409 }
+      );
+    }
+
+    const generatedId = crypto.randomUUID();
+
     const { data: createdUser, error: userError } = await supabase
       .from('users')
       .insert([
         {
-          email: email.trim().toLowerCase(),
+          id: generatedId,
+          email: trimmedEmail,
           name: name.trim(),
           role: 'student',
-          password_hash: null,
+          password_hash: password ? hashPassword(password) : null,
         },
       ])
       .select('id, name, email, role')
@@ -120,10 +133,40 @@ export async function POST(request: NextRequest) {
 
     if (studentError || !studentData) {
       console.error('Student create row error:', studentError);
+      await supabase.from('users').delete().eq('id', createdUser.id);
       return NextResponse.json(
         { error: studentError?.message || 'Unable to create student profile.' },
         { status: 500 }
       );
+    }
+
+    if (password) {
+      try {
+        const { error: authError } = await supabase.auth.admin.createUser({
+          email: trimmedEmail,
+          password,
+          email_confirm: true,
+          user_metadata: { role: 'student', student_id: studentId.trim() },
+        });
+        if (authError) {
+          console.error('Supabase Auth create user error:', authError);
+        }
+      } catch (authError) {
+        console.error('Supabase Auth create user exception:', authError);
+      }
+    } else {
+      try {
+        const { error: authError } = await supabase.auth.admin.createUser({
+          email: trimmedEmail,
+          email_confirm: true,
+          user_metadata: { role: 'student', student_id: studentId.trim() },
+        });
+        if (authError) {
+          console.error('Supabase Auth create user error:', authError);
+        }
+      } catch (authError) {
+        console.error('Supabase Auth create user exception:', authError);
+      }
     }
 
     const { data: schoolData } = await supabase.from('schools').select('name').eq('id', schoolId).single();
@@ -140,7 +183,6 @@ export async function POST(request: NextRequest) {
           totalCredits: studentData.total_credits ?? 0,
           availableCredits: studentData.available_credits ?? 0,
           withheldCredits: studentData.withheld_credits ?? 0,
-          isActive: true,
         },
       },
       { status: 201 }
@@ -196,7 +238,7 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (studentError || !studentData) {
-      console.error('Student update row error:', studentError);
+      console.error('Student create row error:', studentError);
       return NextResponse.json(
         { error: studentError?.message || 'Unable to update student profile.' },
         { status: 500 }
@@ -217,7 +259,6 @@ export async function PUT(request: NextRequest) {
           totalCredits: studentData.total_credits ?? 0,
           availableCredits: studentData.available_credits ?? 0,
           withheldCredits: studentData.withheld_credits ?? 0,
-          isActive: true,
         },
       },
       { status: 200 }

@@ -31,10 +31,6 @@ export async function POST(request: NextRequest) {
     }
 
     const trimmedId = studentId.trim();
-    const idParts = trimmedId.split("-");
-    const lastPart = idParts[idParts.length - 1] ?? trimmedId;
-    const displayName = `Student ${lastPart}`;
-
     const supabase = createAdminClient();
 
     const { data: existing, error: existingError } = await supabase
@@ -63,7 +59,6 @@ export async function POST(request: NextRequest) {
       .from("students")
       .update({
         student_id: trimmedId,
-        name: displayName,
       })
       .eq("id", user.id)
       .select("id, student_id, name, school_id, total_credits, available_credits, withheld_credits")

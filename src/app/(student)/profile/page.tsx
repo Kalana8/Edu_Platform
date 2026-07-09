@@ -77,7 +77,7 @@ export default function ProfilePage() {
       }
 
       if (payload.student) {
-        setProfile((prev) => prev ? { ...prev, studentId: payload.student.studentId, name: payload.student.name } : prev);
+        setProfile((prev) => prev ? { ...prev, studentId: payload.student.studentId } : prev);
       }
 
       setIsModalOpen(false);

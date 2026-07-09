@@ -95,6 +95,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    try {
+      const { error: authError } = await supabase.auth.admin.createUser({
+        email: email.trim().toLowerCase(),
+        password,
+        email_confirm: true,
+        user_metadata: { role: 'moderator' },
+      });
+      if (authError) {
+        console.error('Supabase Auth create moderator error:', authError);
+      }
+    } catch (authError) {
+      console.error('Supabase Auth create moderator exception:', authError);
+    }
+
     return NextResponse.json(
       {
         moderator: {
