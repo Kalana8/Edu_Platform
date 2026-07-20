@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { contentId } = body;
 
-    if (!contentId) {
+    if (typeof contentId !== "string" || contentId.trim() === "") {
       return NextResponse.json({ error: "contentId is required." }, { status: 400 });
     }
 
@@ -73,13 +73,53 @@ Generate a quiz based on this reading material:
 
 ${pageTexts}`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-      },
-    });
+    type GenerateResult = Awaited<ReturnType<typeof ai.models.generateContent>>;
+    const generateWithRetry = async (maxRetries = 3): Promise<GenerateResult> => {
+      let attempt = 0;
+      while (true) {
+        try {
+          return await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: prompt,
+            config: {
+              responseMimeType: "application/json",
+            },
+          });
+        } catch (err) {
+          const apiError = err as { status?: number; message?: string };
+          const isRateLimit = apiError?.status === 429 ||
+            /RESOURCE_EXHAUSTED|exceeded your current quota/i.test(apiError?.message ?? "");
+          if (!isRateLimit || attempt >= maxRetries) throw err;
+
+          const retryDelayMatch = /retryDelay":"?(\d+(?:\.\d+)?)s/i.exec(apiError?.message ?? "");
+          const waitMs = retryDelayMatch
+            ? Math.min(Number(retryDelayMatch[1]) * 1000, 60000)
+            : Math.min(2000 * Math.pow(2, attempt), 60000);
+
+          attempt += 1;
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+        }
+      }
+    };
+
+    let response: GenerateResult;
+    try {
+      response = await generateWithRetry();
+    } catch (err) {
+      const apiError = err as { status?: number; message?: string };
+      const isQuota = apiError?.status === 429 ||
+        /RESOURCE_EXHAUSTED|exceeded your current quota/i.test(apiError?.message ?? "");
+      if (isQuota) {
+        return NextResponse.json(
+          {
+            error:
+              "The AI quiz service is temporarily out of quota. Please wait a moment and try again.",
+          },
+          { status: 503 }
+        );
+      }
+      throw err;
+    }
 
     const raw = response.text?.trim() || "{}";
     let parsed: { questions?: Array<Record<string, unknown>> };
