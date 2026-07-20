@@ -10,6 +10,7 @@
 //     "192.168.*",
 //     "10.0.*",
 //     "172.16.*",
+
 //   ],
 // };
 
@@ -22,7 +23,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   
-  allowedDevOrigins: ['192.168.8.101', 'localhost', '127.0.0.1'],
+  allowedDevOrigins: ['192.168.8.101', 'localhost', '127.0.0.1', '192.168.8.103', '192.168.8.102'],
 };
 
 export default nextConfig;

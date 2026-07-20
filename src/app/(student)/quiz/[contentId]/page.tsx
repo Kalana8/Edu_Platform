@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 
@@ -43,51 +43,51 @@ export default function QuizPage() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<QuizResult | null>(null);
 
-  useEffect(() => {
-    const loadQuiz = async () => {
-      setLoading(true);
-      setError(null);
+  const loadQuiz = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const response = await fetch("/api/quiz/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contentId }),
-        });
+    try {
+      const response = await fetch("/api/quiz/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId }),
+      });
 
-        if (response.status === 401) {
-          router.replace("/");
-          return;
-        }
-
-        const payload = await response.json();
-
-        if (!response.ok) {
-          throw new Error(payload.error || "Unable to generate quiz.");
-        }
-
-        const normalized: Question[] = (payload.questions ?? []).map((q: Record<string, unknown>) => ({
-          id: typeof q.id === "string" ? q.id : "",
-          question: typeof q.question === "string" ? q.question : "",
-          options: Array.isArray(q.options)
-            ? q.options.map((opt: Record<string, unknown>) => ({
-                id: typeof opt.id === "string" ? opt.id : "",
-                text: typeof opt.text === "string" ? opt.text : "",
-              }))
-            : [],
-          correctIndex: typeof q.correctIndex === "number" && Number.isInteger(q.correctIndex) ? q.correctIndex : 0,
-        }));
-
-        setQuestions(normalized);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load quiz.");
-      } finally {
-        setLoading(false);
+      if (response.status === 401) {
+        router.replace("/");
+        return;
       }
-    };
 
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Unable to generate quiz.");
+      }
+
+      const normalized: Question[] = (payload.questions ?? []).map((q: Record<string, unknown>) => ({
+        id: typeof q.id === "string" ? q.id : "",
+        question: typeof q.question === "string" ? q.question : "",
+        options: Array.isArray(q.options)
+          ? q.options.map((opt: Record<string, unknown>) => ({
+              id: typeof opt.id === "string" ? opt.id : "",
+              text: typeof opt.text === "string" ? opt.text : "",
+            }))
+          : [],
+        correctIndex: typeof q.correctIndex === "number" && Number.isInteger(q.correctIndex) ? q.correctIndex : 0,
+      }));
+
+      setQuestions(normalized);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load quiz.");
+    } finally {
+      setLoading(false);
+    }
+  }, [contentId, router]);
+
+  useEffect(() => {
     void loadQuiz();
-  }, [contentId]);
+  }, [loadQuiz]);
 
   const submitQuiz = async () => {
     setSubmitting(true);
@@ -177,12 +177,20 @@ export default function QuizPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-4 px-4 py-6">
           <p className="text-sm text-rose-600">{error}</p>
-          <button
-            onClick={() => router.push(`/read/${contentId}`)}
-            className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
-          >
-            Back to Reading
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => { setError(null); setLoading(true); void loadQuiz(); }}
+              className="rounded-3xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 active:scale-[0.98]"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => router.push(`/read/${contentId}`)}
+              className="rounded-3xl bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-300 active:scale-[0.98]"
+            >
+              Back to Reading
+            </button>
+          </div>
         </main>
       </div>
     );
