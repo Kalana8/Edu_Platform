@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FormError, PrimaryButton, SecondaryLink, TextField } from "@/components/ui/form";
 
 export default function JoinSchool() {
   const router = useRouter();
@@ -62,38 +62,54 @@ export default function JoinSchool() {
   }
 
   return (
-    <div className="min-h-screen  bg-brand text-slate-950">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-4 py-8 text-white">
-          <div className="space-y-3 text-center mt-18">
-            <h1 className="text-3xl text-white font-semibold tracking-tight">Join Your School</h1>
+    <div className="min-h-screen bg-brand text-white">
+      <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-6 pt-16 pb-32">
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight">Join Your School</h1>
+          <p className="text-white/75">
+            Enter the ID your <span className="font-medium text-white">school</span> gave you
+          </p>
+          {error && <FormError id="school-id-error">{error}</FormError>}
+        </div>
+
+        <form
+          className="mt-12 flex flex-col gap-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void verify();
+          }}
+          noValidate
+        >
+          <TextField
+            id="school-id"
+            label="School ID"
+            value={schoolId}
+            onChange={(e) => {
+              setSchoolId(e.target.value.toUpperCase());
+              if (error) setError(null);
+            }}
+            type="text"
+            autoComplete="off"
+            autoCapitalize="characters"
+            spellCheck={false}
+            placeholder="SCH-45821"
+            error={!!error}
+            aria-describedby={error ? "school-id-error" : undefined}
+            className="tracking-wider"
+          />
+
+          <div className="flex flex-col gap-3">
+            <PrimaryButton type="submit" loading={loading}>
+              {loading ? "Verifying…" : "Verify School"}
+            </PrimaryButton>
+            <SecondaryLink href="/">
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              Back
+            </SecondaryLink>
           </div>
-
-          <div className="mt-25 space-y-3 px-6">
-            <div className="space-y-2 mb-13">
-              <label className="block  font-medium ">Enter School ID</label>
-              <input
-                value={schoolId}
-                onChange={(e) => setSchoolId(e.target.value)}
-                type="text"
-                placeholder="SCH-45821"
-                className="w-full rounded-3xl border border-slate-200 bg-slate-50 p-4 py-3 text-sm text-slate-900 outline-none ring-1 ring-transparent transition focus:border-slate-300 focus:ring-slate-200"
-              />
-              <p className=" ">Ask your school for the ID.</p>
-              {error && <p className="text-sm text-red-300 font-bold tracking-wide">{error}</p>}
-            </div>
-
-            <button
-              onClick={() => {
-                verify();
-              }}
-              disabled={loading}
-              className="inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold rounded-lg bg-white px-8 text-base font-semibold text-blue-700 hover:cursor-pointer"
-            >
-              {loading ? "Verifying..." : "Verify School"}
-            </button>
-
-            <Link href="/" className="block text-center text-sm ">Cancel</Link>
-          </div>
+        </form>
       </main>
     </div>
   );

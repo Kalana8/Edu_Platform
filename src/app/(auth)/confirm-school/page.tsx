@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { CSSProperties, ReactNode } from "react";
+import { SecondaryLink } from "@/components/ui/form";
 
 type SearchParams =
   | Record<string, string | string[] | undefined>
@@ -19,51 +21,100 @@ export default async function ConfirmSchool({
   const tier = pickValue(params.tier) || "Loading...";
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 bg-brand">
-      <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-8 py-8 text-white">
-        <div className="space-y-4 mt-18 text-center">
-          <h1 className="text-3xl font-semibold ">Confirm Your School</h1>
+    <div className="min-h-screen bg-brand text-white">
+      <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-6 pt-16 pb-32">
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight">Confirm Your School</h1>
+          <p className="text-white/75">Make sure these details are correct</p>
         </div>
 
-        <div className="mt-19 overflow-hidden rounded-2xl border border-white/40 bg-white/10 p-1 shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur-md ring-1 ring-white/30">
-          <div className="rounded-xl bg-white/75 p-6 backdrop-blur-sm">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                  <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 0 1-.707 0A50.88 50.88 0 0 0 7.5 12.173v-.224c0-.131.067-.248.172-.311a54.6 54.6 0 0 1 4.653-2.52.75.75 0 0 0-.195-1.379 56.345 56.345 0 0 0-4.81-1.245.75.75 0 0 1-.448-.739A60.5 60.5 0 0 1 11.7 2.805Z" />
-                  <path d="M13.06 15.473a48.45 48.45 0 0 1 7.666 4.282c.63.355.146 1.285-.622 1.285h-8.552a.75.75 0 0 1-.704-.513l-2.81-9.778a.75.75 0 0 1 .54-.97 61.42 61.42 0 0 0 6.542-2.182 61.42 61.42 0 0 0 1.84-1.176l.079-.05a.75.75 0 0 1 .714.066 60.2 60.2 0 0 1 5.1 3.152.75.75 0 0 1-.34 1.345 48.3 48.3 0 0 0-7.78 2.91c-.252.084-.51.156-.773.215Z" />
-                  <path d="M3.462 14.42a.75.75 0 0 0 .688.394 59.97 59.97 0 0 0 13.217-2.09.75.75 0 0 0 .406-1.304 55.5 55.5 0 0 0-8.59-3.409.75.75 0 0 0-.718.22l-3.084 3.498a.75.75 0 0 0-.154.838Z" />
+        {/* School card: illustration breaks out of the top edge, CTA sits in a notch cut from the bottom-right corner */}
+        <div className="relative mt-20 rounded-[2rem] bg-blue-50 px-6 pb-28 pt-20 text-slate-900 shadow-[0_24px_48px_-20px_rgba(4,43,68,0.55)]">
+          <BooksIllustration className="absolute -top-14 left-4 h-32 w-36 drop-shadow-[0_10px_12px_rgba(4,43,68,0.25)]" />
+
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Your school</p>
+          <h2 className="mt-1 text-3xl font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{schoolName}</h2>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Chip>
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="m12 3 9 5-9 5-9-5z" />
+                <path d="m3 13 9 5 9-5" />
+              </svg>
+              {tier} tier
+            </Chip>
+            {schoolCode && (
+              <Chip>
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18" />
                 </svg>
-              </span>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-600">School Name</p>
-                <p className="text-base font-semibold text-slate-950">{schoolName}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 pt-4">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-600">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-                  <path fillRule="evenodd" d="M5.166 2.62a.75.75 0 0 1 .75.75c0 .894.393 1.693 1.017 2.24a.75.75 0 1 1-.95 1.16A4.478 4.478 0 0 0 3.666 3.37a.75.75 0 0 1 .75-.75Zm8.27 0a.75.75 0 0 1 .75.75c0 .894.393 1.693 1.017 2.24a.75.75 0 1 1-.95 1.16 4.478 4.478 0 0 0-2.317-2.035.75.75 0 0 1 .5-1.165ZM3.9 8.7a.75.75 0 0 1 .75-.75h14.7a.75.75 0 0 1 0 1.5H4.65a.75.75 0 0 1-.75-.75ZM3.9 12.45a.75.75 0 0 1 .75-.75h14.7a.75.75 0 0 1 0 1.5H4.65a.75.75 0 0 1-.75-.75Zm0 3.75a.75.75 0 0 1 .75-.75h14.7a.75.75 0 0 1 0 1.5H4.65a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
-                  <path d="M4.5 19.5a.75.75 0 0 1 .75-.75h13.5a.75.75 0 0 1 0 1.5H5.25a.75.75 0 0 1-.75-.75Z" />
-                </svg>
-              </span>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-600">Tier</p>
-                <p className="text-base font-semibold text-slate-950">{tier}</p>
-              </div>
-            </div>
+                {schoolCode}
+              </Chip>
+            )}
+          </div>
+
+          {/* Notch: page-coloured block with concave corners, holding the join button */}
+          <div className="absolute bottom-0 right-0 rounded-tl-[1.75rem] bg-brand pl-3 pt-3">
+            <span aria-hidden className="absolute -top-7 right-0 h-7 w-7" style={notchCorner} />
+            <span aria-hidden className="absolute -left-7 bottom-0 h-7 w-7" style={notchCorner} />
+            <Link
+              href={`/create-student-id?code=${encodeURIComponent(schoolCode)}`}
+              className="group flex h-16 w-36 items-center justify-center gap-2 rounded-[1.5rem] bg-slate-900 text-base font-semibold text-white shadow-lg transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 active:scale-[0.98]"
+            >
+              Join
+              <svg className="h-6 w-6 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M4 12h16" />
+                <path d="m14 6 6 6-6 6" />
+              </svg>
+            </Link>
           </div>
         </div>
 
-        <Link
-          href={`/create-student-id?code=${encodeURIComponent(schoolCode)}`}
-          className="mt-8 inline-flex w-full items-center justify-center px-5 py-3 rounded-lg bg-white  text-base font-semibold text-blue-700 hover:cursor-pointer"
-        >
-          Join School Team
-        </Link>
-
-         <Link href="/" className="block text-center text-sm mt-4">Cancel</Link>
+        <div className="mt-6 flex flex-col gap-3">
+          <SecondaryLink href="/join-school">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Back
+          </SecondaryLink>
+        </div>
       </main>
     </div>
+  );
+}
+
+// Concave corner: transparent quarter-circle (shows the card) with page colour outside it.
+const notchCorner: CSSProperties = {
+  background: "radial-gradient(circle at 0 0, transparent 1.75rem, var(--brand) calc(1.75rem + 0.5px))",
+};
+
+function Chip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium text-slate-800 ring-1 ring-inset ring-slate-900/70">
+      {children}
+    </span>
+  );
+}
+
+function BooksIllustration({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 144 128" aria-hidden>
+      {/* bottom book */}
+      <rect x="10" y="88" width="120" height="26" rx="9" fill="#035483" />
+      <rect x="18" y="92" width="104" height="18" rx="5" fill="#f8f8f6" />
+      <rect x="10" y="88" width="16" height="26" rx="6" fill="#06446a" />
+      <path d="M100 110v14l6-4 6 4v-14z" fill="#f2a1b3" />
+      {/* middle book */}
+      <rect x="20" y="60" width="110" height="26" rx="9" fill="#a0c3e2" />
+      <rect x="28" y="64" width="94" height="18" rx="5" fill="#ffffff" />
+      <rect x="20" y="60" width="16" height="26" rx="6" fill="#74a9d8" />
+      {/* top book */}
+      <rect x="14" y="32" width="112" height="26" rx="9" fill="#027dc5" />
+      <rect x="22" y="36" width="96" height="18" rx="5" fill="#d7e0eb" />
+      <rect x="14" y="32" width="16" height="26" rx="6" fill="#0267a3" />
+      <rect x="44" y="43" width="40" height="4" rx="2" fill="#a0c3e2" />
+      {/* bookmark ribbon */}
+      <path d="M96 4h14v30l-7-5-7 5z" fill="#ffd66b" />
+    </svg>
   );
 }
