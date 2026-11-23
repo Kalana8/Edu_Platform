@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import BottomBar from "@/components/BottomBar";
 import ProgressRing from "@/components/ProgressRing";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { slugToLabel } from "@/lib/slug";
 import { cookies } from "next/headers";
 
 async function getSessionUser() {
@@ -24,19 +25,19 @@ type CourseCard = {
   percent: number;
 };
 
-type ContentRow = {
-  title: string | null;
-  level: string | null;
-  page_count: number | null;
-  categories: { icon: string | null } | { icon: string | null }[] | null;
-};
+type SupabaseError = { message?: string; code?: string; details?: string; hint?: string } | null;
 
 // Soft tiles for course thumbnails, drawn from the palette.
 const TILE_COLORS = ["bg-brand-soft/60", "bg-brand-tint", "bg-blue-100", "bg-slate-100"];
 
-function one<T>(value: T | T[] | null | undefined): T | null {
-  if (!value) return null;
-  return Array.isArray(value) ? value[0] ?? null : value;
+function logError(label: string, error: SupabaseError) {
+  if (!error) return;
+  console.error(label, {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    hint: error.hint,
+  });
 }
 
 export default async function StudentHomeScreen() {
@@ -62,13 +63,12 @@ export default async function StudentHomeScreen() {
       .maybeSingle(),
     supabase
       .from("reading_progress")
-      .select("content_id, pages_read, is_completed, started_at, content(title, level, page_count, categories(icon))")
-      .eq("user_id", user.id)
-      .order("started_at", { ascending: false }),
+      .select("content_id, pages_read, is_completed")
+      .eq("user_id", user.id),
   ]);
 
   if (studentError) {
-    console.error("Student fetch error:", studentError);
+    logError("Student fetch error:", studentError);
   } else if (student) {
     studentName = student.name ?? "";
     availableCredits = student.available_credits ?? 0;
@@ -76,18 +76,36 @@ export default async function StudentHomeScreen() {
   }
 
   if (progressError) {
-    console.error("Reading progress fetch error:", progressError);
-  } else {
-    const items = progressItems ?? [];
-    totalPagesRead = items.reduce((sum, p) => sum + (p.pages_read ?? 0), 0);
-    courses = items.map((p) => {
-      const content = one(p.content as ContentRow | ContentRow[] | null);
-      const category = one(content?.categories);
+    logError("Reading progress fetch error:", progressError);
+  } else if (progressItems && progressItems.length > 0) {
+    totalPagesRead = progressItems.reduce((sum, p) => sum + (p.pages_read ?? 0), 0);
+
+    // Look up the content and category for each progress row with plain queries
+    // (no embedded joins, which depend on the live DB's foreign keys).
+    const contentIds = [...new Set(progressItems.map((p) => p.content_id))];
+    const { data: contentRows, error: contentError } = await supabase
+      .from("content")
+      .select("id, category_id, level, page_count")
+      .in("id", contentIds);
+    logError("Course content fetch error:", contentError);
+
+    const categoryIds = [...new Set((contentRows ?? []).map((c) => c.category_id).filter(Boolean))];
+    const { data: categoryRows, error: categoryError } = categoryIds.length
+      ? await supabase.from("categories").select("id, slug, label, icon").in("id", categoryIds)
+      : { data: [], error: null };
+    logError("Course category fetch error:", categoryError);
+
+    const contentById = new Map((contentRows ?? []).map((c) => [c.id, c]));
+    const categoryById = new Map((categoryRows ?? []).map((c) => [c.id, c]));
+
+    courses = progressItems.map((p) => {
+      const content = contentById.get(p.content_id);
+      const category = content ? categoryById.get(content.category_id) : undefined;
       const pageCount = content?.page_count ?? 0;
       const percent = p.is_completed ? 100 : pageCount > 0 ? ((p.pages_read ?? 0) / pageCount) * 100 : 0;
       return {
         contentId: p.content_id,
-        title: content?.title ?? "Untitled",
+        title: category?.label || slugToLabel(category?.slug) || "Course",
         level: content?.level ?? "",
         icon: category?.icon || "📚",
         percent,

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import BottomBar from "@/components/BottomBar";
+import StudentLogoutButton from "@/components/StudentLogoutButton";
 
 type ProfileData = {
   name: string;
@@ -153,7 +154,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 pb-16">
+    <div className="min-h-screen bg-slate-50 text-slate-950 pb-28">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
           <PageHeader title="Profile" subtitle="Manage your account" />
@@ -278,6 +279,8 @@ export default function ProfilePage() {
             </div>
 
           </div>
+
+          <StudentLogoutButton />
         </div>
       </main>
 
