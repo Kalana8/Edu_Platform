@@ -1,0 +1,365 @@
+import type { AcademicResource } from "../types";
+import { exploreRoutes } from "../routes";
+
+/**
+ * DEMONSTRATION DATA. Links point to publicly available sources; EduMate does not
+ * reproduce their content. Verify each link and licence before production use.
+ */
+export const resources: AcademicResource[] = [
+  // ── Illustrative unit outlines (EduMate-authored, modelled on typical university structures)
+  {
+    id: "uo-robotics",
+    title: "Robotics Engineering — Illustrative Unit Outline",
+    author: "EduMate Curriculum Team",
+    type: "unit-outline",
+    description:
+      "An illustrative unit outline modelled on the structure of typical first- and second-year undergraduate robotics units. Not an official university document.",
+    url: exploreRoutes.curriculum("robotics-autonomous-systems"),
+    licence: "EduMate original content",
+    access: "edumate",
+    subjectSlugs: ["robotics-autonomous-systems"],
+  },
+  {
+    id: "uo-ai",
+    title: "Machine Learning Foundations — Illustrative Unit Outline",
+    author: "EduMate Curriculum Team",
+    type: "unit-outline",
+    description:
+      "Illustrative outline following the common progression of introductory machine learning units: data, models, optimisation and evaluation.",
+    url: exploreRoutes.curriculum("artificial-intelligence-machine-learning"),
+    licence: "EduMate original content",
+    access: "edumate",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "uo-energy",
+    title: "Energy Systems & Storage — Illustrative Unit Outline",
+    author: "EduMate Curriculum Team",
+    type: "unit-outline",
+    description:
+      "Illustrative outline covering energy fundamentals, generation technologies, electrochemical storage and grid integration.",
+    url: exploreRoutes.curriculum("energy-generation-storage"),
+    licence: "EduMate original content",
+    access: "edumate",
+    subjectSlugs: ["energy-generation-storage"],
+  },
+  {
+    id: "uo-semis",
+    title: "Semiconductor Devices & Fabrication — Illustrative Unit Outline",
+    author: "EduMate Curriculum Team",
+    type: "unit-outline",
+    description:
+      "Illustrative outline spanning semiconductor physics, device operation, lithography and modern chip manufacturing.",
+    url: exploreRoutes.curriculum("semiconductors-chip-manufacturing"),
+    licence: "EduMate original content",
+    access: "edumate",
+    subjectSlugs: ["semiconductors-chip-manufacturing"],
+  },
+  {
+    id: "uo-sustain",
+    title: "Circular Engineering — Illustrative Unit Outline",
+    author: "EduMate Curriculum Team",
+    type: "unit-outline",
+    description:
+      "Illustrative outline on material flows, life-cycle thinking, circular design and resource policy.",
+    url: exploreRoutes.curriculum("sustainable-resources-circular-engineering"),
+    licence: "EduMate original content",
+    access: "edumate",
+    subjectSlugs: ["sustainable-resources-circular-engineering"],
+  },
+
+  // ── Open courseware & OER
+  {
+    id: "mit-ocw",
+    title: "MIT OpenCourseWare",
+    author: "Massachusetts Institute of Technology",
+    type: "lecture",
+    description:
+      "Free lecture notes, problem sets and video lectures from a wide range of university courses. Useful for further study at university depth.",
+    url: "https://ocw.mit.edu",
+    licence: "CC BY-NC-SA 4.0 (per course; check each course)",
+    access: "external",
+    subjectSlugs: [
+      "robotics-autonomous-systems",
+      "artificial-intelligence-machine-learning",
+      "energy-generation-storage",
+      "semiconductors-chip-manufacturing",
+      "aerospace-engineering",
+      "quantum-computing",
+    ],
+  },
+  {
+    id: "openstax-physics-2",
+    title: "University Physics Volume 2",
+    author: "OpenStax, Rice University",
+    type: "textbook",
+    year: "2016",
+    description:
+      "Open textbook covering thermodynamics, electricity and magnetism — essential background for circuits, sensors and energy systems.",
+    url: "https://openstax.org/details/books/university-physics-volume-2",
+    licence: "CC BY 4.0",
+    access: "external",
+    subjectSlugs: [
+      "robotics-autonomous-systems",
+      "energy-generation-storage",
+      "semiconductors-chip-manufacturing",
+    ],
+  },
+  {
+    id: "openstax-chemistry-2e",
+    title: "Chemistry 2e",
+    author: "OpenStax, Rice University",
+    type: "textbook",
+    year: "2019",
+    description:
+      "Open introductory chemistry textbook. Electrochemistry and materials chapters support battery and semiconductor study.",
+    url: "https://openstax.org/details/books/chemistry-2e",
+    licence: "CC BY 4.0",
+    access: "external",
+    subjectSlugs: [
+      "energy-generation-storage",
+      "semiconductors-chip-manufacturing",
+      "sustainable-resources-circular-engineering",
+      "advanced-materials-science",
+    ],
+  },
+  {
+    id: "khan-linear-algebra",
+    title: "Linear Algebra",
+    author: "Khan Academy",
+    type: "video",
+    description:
+      "Beginner-friendly video lessons on vectors, matrices and transformations — the mathematical language of robotics and machine learning.",
+    url: "https://www.khanacademy.org/math/linear-algebra",
+    licence: "Free to use — see Khan Academy terms",
+    access: "external",
+    subjectSlugs: ["robotics-autonomous-systems", "artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "our-world-in-data",
+    title: "Our World in Data",
+    author: "Global Change Data Lab",
+    type: "oer",
+    description:
+      "Open datasets and charts on energy, materials, emissions and resources. Ideal for data-driven projects.",
+    url: "https://ourworldindata.org",
+    licence: "CC BY 4.0",
+    access: "external",
+    subjectSlugs: ["energy-generation-storage", "sustainable-resources-circular-engineering"],
+  },
+
+  // ── Robotics
+  {
+    id: "modern-robotics",
+    title: "Modern Robotics: Mechanics, Planning, and Control",
+    author: "Kevin M. Lynch & Frank C. Park",
+    type: "textbook",
+    year: "2017",
+    description:
+      "A widely used robotics textbook covering configuration space, kinematics, dynamics and motion planning.",
+    url: "http://modernrobotics.org",
+    licence: "Preprint freely available from authors; print edition © Cambridge University Press",
+    access: "external",
+    subjectSlugs: ["robotics-autonomous-systems"],
+  },
+  {
+    id: "ros-docs",
+    title: "ROS 2 Documentation",
+    author: "Open Robotics",
+    type: "documentation",
+    description:
+      "Official documentation for the Robot Operating System — the most common software framework for research and industrial robots.",
+    url: "https://docs.ros.org",
+    licence: "See source for licence",
+    access: "external",
+    subjectSlugs: ["robotics-autonomous-systems"],
+  },
+  {
+    id: "probabilistic-robotics",
+    title: "Probabilistic Robotics",
+    author: "Sebastian Thrun, Wolfram Burgard & Dieter Fox",
+    type: "textbook",
+    year: "2005",
+    description:
+      "Classic text on localisation, mapping and decision-making under uncertainty for autonomous robots.",
+    url: "https://mitpress.mit.edu",
+    licence: "Commercial textbook — link only",
+    access: "external",
+    subjectSlugs: ["robotics-autonomous-systems"],
+  },
+
+  // ── AI / ML
+  {
+    id: "attention-paper",
+    title: "Attention Is All You Need",
+    author: "Vaswani et al.",
+    type: "paper",
+    year: "2017",
+    description:
+      "The research paper that introduced the Transformer architecture behind modern large language models.",
+    url: "https://arxiv.org/abs/1706.03762",
+    licence: "arXiv preprint — link only",
+    access: "external",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "deep-learning-book",
+    title: "Deep Learning",
+    author: "Ian Goodfellow, Yoshua Bengio & Aaron Courville",
+    type: "textbook",
+    year: "2016",
+    description: "Comprehensive textbook on the theory and practice of deep neural networks.",
+    url: "https://www.deeplearningbook.org",
+    licence: "Free to read online; © MIT Press",
+    access: "external",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "d2l",
+    title: "Dive into Deep Learning",
+    author: "Aston Zhang, Zachary C. Lipton, Mu Li & Alexander J. Smola",
+    type: "oer",
+    year: "2023",
+    description: "Interactive open-source book combining explanations, maths and runnable code.",
+    url: "https://d2l.ai",
+    licence: "CC BY-SA 4.0",
+    access: "external",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "3b1b-neural-networks",
+    title: "Neural Networks (video series)",
+    author: "3Blue1Brown",
+    type: "video",
+    description:
+      "Highly visual, beginner-accessible introduction to how neural networks learn, including backpropagation.",
+    url: "https://www.3blue1brown.com/topics/neural-networks",
+    licence: "Free to watch — link only",
+    access: "external",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+  {
+    id: "pytorch-docs",
+    title: "PyTorch Documentation",
+    author: "PyTorch Foundation",
+    type: "documentation",
+    description: "Reference documentation and tutorials for one of the most popular deep learning frameworks.",
+    url: "https://pytorch.org/docs/stable/index.html",
+    licence: "See source for licence",
+    access: "external",
+    subjectSlugs: ["artificial-intelligence-machine-learning"],
+  },
+
+  // ── Energy
+  {
+    id: "without-hot-air",
+    title: "Sustainable Energy — Without the Hot Air",
+    author: "David J. C. MacKay",
+    type: "textbook",
+    year: "2008",
+    description:
+      "A numbers-first look at how much energy we use and what it would take to supply it sustainably.",
+    url: "https://www.withouthotair.com",
+    licence: "Free to read online — see author's terms",
+    access: "external",
+    subjectSlugs: ["energy-generation-storage", "sustainable-resources-circular-engineering"],
+  },
+  {
+    id: "iea-reports",
+    title: "IEA Reports",
+    author: "International Energy Agency",
+    type: "article",
+    description: "Global analysis of energy markets, technologies and transitions, updated regularly.",
+    url: "https://www.iea.org/reports",
+    licence: "See IEA terms of use",
+    access: "external",
+    subjectSlugs: ["energy-generation-storage"],
+  },
+  {
+    id: "battery-university",
+    title: "Battery University",
+    author: "Cadex Electronics",
+    type: "article",
+    description: "Practical articles on battery chemistries, charging, ageing and safety.",
+    url: "https://batteryuniversity.com",
+    licence: "Free to read — link only",
+    access: "external",
+    subjectSlugs: ["energy-generation-storage"],
+  },
+  {
+    id: "li-ion-perspective",
+    title: "The Li-Ion Rechargeable Battery: A Perspective",
+    author: "John B. Goodenough & Kyu-Sung Park",
+    type: "paper",
+    year: "2013",
+    description:
+      "A perspective article on the chemistry, limits and future of lithium-ion batteries by a co-inventor of the technology.",
+    url: "https://doi.org/10.1021/ja3091438",
+    licence: "Publisher copyright — link only",
+    access: "external",
+    subjectSlugs: ["energy-generation-storage"],
+  },
+
+  // ── Semiconductors
+  {
+    id: "moore-1965",
+    title: "Cramming More Components onto Integrated Circuits",
+    author: "Gordon E. Moore",
+    type: "paper",
+    year: "1965",
+    description:
+      "The original article behind “Moore’s Law”, predicting the exponential growth of transistor counts.",
+    url: "https://doi.org/10.1109/JPROC.1998.658762",
+    licence: "Publisher copyright — link only",
+    access: "external",
+    subjectSlugs: ["semiconductors-chip-manufacturing"],
+  },
+  {
+    id: "sze-devices",
+    title: "Physics of Semiconductor Devices",
+    author: "S. M. Sze & Kwok K. Ng",
+    type: "textbook",
+    year: "2006",
+    description: "Standard graduate-level reference on semiconductor device physics.",
+    url: "https://www.wiley.com",
+    licence: "Commercial textbook — link only",
+    access: "external",
+    subjectSlugs: ["semiconductors-chip-manufacturing"],
+  },
+
+  // ── Sustainability
+  {
+    id: "emf-circular",
+    title: "Circular Economy Introduction",
+    author: "Ellen MacArthur Foundation",
+    type: "article",
+    description: "Accessible introduction to circular economy principles with case studies from industry.",
+    url: "https://www.ellenmacarthurfoundation.org",
+    licence: "See source for licence",
+    access: "external",
+    subjectSlugs: ["sustainable-resources-circular-engineering"],
+  },
+  {
+    id: "irp-outlook",
+    title: "Global Resources Outlook",
+    author: "UNEP International Resource Panel",
+    type: "article",
+    year: "2024",
+    description: "International assessment of global material use, its drivers and its environmental impacts.",
+    url: "https://www.resourcepanel.org",
+    licence: "See source for licence",
+    access: "external",
+    subjectSlugs: ["sustainable-resources-circular-engineering"],
+  },
+];
+
+export const resourceTypeLabels: Record<AcademicResource["type"], string> = {
+  "unit-outline": "Unit outline",
+  lecture: "Open lecture",
+  paper: "Research paper",
+  article: "Article",
+  textbook: "Textbook",
+  video: "Video",
+  oer: "Open educational resource",
+  documentation: "Technical documentation",
+};

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import BottomBar from "@/components/BottomBar";
+import DiscoverEntryCard from "@/components/explore/DiscoverEntryCard";
 import { slugToLabel } from "@/lib/slug";
 
 type CategoryItem = {
@@ -55,6 +56,10 @@ export default function ChooseCategoryPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col gap-2 px-4 py-6">
         <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" rounded={false} className="-mx-4 -mt-6" />
+
+        <div className="mt-2 px-3">
+          <DiscoverEntryCard />
+        </div>
 
         {error ? (
           <div className="rounded-[1.75rem] bg-rose-50 p-5 text-sm text-rose-700 shadow-sm border border-rose-100">{error}</div>

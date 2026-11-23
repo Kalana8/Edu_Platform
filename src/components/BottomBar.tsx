@@ -17,7 +17,8 @@ const navItems = [
   {
     label: "Category",
     href: "/choose-category",
-    match: (path: string) => path === "/choose-category" || path.startsWith("/category"),
+    match: (path: string) =>
+      path === "/choose-category" || path.startsWith("/category") || path.startsWith("/explore"),
     icon: (active: boolean) => (
       <svg
         className="h-6 w-6"
