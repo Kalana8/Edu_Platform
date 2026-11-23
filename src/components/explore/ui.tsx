@@ -5,27 +5,18 @@ import type { Difficulty } from "@/lib/explore/types";
 
 // ── Header (reuses the existing student PageHeader) ─────────────────────────
 
-export const headerGradients = {
-  learn: "from-blue-600 via-violet-600 to-fuchsia-600",
-  labs: "from-emerald-500 via-teal-600 to-sky-600",
-  resources: "from-sky-600 via-indigo-600 to-violet-600",
-  community: "from-amber-500 via-orange-500 to-rose-500",
-};
-
 export function ScreenHeader({
   title,
   subtitle,
-  gradient = headerGradients.learn,
   back,
 }: {
   title: string;
   subtitle: string;
-  gradient?: string;
   back?: { href: string; label: string };
 }) {
   return (
     <>
-      <PageHeader title={title} subtitle={subtitle} gradientClass={gradient} rounded={false} className="-mx-4" />
+      <PageHeader title={title} subtitle={subtitle} rounded={false} className="-mx-4" />
       {back && (
         <Link
           href={back.href}

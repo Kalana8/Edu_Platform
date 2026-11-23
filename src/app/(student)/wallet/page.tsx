@@ -62,7 +62,7 @@ function WalletPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Wallet" subtitle="Manage your credits" gradientClass="from-blue-600 via-cyan-600 to-sky-500" />
+            <PageHeader title="Wallet" subtitle="Manage your credits" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading wallet…</div>
@@ -77,7 +77,7 @@ function WalletPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Wallet" subtitle="Manage your credits" gradientClass="from-blue-600 via-cyan-600 to-sky-500" />
+            <PageHeader title="Wallet" subtitle="Manage your credits" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
@@ -95,11 +95,11 @@ function WalletPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-2">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Wallet" subtitle="Manage your credits" gradientClass="from-blue-600 via-cyan-600 to-sky-500" />
+          <PageHeader title="Wallet" subtitle="Manage your credits" />
         </div>
 
         <div className="flex flex-col gap-5 bg-slate-50 px-4 py-6">
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-6 text-white shadow-xl">
+          <div className="relative overflow-hidden rounded-[2rem] bg-brand p-6 text-white shadow-xl">
             <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
             <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-white/5" />
             <div className="relative">

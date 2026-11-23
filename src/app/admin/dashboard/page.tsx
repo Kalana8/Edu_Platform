@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
       <section className="mb-3">
-        <div className="rounded-[1.75rem] bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-4 text-white shadow-lg sm:p-5">
+        <div className="rounded-[1.75rem] bg-brand p-4 text-white shadow-lg sm:p-5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-sky-100 sm:text-sm">Active Students Right Now</p>

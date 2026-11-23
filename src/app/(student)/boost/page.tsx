@@ -83,7 +83,7 @@ export default function BoostPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" gradientClass="from-fuchsia-500 via-violet-600 to-blue-700" />
+            <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading…</div>
@@ -98,7 +98,7 @@ export default function BoostPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" gradientClass="from-fuchsia-500 via-violet-600 to-blue-700" />
+            <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
@@ -112,7 +112,7 @@ export default function BoostPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" gradientClass="from-fuchsia-500 via-violet-600 to-blue-700" />
+          <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" />
         </div>
 
         <div className="flex flex-col gap-2 px-4 py-6">

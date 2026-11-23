@@ -38,7 +38,7 @@ export default async function ModeratorDashboard() {
   return (
     <div>
       <section className="mb-4">
-        <div className="rounded-lg bg-gradient-to-r from-sky-600 via-indigo-600 to-fuchsia-600 p-3 text-white shadow-lg sm:p-4">
+        <div className="rounded-lg bg-brand p-3 text-white shadow-lg sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm">Active Students Right Now</p>

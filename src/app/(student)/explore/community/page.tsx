@@ -1,5 +1,5 @@
 import CommunityClient from "@/components/explore/CommunityClient";
-import { ScreenHeader, headerGradients } from "@/components/explore/ui";
+import { ScreenHeader } from "@/components/explore/ui";
 import { listCommunityPosts, listSubjects, parseDemo } from "@/lib/explore/api";
 import { exploreRoutes } from "@/lib/explore/routes";
 
@@ -17,7 +17,6 @@ export default async function CommunityPage({
       <ScreenHeader
         title="Community"
         subtitle="Projects & discoveries from learners worldwide"
-        gradient={headerGradients.community}
         back={
           fromSubject
             ? { href: exploreRoutes.subject(fromSubject.slug), label: fromSubject.title }

@@ -1,5 +1,5 @@
 import ResourceLibraryClient from "@/components/explore/ResourceLibraryClient";
-import { IllustrativeNotice, ScreenHeader, headerGradients } from "@/components/explore/ui";
+import { IllustrativeNotice, ScreenHeader } from "@/components/explore/ui";
 import { listResources, listSubjects, parseDemo } from "@/lib/explore/api";
 import { exploreRoutes } from "@/lib/explore/routes";
 
@@ -17,7 +17,6 @@ export default async function ResourcesPage({
       <ScreenHeader
         title="Academic Resources"
         subtitle="Lectures, papers, textbooks & more"
-        gradient={headerGradients.resources}
         back={
           fromSubject
             ? { href: exploreRoutes.subject(fromSubject.slug), label: fromSubject.title }

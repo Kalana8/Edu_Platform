@@ -288,14 +288,13 @@ export default function QuizPage() {
           backLabel="Back to Reading"
           title="Quiz"
           subtitle={`Question ${currentIndex + 1} of ${questions.length}`}
-          gradientClass="from-blue-600 via-violet-600 to-fuchsia-600"
           rounded={false}
           className="-mx-4 -mt-6"
         />
 
         <div className="mt-4 rounded-[1.5rem] border border-slate-200/80 bg-white p-4 shadow-sm">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-            <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-500" style={{ width: `${progress}%` }} />
+            <div className="h-full rounded-full bg-brand transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -312,7 +311,7 @@ export default function QuizPage() {
           </div>
           <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
             <div
-              className={`h-full rounded-full transition-all duration-1000 ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-blue-600 to-violet-600"}`}
+              className={`h-full rounded-full transition-all duration-1000 ${timeLeft <= 10 ? "bg-rose-500" : "bg-brand"}`}
               style={{ width: `${timerPercent}%` }}
             />
           </div>

@@ -74,7 +74,6 @@ export default async function CategoryLevelPage({
             backLabel="Back to Levels"
             title={levelInfo.title}
             subtitle={levelInfo.subtitle}
-            gradientClass="from-blue-600 via-violet-600 to-fuchsia-600"
             rounded={false}
             className="-mx-4 -mt-6"
           />

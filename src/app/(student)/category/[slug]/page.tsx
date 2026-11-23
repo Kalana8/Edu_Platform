@@ -78,7 +78,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           backLabel="Back to Categories"
           title={label}
           subtitle="Choose your learning level"
-          gradientClass="from-blue-600 via-violet-600 to-fuchsia-600"
           rounded={false}
           className="-mx-4 -mt-6"
         />

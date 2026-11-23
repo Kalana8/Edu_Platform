@@ -188,7 +188,7 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
           </div>
         ) : null}
 
-        <div className="mb-4 rounded-[2rem] bg-gradient-to-br from-blue-50 to-indigo-50 px-5 py-4 shadow-sm ring-1 ring-blue-200">
+        <div className="mb-4 rounded-[2rem] bg-blue-50 px-5 py-4 shadow-sm ring-1 ring-blue-200">
           <div className="flex items-center justify-between">
             <div className="flex items-start gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">

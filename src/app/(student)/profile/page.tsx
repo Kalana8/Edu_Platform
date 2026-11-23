@@ -123,7 +123,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Profile" subtitle="Manage your account" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
+            <PageHeader title="Profile" subtitle="Manage your account" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading profile…</div>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Profile" subtitle="Manage your account" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
+            <PageHeader title="Profile" subtitle="Manage your account" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
@@ -156,13 +156,13 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-16">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Profile" subtitle="Manage your account" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" />
+          <PageHeader title="Profile" subtitle="Manage your account" />
         </div>
 
         <div className="flex flex-col gap-3 px-4 py-2">
           <div className="rounded-[1.75rem] bg-white p-5 py-3 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-600 to-violet-600 text-3xl text-white shadow-lg shadow-blue-600/20">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-brand text-3xl text-white shadow-lg shadow-brand/20">
                 <span>{profile.name.charAt(0).toUpperCase()}</span>
               </div>
               <div>

@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
+/*
+ * Brand palette
+ *   #027dc5  primary
+ *   #a0c3e2  primary-soft
+ *   #d7e0eb  surface-tint
+ *   #f8f8f6  background
+ *   #d9dad9  border / neutral
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #027dc5;
+  --brand-soft: #a0c3e2;
+  --brand-tint: #d7e0eb;
+  --neutral: #d9dad9;
+  --background: #f8f8f6;
+  --foreground: #15202e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-tint: var(--brand-tint);
+  --color-neutral-line: var(--neutral);
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/*
+ * Remap Tailwind's default scales onto the palette so existing
+ * utility classes (bg-blue-600, text-slate-500, ...) follow the brand.
+ * blue / sky / indigo -> one brand scale anchored at #027dc5 (600)
+ * slate               -> cool neutral anchored at #f8f8f6 (50) and #d7e0eb (200)
+ * emerald / rose / amber are left alone as success / error / warning colors.
+ */
+@theme {
+  --color-blue-50: #f0f6fb;
+  --color-blue-100: #dceaf6;
+  --color-blue-200: #a0c3e2;
+  --color-blue-300: #74a9d8;
+  --color-blue-400: #3f93d1;
+  --color-blue-500: #1786cb;
+  --color-blue-600: #027dc5;
+  --color-blue-700: #0267a3;
+  --color-blue-800: #035483;
+  --color-blue-900: #06446a;
+  --color-blue-950: #042b44;
+
+  --color-sky-50: var(--color-blue-50);
+  --color-sky-100: var(--color-blue-100);
+  --color-sky-200: var(--color-blue-200);
+  --color-sky-300: var(--color-blue-300);
+  --color-sky-400: var(--color-blue-400);
+  --color-sky-500: var(--color-blue-500);
+  --color-sky-600: var(--color-blue-600);
+  --color-sky-700: var(--color-blue-700);
+  --color-sky-800: var(--color-blue-800);
+  --color-sky-900: var(--color-blue-900);
+  --color-sky-950: var(--color-blue-950);
+
+  --color-indigo-50: var(--color-blue-50);
+  --color-indigo-100: var(--color-blue-100);
+  --color-indigo-200: var(--color-blue-200);
+  --color-indigo-300: var(--color-blue-300);
+  --color-indigo-400: var(--color-blue-400);
+  --color-indigo-500: var(--color-blue-500);
+  --color-indigo-600: var(--color-blue-600);
+  --color-indigo-700: var(--color-blue-700);
+  --color-indigo-800: var(--color-blue-800);
+  --color-indigo-900: var(--color-blue-900);
+  --color-indigo-950: var(--color-blue-950);
+
+  --color-slate-50: #f8f8f6;
+  --color-slate-100: #eef1f5;
+  --color-slate-200: #d7e0eb;
+  --color-slate-300: #bcc8d6;
+  --color-slate-400: #8d9cb0;
+  --color-slate-500: #66778c;
+  --color-slate-600: #4b5b70;
+  --color-slate-700: #364558;
+  --color-slate-800: #243243;
+  --color-slate-900: #15202e;
+  --color-slate-950: #0b1420;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }

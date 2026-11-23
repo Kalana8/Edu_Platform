@@ -2,9 +2,8 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,.35),_transparent_25%),linear-gradient(180deg,#4f46e5_0%,#8b5cf6_45%,#9333ea_100%)] text-white">
+    <div className="min-h-screen bg-brand text-white">
       <main className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center px-6 py-24 text-center space-y-20">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,_rgba(255,255,255,.12),_transparent_18%)]" />
         <div className="relative z-10 space-y-4">
           <h1 className="text-5xl font-semibold tracking-tight text-white sm:text-6xl">
             Build Your Skills Daily

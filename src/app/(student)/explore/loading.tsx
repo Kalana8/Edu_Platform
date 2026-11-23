@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/explore/ui";
 export default function ExploreLoading() {
   return (
     <div aria-busy="true" aria-label="Loading">
-      <div className="-mx-4 bg-gradient-to-r from-blue-600 via-violet-600 to-fuchsia-600 px-5 py-6">
+      <div className="-mx-4 bg-brand px-5 py-6">
         <div className="h-8 w-2/3 animate-pulse rounded-xl bg-white/25" />
         <div className="mt-3 h-4 w-1/2 animate-pulse rounded-lg bg-white/20" />
       </div>

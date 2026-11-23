@@ -268,7 +268,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
                     <tr key={moderator.id} className="transition hover:bg-slate-50">
                       <td className="px-6 py-4 align-top">
                         <div className="flex items-start gap-3">
-                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-300 to-slate-400 text-sm font-semibold text-white">
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-400 text-sm font-semibold text-white">
                             {moderator.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                           </div>
                           <div>

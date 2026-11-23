@@ -84,7 +84,7 @@ export default function RanksPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Leaderboard" subtitle="Loading..." gradientClass="from-amber-500 via-orange-500 to-rose-500" />
+            <PageHeader title="Leaderboard" subtitle="Loading..." />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading…</div>
@@ -99,7 +99,7 @@ export default function RanksPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Leaderboard" subtitle="See how schools rank" gradientClass="from-amber-500 via-orange-500 to-rose-500" />
+            <PageHeader title="Leaderboard" subtitle="See how schools rank" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
@@ -128,7 +128,7 @@ export default function RanksPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Leaderboard" subtitle={getSubtitle()} gradientClass="from-amber-500 via-orange-500 to-rose-500" />
+          <PageHeader title="Leaderboard" subtitle={getSubtitle()} />
         </div>
 
         <div className="flex flex-col gap-1 px-4 py-1">

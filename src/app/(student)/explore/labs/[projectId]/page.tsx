@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import ProjectWorkspace from "@/components/explore/ProjectWorkspace";
-import { DifficultyBadge, ScreenHeader, headerGradients } from "@/components/explore/ui";
+import { DifficultyBadge, ScreenHeader } from "@/components/explore/ui";
 import { getLabProject, getSubject } from "@/lib/explore/api";
 import { activityLabels } from "@/lib/explore/labels";
 import { exploreRoutes } from "@/lib/explore/routes";
@@ -16,7 +16,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
       <ScreenHeader
         title={project.title}
         subtitle={activityLabels[project.type]}
-        gradient={headerGradients.labs}
         back={{ href: exploreRoutes.labs(subject?.slug), label: "Labs" }}
       />
       <div className="mt-3 rounded-[1.75rem] border border-slate-200/80 bg-white p-4 shadow-sm">

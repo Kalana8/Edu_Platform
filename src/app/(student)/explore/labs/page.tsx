@@ -1,5 +1,5 @@
 import LabsClient from "@/components/explore/LabsClient";
-import { ScreenHeader, headerGradients } from "@/components/explore/ui";
+import { ScreenHeader } from "@/components/explore/ui";
 import { listLabProjects, listSubjects, parseDemo } from "@/lib/explore/api";
 import { exploreRoutes } from "@/lib/explore/routes";
 
@@ -17,7 +17,6 @@ export default async function LabsPage({
       <ScreenHeader
         title="Virtual Labs"
         subtitle="Experiments, simulations & projects"
-        gradient={headerGradients.labs}
         back={
           fromSubject
             ? { href: exploreRoutes.subject(fromSubject.slug), label: fromSubject.title }

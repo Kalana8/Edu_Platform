@@ -9,12 +9,13 @@ import { slugToLabel } from "@/lib/slug";
 
 type CategoryItem = {
   slug: string;
-  code: string;
   icon: string;
   status: string;
   label: string;
-  color: string;
 };
+
+// Soft tiles for category thumbnails, drawn from the palette.
+const TILE_COLORS = ["bg-brand-soft/60", "bg-brand-tint", "bg-blue-100", "bg-slate-100"];
 
 export default function ChooseCategoryPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
@@ -37,7 +38,6 @@ export default function ChooseCategoryPage() {
             slug: category.slug,
             label: category.label ?? slugToLabel(category.slug),
             icon: category.icon || "📚",
-            color: getColorForSlug(category.slug),
             status: category.status,
           }));
 
@@ -55,7 +55,7 @@ export default function ChooseCategoryPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col gap-2 px-4 py-6">
-        <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" gradientClass="from-blue-600 via-violet-600 to-fuchsia-600" rounded={false} className="-mx-4 -mt-6" />
+        <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" rounded={false} className="-mx-4 -mt-6" />
 
         <div className="mt-2 px-3">
           <DiscoverEntryCard />
@@ -65,22 +65,27 @@ export default function ChooseCategoryPage() {
           <div className="rounded-[1.75rem] bg-rose-50 p-5 text-sm text-rose-700 shadow-sm border border-rose-100">{error}</div>
         ) : null}
 
-        <div className="grid grid-cols-2 gap-3 px-3 mt-1">
+        <h2 className="mt-4 px-3 text-lg font-semibold">All Categories</h2>
+
+        <div className="grid grid-cols-2 gap-4 px-3">
           {isLoading ? (
-            <div className="col-span-2 rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading categories…</div>
+            <div className="col-span-2 rounded-3xl bg-white p-6 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200/70">Loading categories…</div>
           ) : categories.length === 0 ? (
-            <div className="col-span-2 rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">No categories available yet.</div>
+            <div className="col-span-2 rounded-3xl bg-white p-6 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200/70">No categories available yet.</div>
           ) : (
-            categories.map((category) => (
+            categories.map((category, i) => (
               <Link
                 key={category.slug}
                 href={`/category/${category.slug}`}
-                className="group overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-lg hover:-translate-y-0.5"
+                className="group flex flex-col rounded-3xl bg-white p-2.5 shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg"
               >
-                <div className={`flex items-center justify-center rounded-lg p-4 py-1 transition group-hover:scale-105 `}>
-                  <span className="text-2xl">{category.icon}</span>
+                <div className={`flex aspect-[4/3] items-center justify-center rounded-2xl text-5xl transition group-hover:scale-[1.02] ${TILE_COLORS[i % TILE_COLORS.length]}`}>
+                  {category.icon}
                 </div>
-                <p className="mt-1 text-center text-sm font-semibold text-slate-950">{category.label}</p>
+                <div className="px-1.5 pb-1 pt-3">
+                  <p className="text-[11px] text-slate-400">Category</p>
+                  <p className="text-sm font-semibold leading-snug text-slate-900">{category.label}</p>
+                </div>
               </Link>
             ))
           )}
@@ -89,19 +94,4 @@ export default function ChooseCategoryPage() {
       <BottomBar />
     </div>
   );
-}
-
-function getColorForSlug(slug: string): string {
-  const colors: Record<string, string> = {
-    "artificial-intelligence": "bg-violet-100 text-violet-700",
-    "innovation-design": "bg-amber-100 text-amber-700",
-    "personal-development": "bg-rose-100 text-rose-700",
-    "entrepreneurship": "bg-emerald-100 text-emerald-700",
-    "economics": "bg-emerald-100 text-emerald-700",
-    "science-discovery": "bg-cyan-100 text-cyan-700",
-    "manufacturing": "bg-slate-100 text-slate-700",
-    "history-society": "bg-fuchsia-100 text-fuchsia-700",
-  };
-
-  return colors[slug] || "bg-blue-100 text-blue-700";
 }

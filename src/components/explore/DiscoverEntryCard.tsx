@@ -10,7 +10,7 @@ export default function DiscoverEntryCard() {
   return (
     <Link
       href={exploreRoutes.discover()}
-      className="group relative block overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 p-5 text-white shadow-xl transition hover:-translate-y-0.5"
+      className="group relative block overflow-hidden rounded-[1.75rem] bg-brand p-5 text-white shadow-xl shadow-brand/25 transition hover:-translate-y-0.5"
     >
       <div aria-hidden className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/10 transition group-hover:scale-150" />
       <div className="relative flex items-center gap-4">

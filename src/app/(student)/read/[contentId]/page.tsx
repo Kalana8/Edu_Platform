@@ -174,7 +174,7 @@ export default function ReadingPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-6 px-4">
           <div className="w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-8 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-blue-500 text-3xl text-white shadow-lg shadow-emerald-500/20">✅</div>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-500 text-3xl text-white shadow-lg shadow-emerald-500/20">✅</div>
             <h2 className="mt-5 text-xl font-bold text-slate-950 tracking-tight">You&apos;ve finished this content!</h2>
             <p className="mt-2 text-sm text-slate-500">
               You have read all {readingState.totalPages} pages. Review with a quiz or pick another topic.
@@ -226,14 +226,13 @@ export default function ReadingPage() {
           backLabel="Back to Categories"
           title={readingState.title}
           subtitle={`${readingState.level} · Page ${currentPageIndex + 1} of ${readingState.totalPages}`}
-          gradientClass="from-blue-600 via-violet-600 to-fuchsia-600"
           rounded={false}
         />
 
         <div className="flex-1 overflow-y-auto px-4 pb-6">
           <div className="sticky top-0 z-10 bg-slate-50 pb-3 pt-2">
             <div className="h-2 overflow-hidden rounded-full bg-slate-200 shadow-inner">
-              <div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-300" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
+              <div className="h-full rounded-full bg-brand transition-all duration-300" style={{ width: `${Math.min(progressPercent, 100)}%` }} />
             </div>
           </div>
 

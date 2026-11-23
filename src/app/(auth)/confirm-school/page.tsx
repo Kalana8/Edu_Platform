@@ -19,7 +19,7 @@ export default async function ConfirmSchool({
   const tier = pickValue(params.tier) || "Loading...";
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,.35),_transparent_25%),linear-gradient(180deg,#4f46e5_0%,#8b5cf6_45%,#9333ea_100%)]">
+    <div className="min-h-screen bg-slate-50 text-slate-950 bg-brand">
       <main className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col px-8 py-8 text-white">
         <div className="space-y-4 mt-18 text-center">
           <h1 className="text-3xl font-semibold ">Confirm Your School</h1>
