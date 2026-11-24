@@ -36,6 +36,7 @@ export default function AdminSidebar({ role = "admin", isOpen = false, onClose, 
     { href: `${prefix}/category`, label: "Category", icon: "📚" },
     { href: `${prefix}/schools`, label: "Schools", icon: "🏫" },
     { href: `${prefix}/students`, label: "Students", icon: "👥" },
+    { href: `${prefix}/explore`, label: "Explore", icon: "🔭" },
   ];
 
   const adminOnly = [
