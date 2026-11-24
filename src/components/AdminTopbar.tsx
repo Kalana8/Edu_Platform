@@ -9,7 +9,7 @@ interface AdminTopbarProps {
 
 export default function AdminTopbar({ name = "Admin User", role = "Admin", onMenuClick, pageTitle }: AdminTopbarProps) {
   return (
-    <header className="flex items-center justify-between gap-4 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8">
+    <header className="flex items-center justify-between gap-4 bg-white px-4 py-2.5 shadow-sm sm:px-6 lg:px-8">
       <div className="flex items-center gap-4">
         {onMenuClick && (
           <button

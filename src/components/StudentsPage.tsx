@@ -1,6 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  AdminPageHeader,
+  Avatar,
+  HeaderStat,
+  RowAction,
+  RowActions,
+  SearchInput,
+  StatusBadge,
+  TableCard,
+  TableMessage,
+  TableTitle,
+  tableClass,
+} from "./AdminUI";
 
 export type StudentItem = {
   id: string;
@@ -172,15 +185,17 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="mb-4 flex flex-col gap-3 rounded-4xl bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Students</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage student accounts and progress</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">Track students, school assignment, and credits for {role.toLowerCase()} workflows.</p>
-          </div>
-        </div>
+    <div className="text-slate-950">
+      <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
+        <AdminPageHeader
+          title="Manage student accounts and progress"
+          description={`Track students, school assignment, and credits for ${role.toLowerCase()} workflows.`}
+        >
+          <HeaderStat label="Students" value={students.length.toLocaleString()} />
+          <HeaderStat label="Active rate" value={`${activeRate}%`} hint={`${activeStudents} of ${students.length} active`} />
+          <HeaderStat label="Total Credits" value={totalCredits.toLocaleString()} />
+          <HeaderStat label="Available Credits" value={totalAvailableCredits.toLocaleString()} />
+        </AdminPageHeader>
 
         {feedback ? (
           <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -188,92 +203,67 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
           </div>
         ) : null}
 
-        <div className="mb-4 rounded-[2rem] bg-blue-50 px-5 py-4 shadow-sm ring-1 ring-blue-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">
-                <span className="text-2xl">👥</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-600">Active Students</p>
-                <p className="mt-1 text-2xl font-bold text-slate-950">{activeStudents} of {students.length} students are active</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-3xl font-bold text-blue-600">{activeRate}%</p>
-              <p className="text-xs font-semibold text-blue-600">active rate</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by student ID, name, email or school..."
-              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm placeholder-slate-400 transition focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            />
-          </div>
-          <div className="flex gap-3">
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">Credits: {totalCredits.toLocaleString()}</div>
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600">Available: {totalAvailableCredits.toLocaleString()}</div>
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-[2rem] bg-white shadow ring-1 ring-slate-200">
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+        <TableCard
+          toolbar={
+            <>
+              <TableTitle title="All students" count={filteredStudents.length} />
+              <SearchInput value={search} onChange={setSearch} placeholder="Search by ID, name, email or school..." />
+            </>
+          }
+        >
+            <table className={tableClass.table}>
+              <thead className={tableClass.thead}>
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT</th>
-                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">SCHOOL</th>
-                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STUDENT ID</th>
-                  <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">CREDITS</th>
-                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-600 sm:px-6">STATUS</th>
-                  <th scope="col" className="px-4 py-4 text-right text-xs font-semibold text-slate-600 sm:px-6">ACTIONS</th>
+                  <th scope="col" className={tableClass.th}>Student</th>
+                  <th scope="col" className={tableClass.th}>School</th>
+                  <th scope="col" className={tableClass.th}>Student ID</th>
+                  <th scope="col" className={tableClass.thRight}>Credits</th>
+                  <th scope="col" className={tableClass.th}>Status</th>
+                  <th scope="col" className={tableClass.thRight}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
-                {filteredStudents.map((student) => (
-                  <tr key={student.id} className="transition hover:bg-slate-50">
-                    <td className="px-4 py-4 align-top sm:px-6">
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg">👤</div>
+              <tbody className={tableClass.tbody}>
+                {isLoading ? (
+                  <TableMessage colSpan={6}>Loading students…</TableMessage>
+                ) : filteredStudents.length === 0 ? (
+                  <TableMessage colSpan={6}>{search ? "No students match your search." : "No students yet."}</TableMessage>
+                ) : filteredStudents.map((student) => (
+                  <tr key={student.id} className={tableClass.tr}>
+                    <td className={tableClass.td}>
+                      <div className="flex items-center gap-3">
+                        <Avatar name={student.name} />
                         <div>
-                          <div className="text-sm font-semibold text-slate-950">{student.name}</div>
+                          <div className="font-semibold text-slate-900">{student.name}</div>
                           <div className="text-xs text-slate-500">{student.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 align-top text-xs text-slate-600 sm:text-sm sm:px-6">{student.school}</td>
-                    <td className="px-4 py-4 align-top text-xs font-medium text-slate-950 sm:text-sm sm:px-6">{student.studentId}</td>
-                    <td className="px-4 py-4 align-top text-right text-xs sm:text-sm sm:px-6">
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="font-semibold text-slate-950">Available: {student.availableCredits.toLocaleString()}</span>
-                        <span className="text-slate-500">Total: {student.totalCredits.toLocaleString()}</span>
-                        {student.withheldCredits > 0 && <span className="text-amber-600">Withheld: {student.withheldCredits.toLocaleString()}</span>}
+                    <td className={tableClass.td}>{student.school}</td>
+                    <td className={tableClass.td}>
+                      <span className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-700">{student.studentId}</span>
+                    </td>
+                    <td className={tableClass.tdRight}>
+                      <div className="flex flex-col items-end tabular-nums leading-tight">
+                        <span className="font-semibold text-slate-900">{student.availableCredits.toLocaleString()} <span className="font-normal text-slate-500">available</span></span>
+                        <span className="text-xs text-slate-500">{student.totalCredits.toLocaleString()} total</span>
+                        {student.withheldCredits > 0 && <span className="text-xs font-medium text-amber-600">{student.withheldCredits.toLocaleString()} withheld</span>}
                       </div>
                     </td>
-                    <td className="px-4 py-4 align-top sm:px-6">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${student.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700"}`}>
-                        {student.isActive ? "Active" : "Inactive"}
-                      </span>
+                    <td className={tableClass.td}>
+                      <StatusBadge active={student.isActive} />
                     </td>
-                    <td className="px-4 py-4 align-top text-right text-xs font-medium text-slate-600 sm:text-sm sm:px-6">
-                      <div className="flex justify-end gap-2 sm:gap-3">
-                        <button type="button" onClick={() => setSelectedStudent(student)} className="transition hover:text-slate-950">View</button>
-                        <button type="button" onClick={() => openEditModal(student)} className="transition hover:text-slate-950">Edit</button>
-                        <button type="button" onClick={() => setDeletingStudent(student)} className="text-red-500 transition hover:text-red-700">Delete</button>
-                      </div>
+                    <td className={tableClass.tdRight}>
+                      <RowActions>
+                        <RowAction variant="view" onClick={() => setSelectedStudent(student)} />
+                        <RowAction variant="edit" onClick={() => openEditModal(student)} />
+                        <RowAction variant="delete" onClick={() => setDeletingStudent(student)} />
+                      </RowActions>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
+        </TableCard>
      </div>
 
       {selectedStudent ? (

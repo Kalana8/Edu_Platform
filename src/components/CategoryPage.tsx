@@ -3,6 +3,17 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
 import EmojiPicker from "./EmojiPicker";
+import {
+  AdminPageHeader,
+  HeaderButton,
+  RowAction,
+  RowActions,
+  StatusBadge,
+  TableCard,
+  TableMessage,
+  TableTitle,
+  tableClass,
+} from "./AdminUI";
 
 const categoryBadgeClass = (status: CategoryItem["status"]) =>
   status === "Active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-700";
@@ -250,24 +261,13 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-        <div className="mb-3 flex flex-col gap-3 rounded-4xl bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Category</p>
-            <h1 className="mt-1 text-2xl font-semibold text-slate-950">Manage curriculum categories</h1>
-            <p className="mt-1 max-w-2xl text-sm text-slate-500">
-              View categories, manage status, and access content tiers for {role.toLowerCase()} workflows.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700"
-          >
-            + Add Category
-          </button>
-        </div>
+    <div className="text-slate-950">
+      <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
+        <AdminPageHeader
+          title="Manage curriculum categories"
+          description={`View categories, manage status, and access content tiers for ${role.toLowerCase()} workflows.`}
+          action={<HeaderButton onClick={() => setIsModalOpen(true)}>Add Category</HeaderButton>}
+        />
 
         {feedback ? (
           <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -275,60 +275,54 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
           </div>
         ) : null}
 
-        <div className="overflow-hidden rounded-4xl bg-white shadow ring-1 ring-slate-200">
+        <TableCard toolbar={<TableTitle title="All categories" count={isLoading ? undefined : categories.length} />}>
           {isLoading ? (
-            <div className="px-6 py-8 text-center text-sm text-slate-500">Loading categories…</div>
+            <TableMessage>Loading categories…</TableMessage>
           ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+          <table className={tableClass.table}>
+            <thead className={tableClass.thead}>
               <tr>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
-                  Category
-                </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
-                  Code
-                </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">
-                  Status
-                </th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-slate-600 sm:px-6">
-                  Actions
-                </th>
+                <th scope="col" className={tableClass.th}>Category</th>
+                <th scope="col" className={tableClass.th}>Code</th>
+                <th scope="col" className={tableClass.th}>Status</th>
+                <th scope="col" className={tableClass.thRight}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-white">
-              {categories.map((category) => (
-                <tr key={category.slug} className="transition hover:bg-slate-50">
-                  <td className="px-4 py-3 align-top sm:px-6">
+            <tbody className={tableClass.tbody}>
+              {categories.length === 0 ? (
+                <TableMessage colSpan={4}>No categories yet. Add one to get started.</TableMessage>
+              ) : categories.map((category) => (
+                <tr key={category.slug} className={tableClass.tr}>
+                  <td className={tableClass.td}>
                     <div className="flex items-center gap-3">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${category.badgeClass}`}>
-                        <span className="text-lg">{category.icon}</span>
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-brand-tint">
+                        <span className="text-base">{category.icon}</span>
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-slate-950">{category.label}</div>
-                        <div className="text-xs text-slate-500">{category.label ?? slugToLabel(category.slug)}</div>
+                        <div className="font-semibold text-slate-900">{category.label}</div>
+                        <div className="text-xs text-slate-500">{category.slug}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 align-top text-xs text-slate-600 sm:text-sm sm:px-6">{category.code}</td>
-                  <td className="px-4 py-3 align-top sm:px-6">
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${categoryBadgeClass(category.status)}`}>
-                      {category.status}
-                    </span>
+                  <td className={tableClass.td}>
+                    <span className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-700">{category.code}</span>
                   </td>
-                  <td className="px-4 py-3 align-top text-right text-xs font-medium text-slate-600 sm:px-6">
-                    <div className="flex justify-end gap-2 sm:gap-3">
-                      <button type="button" onClick={() => openViewModal(category)} className="transition hover:text-slate-950">View</button>
-                      <button type="button" onClick={() => openEditModal(category)} className="transition hover:text-slate-950">Edit</button>
-                      <button type="button" onClick={() => setDeletingCategory(category)} className="text-red-500 transition hover:text-red-700">Delete</button>
-                    </div>
+                  <td className={tableClass.td}>
+                    <StatusBadge active={category.status === "Active"} />
+                  </td>
+                  <td className={tableClass.tdRight}>
+                    <RowActions>
+                      <RowAction variant="view" onClick={() => openViewModal(category)} />
+                      <RowAction variant="edit" onClick={() => openEditModal(category)} />
+                      <RowAction variant="delete" onClick={() => setDeletingCategory(category)} />
+                    </RowActions>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           )}
-        </div>
+        </TableCard>
       </div>
 
       {isModalOpen ? (

@@ -1,6 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  AdminPageHeader,
+  Avatar,
+  HeaderButton,
+  HeaderStat,
+  RowAction,
+  RowActions,
+  SearchInput,
+  StatusBadge,
+  TableCard,
+  TableMessage,
+  TableTitle,
+  tableClass,
+} from "./AdminUI";
 
 export type ModeratorItem = {
   id: string;
@@ -183,118 +197,80 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+    <div className="text-slate-950">
+      <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
         {/* Header */}
-        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Moderator Management</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Add and manage moderator accounts</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
-              Control moderator access and monitor account status.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setFormState(emptyFormState);
-              setIsModalOpen(true);
-            }}
-            className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700"
-          >
-            + Add Moderator
-          </button>
-        </div>
+        <AdminPageHeader
+          title="Add and manage moderator accounts"
+          description="Control moderator access and monitor account status."
+          action={
+            <HeaderButton
+              onClick={() => {
+                setFormState(emptyFormState);
+                setIsModalOpen(true);
+              }}
+            >
+              Add Moderator
+            </HeaderButton>
+          }
+        >
+          <HeaderStat label="Moderators" value={moderators.length.toLocaleString()} />
+          <HeaderStat label="Active" value={activeModerators.toLocaleString()} hint={`of ${moderators.length}`} />
+        </AdminPageHeader>
 
         {feedback ? (
-          <div className={`mb-4 rounded-2xl border px-4 py-3 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+          <div className={`mb-3 rounded-lg border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
             {feedback.message}
           </div>
         ) : null}
 
-        {/* Stats Card */}
-        <div className="mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-600">Active Moderators</p>
-              <p className="mt-1 text-2xl font-bold text-slate-950">{activeModerators} of {moderators.length}</p>
-            </div>
-            <span className="text-3xl">👥</span>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="mb-4">
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search moderators..."
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm placeholder-slate-400 transition focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="overflow-hidden rounded-[2rem] bg-white shadow ring-1 ring-slate-200">
+        <TableCard
+          toolbar={
+            <>
+              <TableTitle title="All moderators" count={isLoading ? undefined : filteredModerators.length} />
+              <SearchInput value={search} onChange={setSearch} placeholder="Search moderators..." />
+            </>
+          }
+        >
           {isLoading ? (
-            <div className="px-6 py-10 text-center text-sm text-slate-500">Loading moderators…</div>
+            <TableMessage>Loading moderators…</TableMessage>
           ) : (
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+            <table className={tableClass.table}>
+              <thead className={tableClass.thead}>
                 <tr>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                    MODERATOR
-                  </th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                    STATUS
-                  </th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                    LAST LOGIN
-                  </th>
-                  <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-slate-600">
-                    ACTION
-                  </th>
+                  <th scope="col" className={tableClass.th}>Moderator</th>
+                  <th scope="col" className={tableClass.th}>Status</th>
+                  <th scope="col" className={tableClass.th}>Last login</th>
+                  <th scope="col" className={tableClass.thRight}>Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody className={tableClass.tbody}>
                 {filteredModerators.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-10 text-center text-sm text-slate-500">
-                      {search ? "No moderators match your search." : "No moderators found."}
-                    </td>
-                  </tr>
+                  <TableMessage colSpan={4}>
+                    {search ? "No moderators match your search." : "No moderators found."}
+                  </TableMessage>
                 ) : (
                   filteredModerators.map((moderator) => (
-                    <tr key={moderator.id} className="transition hover:bg-slate-50">
-                      <td className="px-6 py-4 align-top">
-                        <div className="flex items-start gap-3">
-                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-400 text-sm font-semibold text-white">
-                            {moderator.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-                          </div>
+                    <tr key={moderator.id} className={tableClass.tr}>
+                      <td className={tableClass.td}>
+                        <div className="flex items-center gap-3">
+                          <Avatar name={moderator.name} />
                           <div>
-                            <div className="text-sm font-semibold text-slate-950">{moderator.name}</div>
+                            <div className="font-semibold text-slate-900">{moderator.name}</div>
                             <div className="text-xs text-slate-500">{moderator.email}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 align-top">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                            moderator.status === "Active"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-slate-100 text-slate-700"
-                          }`}
-                        >
-                          {moderator.status}
-                        </span>
+                      <td className={tableClass.td}>
+                        <StatusBadge active={moderator.status === "Active"} label={moderator.status} />
                       </td>
-                      <td className="px-6 py-4 align-top text-sm text-slate-600">{moderator.lastLogin}</td>
-                      <td className="px-6 py-4 align-top text-right text-sm font-medium text-slate-600">
-                        <div className="flex justify-end gap-3">
-                          <button type="button" onClick={() => setSelectedModerator(moderator)} className="transition hover:text-slate-950">View</button>
-                          <button type="button" onClick={() => openEditModal(moderator)} className="transition hover:text-slate-950">Edit</button>
-                          <button type="button" onClick={() => setDeletingModerator(moderator)} className="text-red-500 transition hover:text-red-700">Delete</button>
-                        </div>
+                      <td className={tableClass.td}>{moderator.lastLogin}</td>
+                      <td className={tableClass.tdRight}>
+                        <RowActions>
+                          <RowAction variant="view" onClick={() => setSelectedModerator(moderator)} />
+                          <RowAction variant="edit" onClick={() => openEditModal(moderator)} />
+                          <RowAction variant="delete" onClick={() => setDeletingModerator(moderator)} />
+                        </RowActions>
                       </td>
                     </tr>
                   ))
@@ -302,7 +278,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
               </tbody>
             </table>
           )}
-        </div>
+        </TableCard>
       </div>
 
       {/* Add Moderator Modal */}
