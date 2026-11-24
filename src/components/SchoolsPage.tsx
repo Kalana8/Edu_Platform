@@ -2,17 +2,18 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
-  AdminPageHeader,
   HeaderButton,
   HeaderStat,
   Pill,
   RowAction,
   RowActions,
   SearchInput,
+  StatRow,
   StatusBadge,
   TableCard,
   TableMessage,
   TableTitle,
+  ToolbarActions,
   tableClass,
 } from "./AdminUI";
 
@@ -48,7 +49,7 @@ interface SchoolsPageProps {
   basePath?: string;
 }
 
-export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: SchoolsPageProps) {
+export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
   void basePath;
 
   const [schools, setSchools] = useState<SchoolItem[]>([]);
@@ -221,16 +222,12 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
   return (
     <div className="text-slate-950">
       <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
-        <AdminPageHeader
-          title="Manage participating schools"
-          description={`View schools, manage performance, and track student engagement for ${role.toLowerCase()} workflows.`}
-          action={<HeaderButton onClick={() => setIsModalOpen(true)}>Add School</HeaderButton>}
-        >
+        <StatRow>
           <HeaderStat label="Total Schools" value={schools.length.toLocaleString()} />
           <HeaderStat label="Total Students" value={totalStudents.toLocaleString()} />
           <HeaderStat label="Total Points" value={totalPoints.toLocaleString()} />
           <HeaderStat label="Active" value={activeSchools.toLocaleString()} hint={`of ${schools.length} schools`} />
-        </AdminPageHeader>
+        </StatRow>
 
         {feedback ? (
           <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -242,7 +239,10 @@ export default function SchoolsPage({ role = "Admin", basePath = "/admin" }: Sch
           toolbar={
             <>
               <TableTitle title="All schools" count={isLoading ? undefined : filteredSchools.length} />
-              <SearchInput value={search} onChange={setSearch} placeholder="Search schools..." />
+              <ToolbarActions>
+                <SearchInput value={search} onChange={setSearch} placeholder="Search schools..." />
+                <HeaderButton onClick={() => setIsModalOpen(true)}>Add School</HeaderButton>
+              </ToolbarActions>
             </>
           }
         >

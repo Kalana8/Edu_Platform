@@ -5,33 +5,10 @@
  */
 import type { ReactNode } from "react";
 
-/* ---------- Page header (plain, sits on the page background) ---------- */
+/* ---------- Stat tiles shown above a page's table ---------- */
 
-export function AdminPageHeader({
-  title,
-  description,
-  action,
-  children,
-}: {
-  title: string;
-  description?: ReactNode;
-  action?: ReactNode;
-  /** Optional row of <HeaderStat /> shown under the title. */
-  children?: ReactNode;
-}) {
-  return (
-    <section className="mb-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-lg font-semibold leading-tight text-slate-900 sm:text-xl">{title}</h1>
-          {description ? <p className="mt-0.5 text-sm text-slate-500">{description}</p> : null}
-        </div>
-        {action ? <div className="shrink-0">{action}</div> : null}
-      </div>
-
-      {children ? <div className="mt-2.5 grid grid-cols-2 gap-2 lg:grid-cols-4">{children}</div> : null}
-    </section>
-  );
+export function StatRow({ children }: { children: ReactNode }) {
+  return <section className="mb-3 grid grid-cols-2 gap-2 lg:grid-cols-4">{children}</section>;
 }
 
 export function HeaderStat({ label, value, hint }: { label: string; value: ReactNode; hint?: ReactNode }) {
@@ -46,7 +23,12 @@ export function HeaderStat({ label, value, hint }: { label: string; value: React
   );
 }
 
-/** Primary call-to-action button for page headers. */
+/** Right-hand group in a TableCard toolbar (search + primary button). */
+export function ToolbarActions({ children }: { children: ReactNode }) {
+  return <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">{children}</div>;
+}
+
+/** Primary call-to-action button (e.g. "Add School"). */
 export function HeaderButton({ children, onClick }: { children: ReactNode; onClick?: () => void }) {
   return (
     <button

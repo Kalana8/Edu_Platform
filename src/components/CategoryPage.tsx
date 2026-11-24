@@ -4,7 +4,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
 import EmojiPicker from "./EmojiPicker";
 import {
-  AdminPageHeader,
   HeaderButton,
   RowAction,
   RowActions,
@@ -47,7 +46,7 @@ const emptyFormState: CategoryFormState = {
   status: "Active",
 };
 
-export default function CategoryPage({ role = "Admin", basePath = "/admin" }: CategoryPageProps) {
+export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps) {
   void basePath;
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
@@ -263,11 +262,6 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
   return (
     <div className="text-slate-950">
       <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
-        <AdminPageHeader
-          title="Manage curriculum categories"
-          description={`View categories, manage status, and access content tiers for ${role.toLowerCase()} workflows.`}
-          action={<HeaderButton onClick={() => setIsModalOpen(true)}>Add Category</HeaderButton>}
-        />
 
         {feedback ? (
           <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -275,7 +269,14 @@ export default function CategoryPage({ role = "Admin", basePath = "/admin" }: Ca
           </div>
         ) : null}
 
-        <TableCard toolbar={<TableTitle title="All categories" count={isLoading ? undefined : categories.length} />}>
+        <TableCard
+          toolbar={
+            <>
+              <TableTitle title="All categories" count={isLoading ? undefined : categories.length} />
+              <HeaderButton onClick={() => setIsModalOpen(true)}>Add Category</HeaderButton>
+            </>
+          }
+        >
           {isLoading ? (
             <TableMessage>Loading categories…</TableMessage>
           ) : (

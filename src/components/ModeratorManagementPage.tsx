@@ -2,17 +2,18 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
-  AdminPageHeader,
   Avatar,
   HeaderButton,
   HeaderStat,
   RowAction,
   RowActions,
   SearchInput,
+  StatRow,
   StatusBadge,
   TableCard,
   TableMessage,
   TableTitle,
+  ToolbarActions,
   tableClass,
 } from "./AdminUI";
 
@@ -200,23 +201,10 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
     <div className="text-slate-950">
       <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
         {/* Header */}
-        <AdminPageHeader
-          title="Add and manage moderator accounts"
-          description="Control moderator access and monitor account status."
-          action={
-            <HeaderButton
-              onClick={() => {
-                setFormState(emptyFormState);
-                setIsModalOpen(true);
-              }}
-            >
-              Add Moderator
-            </HeaderButton>
-          }
-        >
+        <StatRow>
           <HeaderStat label="Moderators" value={moderators.length.toLocaleString()} />
           <HeaderStat label="Active" value={activeModerators.toLocaleString()} hint={`of ${moderators.length}`} />
-        </AdminPageHeader>
+        </StatRow>
 
         {feedback ? (
           <div className={`mb-3 rounded-lg border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -228,7 +216,17 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           toolbar={
             <>
               <TableTitle title="All moderators" count={isLoading ? undefined : filteredModerators.length} />
-              <SearchInput value={search} onChange={setSearch} placeholder="Search moderators..." />
+              <ToolbarActions>
+                <SearchInput value={search} onChange={setSearch} placeholder="Search moderators..." />
+                <HeaderButton
+                  onClick={() => {
+                    setFormState(emptyFormState);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  Add Moderator
+                </HeaderButton>
+              </ToolbarActions>
             </>
           }
         >

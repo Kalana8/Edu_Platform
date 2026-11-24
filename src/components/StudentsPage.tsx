@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
-  AdminPageHeader,
   Avatar,
   HeaderStat,
   RowAction,
   RowActions,
   SearchInput,
+  StatRow,
   StatusBadge,
   TableCard,
   TableMessage,
@@ -53,7 +53,7 @@ interface StudentsPageProps {
   schools?: Array<{ id: string; name: string }>;
 }
 
-export default function StudentsPage({ role = "Admin", basePath = "/admin", students: initialStudents, schools: initialSchools }: StudentsPageProps = {}) {
+export default function StudentsPage({ basePath = "/admin", students: initialStudents, schools: initialSchools }: StudentsPageProps = {}) {
   void basePath;
 
   const [students, setStudents] = useState<StudentItem[]>(initialStudents ?? []);
@@ -187,15 +187,12 @@ export default function StudentsPage({ role = "Admin", basePath = "/admin", stud
   return (
     <div className="text-slate-950">
       <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
-        <AdminPageHeader
-          title="Manage student accounts and progress"
-          description={`Track students, school assignment, and credits for ${role.toLowerCase()} workflows.`}
-        >
+        <StatRow>
           <HeaderStat label="Students" value={students.length.toLocaleString()} />
           <HeaderStat label="Active rate" value={`${activeRate}%`} hint={`${activeStudents} of ${students.length} active`} />
           <HeaderStat label="Total Credits" value={totalCredits.toLocaleString()} />
           <HeaderStat label="Available Credits" value={totalAvailableCredits.toLocaleString()} />
-        </AdminPageHeader>
+        </StatRow>
 
         {feedback ? (
           <div className={`mb-3 rounded-2xl border px-4 py-2.5 text-sm ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
