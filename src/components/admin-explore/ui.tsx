@@ -270,6 +270,45 @@ export function useCollection<T>(kind: ContentKind, keyOf: (item: T) => string) 
 
 export { call as adminCall };
 
+/** Publish / hide confirmation dialog. `published` is the item's current state. */
+export function ConfirmVisibility({
+  name,
+  published,
+  onCancel,
+  onConfirm,
+}: {
+  name: string;
+  published: boolean;
+  onCancel: () => void;
+  onConfirm: () => Promise<unknown>;
+}) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <Modal eyebrow={published ? "Hide from students" : "Publish to students"} title={`${published ? "Hide" : "Publish"} ${name}?`} onClose={onCancel}>
+      <p className="text-sm text-slate-600">
+        {published
+          ? "Students will no longer see it on Discover or Explore. Their saved progress is kept, and you can publish it again at any time."
+          : "Students will see it on Discover and Explore the next time they load the page."}
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <button type="button" onClick={onCancel} className={`${btnSecondary} cursor-pointer`}>Cancel</button>
+        <button
+          type="button"
+          disabled={busy}
+          className={`${published ? btnDanger : btnPrimary} cursor-pointer`}
+          onClick={async () => {
+            setBusy(true);
+            await onConfirm();
+            setBusy(false);
+          }}
+        >
+          {busy ? "Saving…" : published ? "Hide" : "Publish"}
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 /** Delete confirmation dialog shared by all panels. */
 export function ConfirmDelete({ name, onCancel, onConfirm }: { name: string; onCancel: () => void; onConfirm: () => Promise<unknown> }) {
   const [busy, setBusy] = useState(false);

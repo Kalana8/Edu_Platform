@@ -7,6 +7,7 @@ import type { Curriculum, LearningStage, Prerequisite } from "@/lib/explore/type
 import {
   Banner,
   ConfirmDelete,
+  ConfirmVisibility,
   Field,
   FormSection,
   LinesInput,
@@ -53,6 +54,7 @@ export default function SubjectsPanel({ canEdit }: { canEdit: boolean }) {
   const { items, loading, feedback, save, remove, togglePublished } = useCollection<AdminSubject>("subjects", (s) => s.slug);
   const [editing, setEditing] = useState<{ subject: AdminSubject; isNew: boolean } | null>(null);
   const [deleting, setDeleting] = useState<AdminSubject | null>(null);
+  const [toggling, setToggling] = useState<AdminSubject | null>(null);
 
   return (
     <div className="space-y-3">
@@ -114,12 +116,12 @@ export default function SubjectsPanel({ canEdit }: { canEdit: boolean }) {
                     <div className="flex justify-end gap-3 whitespace-nowrap">
                       {canEdit ? (
                         <>
-                          <button type="button" onClick={() => togglePublished(s)} className="hover:text-slate-950">{s.isPublished ? "Hide" : "Publish"}</button>
-                          <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="hover:text-slate-950">Edit</button>
-                          <button type="button" onClick={() => setDeleting(s)} className="text-red-500 hover:text-red-700">Delete</button>
+                          <button type="button" onClick={() => setToggling(s)} className="cursor-pointer hover:text-slate-950">{s.isPublished ? "Hide" : "Publish"}</button>
+                          <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="cursor-pointer hover:text-slate-950">Edit</button>
+                          <button type="button" onClick={() => setDeleting(s)} className="cursor-pointer text-red-500 hover:text-red-700">Delete</button>
                         </>
                       ) : (
-                        <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="hover:text-slate-950">View</button>
+                        <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="cursor-pointer hover:text-slate-950">View</button>
                       )}
                     </div>
                   </td>
@@ -139,6 +141,18 @@ export default function SubjectsPanel({ canEdit }: { canEdit: boolean }) {
           onSave={async (s) => {
             await save(s, editing.isNew ? undefined : editing.subject.slug);
             setEditing(null);
+          }}
+        />
+      )}
+
+      {toggling && (
+        <ConfirmVisibility
+          name={toggling.title}
+          published={toggling.isPublished}
+          onCancel={() => setToggling(null)}
+          onConfirm={async () => {
+            await togglePublished(toggling);
+            setToggling(null);
           }}
         />
       )}
