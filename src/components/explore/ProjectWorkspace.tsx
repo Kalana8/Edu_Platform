@@ -15,13 +15,26 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
   const done = state.completedSteps.length;
   const total = project.steps.length;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (summary.trim().length < 20) return setError("Please describe your work in at least 20 characters.");
     if (link && !/^https?:\/\//i.test(link.trim())) return setError("Links must start with http:// or https://");
     setError(null);
-    submit({ summary: summary.trim(), link: link.trim() });
+    const result = await submit({ summary: summary.trim(), link: link.trim() });
+    if (!result.ok) setError(result.error ?? "Unable to submit your work. Please try again.");
   };
+
+  const onWithdraw = () => {
+    // Bring the submitted text back into the form so the learner can edit it.
+    if (state.submission) {
+      setSummary(state.submission.summary);
+      setLink(state.submission.link);
+    }
+    withdraw();
+  };
+
+  const review = state.submission?.reviewStatus ?? "pending";
+  const verified = review === "verified";
 
   return (
     <div className="mt-3 space-y-3">
@@ -106,19 +119,40 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
         <p className="mt-1 text-xs text-slate-600">{project.deliverable}</p>
 
         {state.submission ? (
-          <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-sm font-semibold text-emerald-800">✅ Submitted {formatDate(state.submission.submittedAt.slice(0, 10))}</p>
-            <p className="text-xs text-emerald-700">Awaiting mastery review</p>
+          <div
+            className={`mt-4 rounded-2xl border p-4 ${
+              review === "returned" ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50"
+            }`}
+          >
+            <p className={`text-sm font-semibold ${review === "returned" ? "text-amber-800" : "text-emerald-800"}`}>
+              {verified ? "🏅 Verified" : review === "returned" ? "↩️ Returned for changes" : "✅ Submitted"}{" "}
+              {formatDate(state.submission.submittedAt.slice(0, 10))}
+            </p>
+            <p className={`text-xs ${review === "returned" ? "text-amber-700" : "text-emerald-700"}`}>
+              {verified
+                ? "Added to your Mastery Passport"
+                : review === "returned"
+                  ? "A reviewer asked for changes. Withdraw, edit and submit again."
+                  : "Awaiting mastery review"}
+            </p>
+            {state.submission.feedback && (
+              <p className="mt-3 rounded-xl bg-white/70 p-3 text-xs text-slate-700">
+                <span className="font-semibold">Reviewer feedback: </span>
+                {state.submission.feedback}
+              </p>
+            )}
             <p className="mt-3 whitespace-pre-wrap text-sm text-slate-700">{state.submission.summary}</p>
             {state.submission.link && (
               <a href={state.submission.link} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block break-all text-sm font-semibold text-blue-700">
                 {state.submission.link} ↗
               </a>
             )}
-            <div className="mt-4 flex flex-col gap-2">
-              <button type="button" onClick={withdraw} className={btn.secondary}>Withdraw & edit</button>
-              <button type="button" onClick={reset} className={btn.ghost}>Reset lab</button>
-            </div>
+            {!verified && (
+              <div className="mt-4 flex flex-col gap-2">
+                <button type="button" onClick={onWithdraw} className={btn.secondary}>Withdraw & edit</button>
+                <button type="button" onClick={reset} className={btn.ghost}>Reset lab</button>
+              </div>
+            )}
           </div>
         ) : (
           <form onSubmit={onSubmit} className="mt-4 space-y-3" noValidate>
@@ -151,7 +185,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
                 placeholder="https://"
                 className={`mt-1 ${inputCls}`}
               />
-              <p className="mt-1 text-[11px] text-slate-400">File uploads arrive when the backend is connected.</p>
+              <p className="mt-1 text-[11px] text-slate-400">Share files via a link (e.g. Google Drive, GitHub).</p>
             </div>
             {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
             <button type="submit" className={`${btn.primary} w-full`}>Submit for mastery review</button>

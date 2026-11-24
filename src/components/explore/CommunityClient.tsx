@@ -6,6 +6,7 @@ import type { CommunityPost, PostKind, SubjectSummary } from "@/lib/explore/type
 import { postKindLabels } from "@/lib/explore/data/community";
 import { exploreRoutes } from "@/lib/explore/routes";
 import { useCommunityState } from "@/lib/explore/store";
+import type { NewPostInput } from "@/lib/explore/store-types";
 import { ChipButton, EmptyState, Section, SectionHeading, SwipeRow, btn, formatDate, inputCls } from "./ui";
 
 const kindStyle: Record<PostKind, { cls: string; icon: string; short: string }> = {
@@ -99,9 +100,10 @@ export default function CommunityClient({
             subjects={availableSubjects}
             defaultSubject={subject !== "all" ? subject : availableSubjects[0]?.slug}
             onCancel={() => setComposerOpen(false)}
-            onSubmit={(post) => {
-              community.addPost(post);
-              setComposerOpen(false);
+            onSubmit={async (post) => {
+              const result = await community.addPost(post);
+              if (result.ok) setComposerOpen(false);
+              return result.error;
             }}
           />
         ) : (
@@ -122,12 +124,18 @@ export default function CommunityClient({
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${kindStyle[p.kind].cls}`}>
                     {kindStyle[p.kind].icon} {postKindLabels[p.kind]}
                   </span>
-                  <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold text-amber-800">Pending</span>
+                  {p.moderation === "rejected" ? (
+                    <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-semibold text-rose-700">Not approved</span>
+                  ) : (
+                    <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold text-amber-800">Pending</span>
+                  )}
                 </div>
                 <h3 className="mt-2 font-bold text-slate-900">{p.title}</h3>
                 <p className="mt-1 text-xs text-slate-600">{p.excerpt}</p>
                 <p className="mt-3 text-[11px] text-slate-500">
-                  Only you can see this until a moderator approves it.{" "}
+                  {p.moderation === "rejected"
+                    ? "A moderator didn’t approve this post. Only you can see it."
+                    : "Only you can see this until a moderator approves it."}{" "}
                   <button type="button" onClick={() => community.removePost(p.id)} className="font-semibold text-rose-600">
                     Delete
                   </button>
@@ -208,7 +216,7 @@ export default function CommunityClient({
                     </span>
                     <div className="min-w-0 flex-1 text-xs">
                       <p className="font-semibold text-slate-800">{p.authorDisplay}</p>
-                      <p className="text-slate-500">{p.region} · {formatDate(p.createdAt)}</p>
+                      <p className="text-slate-500">{p.region ? `${p.region} · ` : ""}{formatDate(p.createdAt)}</p>
                     </div>
                     <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${kindStyle[p.kind].cls}`}>
                       {kindStyle[p.kind].icon} {kindStyle[p.kind].short}
@@ -233,7 +241,7 @@ export default function CommunityClient({
                       aria-pressed={appreciated}
                       className={`rounded-full px-3 py-1.5 font-semibold transition ${appreciated ? "bg-rose-50 text-rose-600" : "text-slate-600"}`}
                     >
-                      {appreciated ? "♥" : "♡"} {p.appreciations + (appreciated ? 1 : 0)}
+                      {appreciated ? "♥" : "♡"} {community.appreciationCount(p)}
                     </button>
                     <span className="px-2 text-slate-500">💬 {p.replies}</span>
                     <button
@@ -262,7 +270,8 @@ function Composer({
 }: {
   subjects: SubjectSummary[];
   defaultSubject?: string;
-  onSubmit: (post: CommunityPost) => void;
+  /** Resolves with an error message when the server rejects the post. */
+  onSubmit: (post: NewPostInput) => Promise<string | undefined>;
   onCancel: () => void;
 }) {
   const [kind, setKind] = useState<PostKind>("showcase");
@@ -271,28 +280,21 @@ function Composer({
   const [body, setBody] = useState("");
   const [safe, setSafe] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (title.trim().length < 5) return setError("Please add a title (at least 5 characters).");
     if (body.trim().length < 20) return setError("Please describe your work (at least 20 characters).");
     if (/\b[\w.+-]+@[\w-]+\.[\w.]+\b|\+?\d[\d\s-]{7,}\d/.test(`${title} ${body}`))
       return setError("For your safety, please remove email addresses and phone numbers.");
     if (!safe) return setError("Please confirm you haven’t included personal information.");
-    onSubmit({
-      id: `mine-${Date.now()}`,
-      kind,
-      subjectSlug: subject,
-      title: title.trim(),
-      excerpt: body.trim(),
-      authorDisplay: "You",
-      authorBand: "16–18",
-      region: "—",
-      createdAt: new Date().toISOString().slice(0, 10),
-      appreciations: 0,
-      replies: 0,
-      moderation: "pending",
-    });
+    setError(null);
+    setSubmitting(true);
+    const serverError = await onSubmit({ kind, subjectSlug: subject, title: title.trim(), excerpt: body.trim() });
+    setSubmitting(false);
+    if (serverError) setError(serverError);
   };
 
   return (
@@ -311,7 +313,9 @@ function Composer({
         I haven’t included my full name, school, address, contact details or photos of people.
       </label>
       {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
-      <button type="submit" className={`${btn.primary} w-full`}>Submit for moderation</button>
+      <button type="submit" disabled={submitting} className={`${btn.primary} w-full disabled:opacity-60`}>
+        {submitting ? "Submitting…" : "Submit for moderation"}
+      </button>
       <button type="button" onClick={onCancel} className={`${btn.ghost} w-full`}>Cancel</button>
     </form>
   );

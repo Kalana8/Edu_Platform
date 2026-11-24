@@ -1,160 +1,191 @@
 "use client";
 
 /**
- * Local learner state for Explore (saved interests, lab progress,
- * submissions, community interactions). Persists to localStorage until backend
- * endpoints exist — swap the read/write functions for API calls later.
+ * Learner state for Explore (saved interests, lab progress, submissions,
+ * community interactions), backed by the /api/explore routes.
+ *
+ * State is loaded once per page session from GET /api/explore/me and shared by
+ * every hook. Actions update the UI immediately, then sync to the server; if a
+ * request fails the state is reloaded from the server so the UI never drifts.
  */
 
 import { useCallback, useSyncExternalStore } from "react";
 import type { CommunityPost } from "./types";
+import type {
+  ExploreLearnerState,
+  NewPostInput,
+  ProjectAction,
+  ProjectMap,
+  ProjectState,
+} from "./store-types";
 
-const PREFIX = "edumate.explore.";
+export type { ProjectState, Submission } from "./store-types";
+
+interface StoreState extends ExploreLearnerState {
+  status: "idle" | "loading" | "ready" | "error";
+  /** Posts the learner had appreciated when state was loaded (already counted in post.appreciations). */
+  initiallyAppreciated: string[];
+}
+
+const EMPTY: StoreState = {
+  status: "idle",
+  savedInterests: [],
+  projects: {},
+  appreciated: [],
+  reported: [],
+  myPosts: [],
+  initiallyAppreciated: [],
+};
+
+let state: StoreState = EMPTY;
 const listeners = new Set<() => void>();
-const cache = new Map<string, { raw: string | null; value: unknown }>();
 
-function readRaw(key: string): string | null {
-  try {
-    return window.localStorage.getItem(PREFIX + key);
-  } catch {
-    return null;
-  }
-}
-
-function read<T>(key: string, fallback: T): T {
-  const raw = readRaw(key);
-  const cached = cache.get(key);
-  if (cached && cached.raw === raw) return cached.value as T;
-  let value: T = fallback;
-  if (raw) {
-    try {
-      value = JSON.parse(raw) as T;
-    } catch {
-      value = fallback;
-    }
-  }
-  cache.set(key, { raw, value });
-  return value;
-}
-
-function write<T>(key: string, value: T) {
-  try {
-    window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
-  } catch {
-    // Storage unavailable (private mode etc.) — keep in-memory value.
-    cache.set(key, { raw: JSON.stringify(value), value });
-  }
+function setState(patch: Partial<StoreState> | ((s: StoreState) => Partial<StoreState>)) {
+  state = { ...state, ...(typeof patch === "function" ? patch(state) : patch) };
   listeners.forEach((l) => l());
+}
+
+let inflight: Promise<void> | null = null;
+
+function load(force = false): Promise<void> {
+  if (inflight) return inflight;
+  if (!force && state.status !== "idle") return Promise.resolve();
+  if (state.status === "idle") setState({ status: "loading" });
+  inflight = fetch("/api/explore/me", { cache: "no-store" })
+    .then(async (res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as ExploreLearnerState;
+      setState({ ...data, initiallyAppreciated: data.appreciated, status: "ready" });
+    })
+    .catch((err) => {
+      console.error("Explore: could not load learner state", err);
+      setState({ status: "error" });
+    })
+    .finally(() => {
+      inflight = null;
+    });
+  return inflight;
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key?.startsWith(PREFIX)) listener();
-  };
-  window.addEventListener("storage", onStorage);
+  void load();
   return () => {
     listeners.delete(listener);
-    window.removeEventListener("storage", onStorage);
   };
 }
 
-function usePersistent<T>(key: string, fallback: T) {
-  const value = useSyncExternalStore(
-    subscribe,
-    () => read(key, fallback),
-    () => fallback,
-  );
-  const set = useCallback(
-    (update: (prev: T) => T) => write(key, update(read(key, fallback))),
-    [key, fallback],
-  );
-  return [value, set] as const;
+function useStore() {
+  return useSyncExternalStore(subscribe, () => state, () => EMPTY);
 }
+
+async function send(url: string, method: string, body?: unknown): Promise<{ ok: boolean; data: Record<string, unknown> }> {
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error(`Explore: ${method} ${url} failed`, data);
+      void load(true);
+    }
+    return { ok: res.ok, data };
+  } catch (err) {
+    console.error(`Explore: ${method} ${url} failed`, err);
+    void load(true);
+    return { ok: false, data: { error: "Network error. Please try again." } };
+  }
+}
+
+const toggleIn = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
 
 // ── Saved interests ─────────────────────────────────────────────────────────
 
-const NO_STRINGS: string[] = [];
-
 export function useSavedInterests() {
-  const [saved, setSaved] = usePersistent<string[]>("interests", NO_STRINGS);
-  const toggle = useCallback(
-    (slug: string) =>
-      setSaved((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug])),
-    [setSaved],
-  );
+  const { savedInterests: saved } = useStore();
+  const toggle = useCallback((slug: string) => {
+    const wasSaved = state.savedInterests.includes(slug);
+    setState((s) => ({ savedInterests: toggleIn(s.savedInterests, slug) }));
+    void send("/api/explore/interests", wasSaved ? "DELETE" : "POST", { subjectSlug: slug });
+  }, []);
   return { saved, toggle, isSaved: (slug: string) => saved.includes(slug) };
 }
 
 // ── Lab / project progress ──────────────────────────────────────────────────
 
-export interface Submission {
-  summary: string;
-  link: string;
-  submittedAt: string;
-}
-
-export interface ProjectState {
-  started: boolean;
-  completedSteps: string[];
-  submission?: Submission;
-}
-
-type ProjectMap = Record<string, ProjectState>;
-const NO_PROJECTS: ProjectMap = {};
 const EMPTY_PROJECT: ProjectState = { started: false, completedSteps: [] };
 
-export function useAllProjectStates() {
-  const [projects] = usePersistent<ProjectMap>("projects", NO_PROJECTS);
-  return projects;
+export function useAllProjectStates(): ProjectMap {
+  return useStore().projects;
 }
 
 export function useProjectState(projectId: string) {
-  const [projects, setProjects] = usePersistent<ProjectMap>("projects", NO_PROJECTS);
-  const state = projects[projectId] ?? EMPTY_PROJECT;
+  const state = useStore().projects[projectId] ?? EMPTY_PROJECT;
 
-  const update = useCallback(
-    (fn: (s: ProjectState) => ProjectState) =>
-      setProjects((prev) => ({ ...prev, [projectId]: fn(prev[projectId] ?? EMPTY_PROJECT) })),
-    [projectId, setProjects],
+  const run = useCallback(
+    async (action: ProjectAction, optimistic: (s: ProjectState) => ProjectState) => {
+      setState((s) => ({ projects: { ...s.projects, [projectId]: optimistic(s.projects[projectId] ?? EMPTY_PROJECT) } }));
+      const { ok, data } = await send(`/api/explore/projects/${encodeURIComponent(projectId)}`, "POST", action);
+      if (ok && data.state) setState((s) => ({ projects: { ...s.projects, [projectId]: data.state as ProjectState } }));
+      return { ok, error: ok ? undefined : (data.error as string | undefined) };
+    },
+    [projectId],
   );
 
   return {
     state,
-    start: () => update((s) => ({ ...s, started: true })),
+    start: () => run({ action: "start" }, (s) => ({ ...s, started: true })),
     toggleStep: (stepId: string) =>
-      update((s) => ({
+      run({ action: "toggleStep", stepId }, (s) => ({ ...s, started: true, completedSteps: toggleIn(s.completedSteps, stepId) })),
+    submit: (submission: { summary: string; link: string }) =>
+      run({ action: "submit", ...submission }, (s) => ({
         ...s,
         started: true,
-        completedSteps: s.completedSteps.includes(stepId)
-          ? s.completedSteps.filter((x) => x !== stepId)
-          : [...s.completedSteps, stepId],
+        submission: { ...submission, submittedAt: new Date().toISOString(), reviewStatus: "pending" },
       })),
-    submit: (submission: Omit<Submission, "submittedAt">) =>
-      update((s) => ({ ...s, started: true, submission: { ...submission, submittedAt: new Date().toISOString() } })),
-    withdraw: () => update((s) => ({ ...s, submission: undefined })),
-    reset: () => update(() => EMPTY_PROJECT),
+    withdraw: () => run({ action: "withdraw" }, (s) => ({ ...s, submission: undefined })),
+    reset: () => run({ action: "reset" }, () => EMPTY_PROJECT),
   };
 }
 
 // ── Community interactions ──────────────────────────────────────────────────
 
-const NO_POSTS: CommunityPost[] = [];
-
 export function useCommunityState() {
-  const [appreciated, setAppreciated] = usePersistent<string[]>("appreciated", NO_STRINGS);
-  const [reported, setReported] = usePersistent<string[]>("reported", NO_STRINGS);
-  const [myPosts, setMyPosts] = usePersistent<CommunityPost[]>("myPosts", NO_POSTS);
+  const { appreciated, reported, myPosts, initiallyAppreciated } = useStore();
 
   return {
     appreciated,
     reported,
     myPosts,
-    toggleAppreciate: (id: string) =>
-      setAppreciated((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id])),
-    report: (id: string) => setReported((prev) => (prev.includes(id) ? prev : [...prev, id])),
-    undoReport: (id: string) => setReported((prev) => prev.filter((x) => x !== id)),
-    addPost: (post: CommunityPost) => setMyPosts((prev) => [post, ...prev]),
-    removePost: (id: string) => setMyPosts((prev) => prev.filter((p) => p.id !== id)),
+    /** Live count for a feed post, including this learner's toggle since the page loaded. */
+    appreciationCount: (post: CommunityPost) =>
+      post.appreciations - (initiallyAppreciated.includes(post.id) ? 1 : 0) + (appreciated.includes(post.id) ? 1 : 0),
+    toggleAppreciate: (id: string) => {
+      const was = state.appreciated.includes(id);
+      setState((s) => ({ appreciated: toggleIn(s.appreciated, id) }));
+      void send(`/api/explore/community/posts/${encodeURIComponent(id)}/appreciate`, was ? "DELETE" : "POST");
+    },
+    report: (id: string) => {
+      if (state.reported.includes(id)) return;
+      setState((s) => ({ reported: [...s.reported, id] }));
+      void send(`/api/explore/community/posts/${encodeURIComponent(id)}/report`, "POST", {});
+    },
+    undoReport: (id: string) => {
+      setState((s) => ({ reported: s.reported.filter((x) => x !== id) }));
+      void send(`/api/explore/community/posts/${encodeURIComponent(id)}/report`, "DELETE");
+    },
+    /** Submits a post for moderation. Resolves with an error message if the server rejects it. */
+    addPost: async (input: NewPostInput): Promise<{ ok: boolean; error?: string }> => {
+      const { ok, data } = await send("/api/explore/community/posts", "POST", input);
+      if (!ok) return { ok, error: (data.error as string) ?? "Unable to submit your post." };
+      setState((s) => ({ myPosts: [data.post as CommunityPost, ...s.myPosts] }));
+      return { ok };
+    },
+    removePost: (id: string) => {
+      setState((s) => ({ myPosts: s.myPosts.filter((p) => p.id !== id) }));
+      void send(`/api/explore/community/posts/${encodeURIComponent(id)}`, "DELETE");
+    },
   };
 }

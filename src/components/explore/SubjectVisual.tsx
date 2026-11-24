@@ -151,13 +151,16 @@ function MotifShape({ motif, accent }: { motif: Motif; accent: string }) {
         </>
       );
     case "dna": {
+      // Round trig output: Node and browsers can differ in the last digits of Math.sin,
+      // which breaks hydration when the raw values end up in SVG attributes.
+      const wave = (x: number) => Math.round(Math.sin(x / 18) * 4000) / 100;
       const xs = Array.from({ length: 41 }, (_, i) => -90 + i * 4.5);
-      const a = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x} ${Math.sin(x / 18) * 40}`).join(" ");
-      const b = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x} ${-Math.sin(x / 18) * 40}`).join(" ");
+      const a = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x} ${wave(x)}`).join(" ");
+      const b = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x} ${-wave(x)}`).join(" ");
       return (
         <>
           {xs.filter((_, i) => i % 4 === 0).map((x) => (
-            <line key={x} x1={x} y1={Math.sin(x / 18) * 40} x2={x} y2={-Math.sin(x / 18) * 40} stroke={accent} strokeWidth="3" strokeOpacity="0.8" />
+            <line key={x} x1={x} y1={wave(x)} x2={x} y2={-wave(x)} stroke={accent} strokeWidth="3" strokeOpacity="0.8" />
           ))}
           <path d={a} />
           <path d={b} strokeOpacity="0.7" />

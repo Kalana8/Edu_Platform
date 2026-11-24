@@ -186,12 +186,13 @@ export interface CommunityPost {
   excerpt: string;
   /** Privacy-safe display name: first name + initial only. */
   authorDisplay: string;
-  authorBand: "Under 16" | "16–18" | "Adult learner";
-  region: string;
+  authorBand?: "Under 16" | "16–18" | "Adult learner";
+  /** Broad region only (e.g. continent); absent when unknown. */
+  region?: string;
   subjectSlug: string;
   createdAt: string;
   appreciations: number;
   replies: number;
   achievement?: string;
-  moderation: "reviewed" | "pending";
+  moderation: "reviewed" | "pending" | "rejected";
 }

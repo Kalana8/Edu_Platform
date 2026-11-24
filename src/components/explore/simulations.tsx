@@ -149,8 +149,10 @@ function RobotArmSim() {
   const [a2, setA2] = useState(-30);
   const L1 = 90, L2 = 70;
   const r = (d: number) => (d * Math.PI) / 180;
-  const x1 = L1 * Math.cos(r(a1)), y1 = L1 * Math.sin(r(a1));
-  const x2 = x1 + L2 * Math.cos(r(a1 + a2)), y2 = y1 + L2 * Math.sin(r(a1 + a2));
+  // Rounded so server- and client-rendered SVG coordinates match exactly (hydration).
+  const round = (n: number) => Math.round(n * 100) / 100;
+  const x1 = round(L1 * Math.cos(r(a1))), y1 = round(L1 * Math.sin(r(a1)));
+  const x2 = round(x1 + L2 * Math.cos(r(a1 + a2))), y2 = round(y1 + L2 * Math.sin(r(a1 + a2)));
   const ox = 170, oy = 170;
   return (
     <div className="space-y-4">
