@@ -29,7 +29,7 @@ export default async function ConfirmSchool({
         </div>
 
         {/* School card: illustration breaks out of the top edge, CTA sits in a notch cut from the bottom-right corner */}
-        <div className="relative mt-20 rounded-[2rem] bg-blue-50 px-6 pb-28 pt-20 text-slate-900 shadow-[0_24px_48px_-20px_rgba(4,43,68,0.55)]">
+        <div className="relative mt-20 rounded-[2rem] bg-blue-50 px-6 pb-24 pt-20 text-slate-900 shadow-[0_24px_48px_-20px_rgba(4,43,68,0.55)]">
           <BooksIllustration className="absolute -top-14 left-4 h-32 w-36 drop-shadow-[0_10px_12px_rgba(4,43,68,0.25)]" />
 
           <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Your school</p>
@@ -59,10 +59,10 @@ export default async function ConfirmSchool({
             <span aria-hidden className="absolute -left-7 bottom-0 h-7 w-7" style={notchCorner} />
             <Link
               href={`/create-student-id?code=${encodeURIComponent(schoolCode)}`}
-              className="group flex h-16 w-36 items-center justify-center gap-2 rounded-[1.5rem] bg-slate-900 text-base font-semibold text-white shadow-lg transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 active:scale-[0.98]"
+              className="group flex h-12 w-32 items-center justify-center gap-2 rounded-[1.25rem] bg-slate-900 text-base font-semibold text-white shadow-lg transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 active:scale-[0.98]"
             >
               Join
-              <svg className="h-6 w-6 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M4 12h16" />
                 <path d="m14 6 6 6-6 6" />
               </svg>
@@ -90,7 +90,7 @@ const notchCorner: CSSProperties = {
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium text-slate-800 ring-1 ring-inset ring-slate-900/70">
+    <span className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-slate-800 ring-1 ring-inset ring-slate-900/70">
       {children}
     </span>
   );

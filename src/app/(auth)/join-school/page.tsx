@@ -2,35 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FormError, PrimaryButton, SecondaryLink, TextField } from "@/components/ui/form";
+import { FormError, SecondaryLink, TextField } from "@/components/ui/form";
 
 type School = { code: string; name: string; location: string | null; tier: string };
-type Mode = "name" | "id";
 
 const MIN_QUERY = 2;
 
 export default function JoinSchool() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("name");
-
-  // Search by name
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<School[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  // Enter school ID
-  const [schoolId, setSchoolId] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  function goToConfirm(school: Pick<School, "code" | "name" | "tier">) {
+  function goToConfirm(school: School) {
     router.push(
       `/confirm-school?code=${encodeURIComponent(school.code)}&name=${encodeURIComponent(school.name)}&tier=${encodeURIComponent(school.tier)}`,
     );
   }
 
-  // Debounced name search; a newer keystroke cancels the previous request.
+  // Debounced search; a newer keystroke cancels the previous request.
   useEffect(() => {
     const q = query.trim();
     if (q.length < MIN_QUERY) return;
@@ -67,55 +58,6 @@ export default function JoinSchool() {
     }
   }
 
-  function switchMode(next: Mode) {
-    setMode(next);
-    setError(null);
-    setSearchError(null);
-  }
-
-  async function verify() {
-    setError(null);
-    const trimmed = schoolId.trim();
-    if (!trimmed) {
-      setError("Enter school id");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const res = await fetch("/api/verify-school", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ schoolId: trimmed }),
-      });
-
-      let json: { exists?: boolean; error?: string; school?: School } | null = null;
-      try {
-        json = await res.json();
-      } catch {
-        setError("Something went wrong");
-        return;
-      }
-
-      if (!res.ok) {
-        setError(json?.error || "Something went wrong");
-        return;
-      }
-
-      if (!json?.exists || !json.school) {
-        setError("Enter a valid id");
-        return;
-      }
-
-      goToConfirm(json.school);
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const trimmedQuery = query.trim();
 
   return (
@@ -124,108 +66,64 @@ export default function JoinSchool() {
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">Join Your School</h1>
           <p className="text-white/75">
-            {mode === "name" ? (
-              <>Search for your <span className="font-medium text-white">school</span> by name</>
-            ) : (
-              <>Enter the ID your <span className="font-medium text-white">school</span> gave you</>
-            )}
+            Search for your <span className="font-medium text-white">school</span> by name or ID
           </p>
-          {mode === "id" && error && <FormError id="school-id-error">{error}</FormError>}
         </div>
 
-        {mode === "name" ? (
-          <div className="mt-12 flex flex-col gap-3">
-            <TextField
-              id="school-name"
-              label="School name"
-              value={query}
-              onChange={(e) => onQueryChange(e.target.value)}
-              type="search"
-              autoComplete="off"
-              placeholder="Start typing your school's name"
-              aria-controls="school-results"
-              trailing={searching ? <SmallSpinner /> : <SearchIcon />}
-            />
+        <div className="mt-12 flex flex-col gap-3">
+          <TextField
+            id="school-search"
+            label="School"
+            value={query}
+            onChange={(e) => onQueryChange(e.target.value)}
+            type="search"
+            autoComplete="off"
+            placeholder="School name or ID"
+            aria-controls="school-results"
+            trailing={searching ? <SmallSpinner /> : <SearchIcon />}
+          />
 
-            <div id="school-results" aria-live="polite">
-              {searchError ? (
-                <FormError>{searchError}</FormError>
-              ) : results === null ? (
-                trimmedQuery.length > 0 && (
-                  <p className="px-1 text-sm text-white/70">Type at least {MIN_QUERY} letters.</p>
-                )
-              ) : results.length === 0 ? (
-                !searching && (
-                  <p className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white/85">
-                    No schools match &ldquo;{trimmedQuery}&rdquo;. Check the spelling or use your school ID.
-                  </p>
-                )
-              ) : (
-                <ul className="overflow-hidden rounded-xl bg-white text-slate-900 shadow-[0_12px_32px_-12px_rgba(4,43,68,0.45)] divide-y divide-slate-100">
-                  {results.map((s) => (
-                    <li key={s.code}>
-                      <button
-                        type="button"
-                        onClick={() => goToConfirm(s)}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50 focus-visible:bg-blue-50 focus-visible:outline-none"
-                      >
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-semibold">{s.name}</span>
-                          <span className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
-                            <PinIcon />
-                            <span className="truncate">{s.location || "Location not set"}</span>
-                          </span>
+          <div id="school-results" aria-live="polite">
+            {searchError ? (
+              <FormError>{searchError}</FormError>
+            ) : results === null ? (
+              trimmedQuery.length > 0 && (
+                <p className="px-1 text-sm text-white/70">Type at least {MIN_QUERY} letters.</p>
+              )
+            ) : results.length === 0 ? (
+              !searching && (
+                <p className="rounded-xl bg-white/10 px-4 py-3 text-sm text-white/85">
+                  No schools match &ldquo;{trimmedQuery}&rdquo;. Check the spelling and try again.
+                </p>
+              )
+            ) : (
+              <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl bg-white text-slate-900 shadow-[0_12px_32px_-12px_rgba(4,43,68,0.45)]">
+                {results.map((s) => (
+                  <li key={s.code}>
+                    <button
+                      type="button"
+                      onClick={() => goToConfirm(s)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-blue-50 focus-visible:bg-blue-50 focus-visible:outline-none"
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold">{s.name}</span>
+                        <span className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
+                          <PinIcon />
+                          <span className="truncate">{s.location || "Location not set"}</span>
                         </span>
-                        <span className="shrink-0 rounded-full bg-brand-tint px-2.5 py-0.5 text-[11px] font-semibold text-brand">
-                          {s.tier}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                      </span>
+                      <span className="shrink-0 rounded-full bg-brand-tint px-2.5 py-0.5 text-[11px] font-semibold text-brand">
+                        {s.tier}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        ) : (
-          <form
-            className="mt-12 flex flex-col gap-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void verify();
-            }}
-            noValidate
-          >
-            <TextField
-              id="school-id"
-              label="School ID"
-              value={schoolId}
-              onChange={(e) => {
-                setSchoolId(e.target.value.toUpperCase());
-                if (error) setError(null);
-              }}
-              type="text"
-              autoComplete="off"
-              autoCapitalize="characters"
-              spellCheck={false}
-              placeholder="SCH-45821"
-              error={!!error}
-              aria-describedby={error ? "school-id-error" : undefined}
-              className="tracking-wider"
-            />
-            <PrimaryButton type="submit" loading={loading} compact>
-              {loading ? "Confirming…" : "Confirm School"}
-            </PrimaryButton>
-          </form>
-        )}
+        </div>
 
-        <div className="mt-6 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={() => switchMode(mode === "name" ? "id" : "name")}
-            className="text-sm font-medium text-white/85 underline-offset-4 hover:text-white hover:underline focus-visible:underline focus-visible:outline-none"
-          >
-            {mode === "name" ? "Have a school ID? Enter it instead" : "Search by school name instead"}
-          </button>
+        <div className="mt-6 flex flex-col">
           <SecondaryLink href="/">
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="m15 18-6-6 6-6" />

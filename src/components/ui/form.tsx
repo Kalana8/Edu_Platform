@@ -68,7 +68,7 @@ const primaryClass = `${primaryBase} w-full px-16 text-lg`;
 // Content-width variant, centred in its column (matches the landing "Get Started").
 const primaryCompactClass = `${primaryBase} self-center pl-6 pr-16 text-base`;
 
-const secondaryClass = `inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-6 text-sm font-medium text-white/85 ring-1 ring-inset ring-white/35 transition hover:bg-white/10 hover:text-white active:scale-[0.99] ${focusRing}`;
+const secondaryClass = `inline-flex h-8 items-center justify-center gap-1.5 self-start rounded-full pl-3 pr-5 text-sm font-medium text-white/85 ring-1 ring-inset ring-white/35 transition hover:bg-white/10 hover:text-white active:scale-[0.99] ${focusRing}`;
 
 function ArrowBadge({ loading = false }: { loading?: boolean }) {
   return (

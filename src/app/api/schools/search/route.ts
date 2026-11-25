@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const MAX_RESULTS = 8;
 
-/** Public school lookup for the join flow: active schools whose name contains `q`. */
+/** Public school lookup for the join flow: active schools whose name or code contains `q`. */
 export async function GET(request: NextRequest) {
   const q = (request.nextUrl.searchParams.get("q") ?? "").trim().slice(0, 80);
 
@@ -11,8 +11,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ schools: [] });
   }
 
-  // Treat the query as literal text, not ilike wildcards.
-  const pattern = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  // Drop ilike wildcards and PostgREST filter syntax so the query is plain text.
+  const clean = q.replace(/[%_\\,()"*]/g, " ").replace(/\s+/g, " ").trim();
+  if (clean.length < 2) {
+    return NextResponse.json({ schools: [] });
+  }
+  const pattern = `"%${clean}%"`;
 
   try {
     const supabase = await createClient();
@@ -20,7 +24,7 @@ export async function GET(request: NextRequest) {
       .from("schools")
       .select("code, name, location, tier")
       .eq("is_active", true)
-      .ilike("name", pattern)
+      .or(`name.ilike.${pattern},code.ilike.${pattern}`)
       .order("name", { ascending: true })
       .limit(MAX_RESULTS);
 
