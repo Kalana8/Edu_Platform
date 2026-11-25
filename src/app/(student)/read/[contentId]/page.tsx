@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import MobileLoader from "@/components/MobileLoader";
 
 type PageData = {
   id: string;
@@ -136,8 +137,8 @@ export default function ReadingPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-500">
-        <p className="text-sm font-medium animate-pulse">Loading reading material…</p>
+      <div className="bg-slate-50">
+        <MobileLoader label="Loading reading material…" className="min-h-screen" />
       </div>
     );
   }

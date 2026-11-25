@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import MobileLoader from "@/components/MobileLoader";
 import BottomBar from "@/components/BottomBar";
 
 type WalletData = {
@@ -85,9 +86,7 @@ export default function BoostPage() {
           <div className="[&>section]:!rounded-none">
             <PageHeader title="Boost Your Progress" subtitle="Use credits to unlock special features" />
           </div>
-          <div className="px-4 py-6">
-            <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading…</div>
-          </div>
+          <MobileLoader label="Loading boosts…" />
         </main>
       </div>
     );

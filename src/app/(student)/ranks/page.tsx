@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import MobileLoader from "@/components/MobileLoader";
 import BottomBar from "@/components/BottomBar";
 
 type SchoolRank = {
@@ -84,11 +85,9 @@ export default function RanksPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Leaderboard" subtitle="Loading..." />
+            <PageHeader title="Leaderboard" />
           </div>
-          <div className="px-4 py-6">
-            <div className="rounded-[1.75rem] bg-white p-6 text-center text-sm text-slate-500 shadow-sm">Loading…</div>
-          </div>
+          <MobileLoader label="Loading leaderboard…" />
         </main>
       </div>
     );
@@ -99,7 +98,7 @@ export default function RanksPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
           <div className="[&>section]:!rounded-none">
-            <PageHeader title="Leaderboard" subtitle="See how schools rank" />
+            <PageHeader title="Leaderboard" />
           </div>
           <div className="px-4 py-6">
             <div className="rounded-[1.75rem] bg-rose-50 p-4 text-sm text-rose-700">{error}</div>
@@ -112,13 +111,6 @@ export default function RanksPage() {
   const isSchoolTab = activeTab !== "students";
   const items = isSchoolTab ? data.schools : data.students;
 
-  const getSubtitle = () => {
-    if (isSchoolTab) {
-      if (activeTab === "tier") return "See how your tier ranks";
-      return "See how schools rank nationally";
-    }
-    return "See how students in your school rank";
-  };
 
   const emptyText = isSchoolTab
     ? "Rankings will appear once schools start earning points."
@@ -128,7 +120,7 @@ export default function RanksPage() {
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col">
         <div className="[&>section]:!rounded-none">
-          <PageHeader title="Leaderboard" subtitle={getSubtitle()} />
+          <PageHeader title="Leaderboard" />
         </div>
 
         <div className="flex flex-col gap-1 px-4 py-1">

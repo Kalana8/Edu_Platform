@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import MobileLoader from "@/components/MobileLoader";
 import BottomBar from "@/components/BottomBar";
 import DiscoverEntryCard from "@/components/explore/DiscoverEntryCard";
 import { slugToLabel } from "@/lib/slug";
@@ -69,7 +70,7 @@ export default function ChooseCategoryPage() {
 
         <div className="grid grid-cols-2 gap-4 px-3">
           {isLoading ? (
-            <div className="col-span-2 rounded-3xl bg-white p-6 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200/70">Loading categories…</div>
+            <MobileLoader label="Loading categories…" className="col-span-2 py-12" />
           ) : categories.length === 0 ? (
             <div className="col-span-2 rounded-3xl bg-white p-6 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200/70">No categories available yet.</div>
           ) : (

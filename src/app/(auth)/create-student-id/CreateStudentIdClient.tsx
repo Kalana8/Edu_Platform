@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { setUser as saveUser } from "@/lib/session";
 import Link from "next/link";
+import { MobileSpinner } from "@/components/MobileLoader";
 
 type Mode = "studentNumber" | "signUp" | "signIn" | "forgotPassword";
 
@@ -223,7 +224,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
                 disabled={loading || !fullStudentId}
                 className="inline-flex w-full items-center justify-center px-5 py-3 text-base font-semibold rounded-lg bg-white text-blue-700 hover:cursor-pointer disabled:opacity-60"
               >
-                {loading ? "Checking..." : "Continue"}
+                {loading ? <><MobileSpinner className="mr-2 h-4 w-4" />Checking…</> : "Continue"}
               </button>
             </>
           )}
@@ -269,7 +270,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
                 disabled={loading || !password}
                 className="inline-flex w-full items-center justify-center px-5 py-3 text-base font-semibold rounded-lg bg-white text-blue-700 hover:cursor-pointer disabled:opacity-60"
               >
-                {loading ? "Creating..." : "Create Account"}
+                {loading ? <><MobileSpinner className="mr-2 h-4 w-4" />Creating…</> : "Create Account"}
               </button>
 
               
@@ -306,7 +307,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
                 disabled={loading || !password}
                 className="inline-flex w-full items-center justify-center px-5 py-3 text-base font-semibold rounded-lg bg-white text-blue-700 hover:cursor-pointer disabled:opacity-60"
               >
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? <><MobileSpinner className="mr-2 h-4 w-4" />Signing in…</> : "Sign In"}
               </button>
 
               <button
@@ -356,7 +357,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
                 disabled={loading || resetSuccess}
                 className="inline-flex w-full items-center justify-center px-5 py-3 text-base font-semibold rounded-lg bg-white text-blue-700 hover:cursor-pointer disabled:opacity-60"
               >
-                {loading ? "Submitting..." : "Submit Reset Request"}
+                {loading ? <><MobileSpinner className="mr-2 h-4 w-4" />Submitting…</> : "Submit Reset Request"}
               </button>
 
            
@@ -366,7 +367,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
           <Link href="/" className="block text-center text-sm text-white/80 hover:text-white">Cancel</Link>
 
           <p className="rounded-lg bg-white/85 px-3 py-1.5 text-center text-[11px] leading-snug text-slate-700">
-            Your Student ID tracks academic progress and is customizable in Settings.
+            Your Student ID tracks academic progress and is customisable in Settings.
           </p>
         </div>
       </main>

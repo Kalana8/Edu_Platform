@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
+import MobileLoader from "@/components/MobileLoader";
 
 type Option = {
   id: string;
@@ -163,10 +164,7 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center px-4 py-6">
-          <div className="text-center">
-            <p className="text-lg font-semibold text-slate-950">Generating quiz…</p>
-            <p className="mt-2 text-sm text-slate-500">This may take a few seconds.</p>
-          </div>
+          <MobileLoader label="Generating quiz…" hint="This may take a few seconds." />
         </main>
       </div>
     );
