@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   HeaderButton,
   HeaderStat,
+  Loader,
   Pill,
   RowAction,
   RowActions,
@@ -247,7 +248,7 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
           }
         >
           {isLoading ? (
-            <TableMessage>Loading schools…</TableMessage>
+            <Loader label="Loading schools…" />
           ) : (
               <table className={tableClass.table}>
                 <thead className={tableClass.thead}>

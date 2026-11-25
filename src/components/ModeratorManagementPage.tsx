@@ -5,6 +5,7 @@ import {
   Avatar,
   HeaderButton,
   HeaderStat,
+  Loader,
   RowAction,
   RowActions,
   SearchInput,
@@ -231,7 +232,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           }
         >
           {isLoading ? (
-            <TableMessage>Loading moderators…</TableMessage>
+            <Loader label="Loading moderators…" />
           ) : (
             <table className={tableClass.table}>
               <thead className={tableClass.thead}>

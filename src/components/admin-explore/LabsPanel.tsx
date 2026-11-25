@@ -16,6 +16,7 @@ import {
   inputCls,
   useCollection,
 } from "./ui";
+import { HeaderButton, Loader, RowAction, RowActions, TableCard, TableMessage, TableTitle, tableClass } from "../AdminUI";
 
 const blankLab = (subjectSlug: string, sortOrder: number): AdminLab => ({
   id: "",
@@ -47,69 +48,72 @@ export default function LabsPanel({ canEdit }: { canEdit: boolean }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">Hands-on activities on the Labs page and inside each subject.</p>
-        {canEdit && (
-          <button
-            type="button"
-            className={btnPrimary}
-            disabled={subjects.length === 0}
-            onClick={() => setEditing({ lab: blankLab(subjects[0]?.slug ?? "", items.length), isNew: true })}
-          >
-            + Add lab
-          </button>
-        )}
-      </div>
-
       <Banner feedback={feedback} />
 
-      <div className="overflow-x-auto rounded-4xl bg-white shadow ring-1 ring-slate-200">
+      <TableCard
+        toolbar={
+          <>
+            <TableTitle title="Labs" count={loading ? undefined : items.length} />
+            {canEdit && (
+              <HeaderButton
+                disabled={subjects.length === 0}
+                onClick={() => setEditing({ lab: blankLab(subjects[0]?.slug ?? "", items.length), isNew: true })}
+              >
+                Add lab
+              </HeaderButton>
+            )}
+          </>
+        }
+      >
         {loading ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">Loading labs…</div>
+          <Loader label="Loading labs…" />
         ) : items.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">No labs yet.</div>
+          <TableMessage>No labs yet.</TableMessage>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+          <table className={tableClass.table}>
+            <thead className={tableClass.thead}>
               <tr>
-                {["Lab", "Subject", "Type", "Steps", "Status", ""].map((h) => (
-                  <th key={h} scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">{h}</th>
-                ))}
+                <th scope="col" className={tableClass.th}>Lab</th>
+                <th scope="col" className={tableClass.th}>Subject</th>
+                <th scope="col" className={tableClass.th}>Type</th>
+                <th scope="col" className={tableClass.thRight}>Steps</th>
+                <th scope="col" className={tableClass.th}>Status</th>
+                <th scope="col" className={tableClass.thRight}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-white">
+            <tbody className={tableClass.tbody}>
               {items.map((l) => (
-                <tr key={l.id} className="transition hover:bg-slate-50">
-                  <td className="px-4 py-3 sm:px-6">
-                    <div className="text-sm font-semibold text-slate-950">{l.title}</div>
+                <tr key={l.id} className={tableClass.tr}>
+                  <td className={tableClass.td}>
+                    <div className="font-semibold text-slate-900">{l.title}</div>
                     <div className="text-xs text-slate-500">{l.id}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 sm:px-6">{subjectTitle(l.subjectSlug)}</td>
-                  <td className="px-4 py-3 text-sm capitalize text-slate-600 sm:px-6">
+                  <td className={tableClass.td}>{subjectTitle(l.subjectSlug)}</td>
+                  <td className={`${tableClass.td} capitalize`}>
                     {l.type}
                     <div className="text-xs text-slate-400">{l.durationMins} min · {l.difficulty}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 sm:px-6">{l.steps.length}</td>
-                  <td className="px-4 py-3 sm:px-6"><StatusBadge published={l.isPublished} /></td>
-                  <td className="px-4 py-3 text-right text-xs font-medium text-slate-600 sm:px-6">
-                    <div className="flex justify-end gap-3 whitespace-nowrap">
+                  <td className={`${tableClass.tdRight} tabular-nums`}>{l.steps.length}</td>
+                  <td className={tableClass.td}><StatusBadge published={l.isPublished} /></td>
+                  <td className={tableClass.tdRight}>
+                    <RowActions>
                       {canEdit ? (
                         <>
-                          <button type="button" onClick={() => togglePublished(l)} className="hover:text-slate-950">{l.isPublished ? "Hide" : "Publish"}</button>
-                          <button type="button" onClick={() => setEditing({ lab: l, isNew: false })} className="hover:text-slate-950">Edit</button>
-                          <button type="button" onClick={() => setDeleting(l)} className="text-red-500 hover:text-red-700">Delete</button>
+                          <RowAction variant={l.isPublished ? "hide" : "publish"} onClick={() => togglePublished(l)} />
+                          <RowAction variant="edit" onClick={() => setEditing({ lab: l, isNew: false })} />
+                          <RowAction variant="delete" onClick={() => setDeleting(l)} />
                         </>
                       ) : (
-                        <button type="button" onClick={() => setEditing({ lab: l, isNew: false })} className="hover:text-slate-950">View</button>
+                        <RowAction variant="view" onClick={() => setEditing({ lab: l, isNew: false })} />
                       )}
-                    </div>
+                    </RowActions>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
+      </TableCard>
 
       {editing && (
         <LabEditor

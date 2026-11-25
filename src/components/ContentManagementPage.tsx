@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
+import { Loader } from "./AdminUI";
 
 export type CategoryItem = {
   id: string;
@@ -312,7 +313,7 @@ export default function ContentManagementPage() {
           <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Categories</h2>
             {loadingCategories ? (
-              <div className="px-6 py-10 text-center text-sm text-slate-500">Loading categories…</div>
+              <Loader label="Loading categories…" />
             ) : categories.length === 0 ? (
               <div className="px-6 py-10 text-center text-sm text-slate-500">No categories available yet.</div>
             ) : (
@@ -517,7 +518,7 @@ export default function ContentManagementPage() {
                     </h3>
                   </div>
                   {loadingContents ? (
-                    <div className="px-6 py-10 text-center text-sm text-slate-500">Loading content…</div>
+                    <Loader label="Loading content…" />
                   ) : (() => {
                     const categoryPending = pendingItems.filter((p) => p.category_id === selectedCategory?.id);
                     if (contents.length === 0 && categoryPending.length === 0) {

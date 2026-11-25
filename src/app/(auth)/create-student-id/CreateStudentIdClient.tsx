@@ -190,7 +190,7 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
           </h1>
         </div>
 
-        <div className="mt-25 space-y-3 px-6">
+        <div className="mt-10 space-y-3 px-6">
           {mode === "studentNumber" && (
             <>
               <div className="space-y-2">
@@ -365,11 +365,9 @@ export default function CreateStudentIdClient({ schoolCode }: { schoolCode: stri
 
           <Link href="/" className="block text-center text-sm text-white/80 hover:text-white">Cancel</Link>
 
-          <div className="overflow-hidden rounded-2xl border border-white/40 bg-white/10 p-1 shadow-[0_28px_60px_-30px_rgba(15,23,42,0.45)] backdrop-blur-md ring-1 ring-white/30">
-            <div className="rounded-xl bg-white/85 p-5 text-left text-xs text-slate-700 backdrop-blur-sm">
-              Your Student ID helps track your individual progress. You can customize it later in settings.
-            </div>
-          </div>
+          <p className="rounded-lg bg-white/85 px-3 py-1.5 text-center text-[11px] leading-snug text-slate-700">
+            Your Student ID tracks academic progress and is customizable in Settings.
+          </p>
         </div>
       </main>
     </div>

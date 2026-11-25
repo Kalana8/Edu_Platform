@@ -63,7 +63,10 @@ function Spinner() {
 }
 
 // Pill with centred label and a round arrow badge pinned right (same as landing "Get Started").
-const primaryClass = `group relative flex h-14 w-full items-center justify-center rounded-full bg-white px-16 text-lg font-semibold text-slate-900 shadow-[0_12px_32px_-8px_rgba(4,43,68,0.45)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-10px_rgba(4,43,68,0.55)] active:translate-y-0 active:scale-[0.98] disabled:cursor-wait disabled:hover:translate-y-0 ${focusRing}`;
+const primaryBase = `group relative flex h-14 items-center justify-center rounded-full bg-white font-semibold text-slate-900 shadow-[0_12px_32px_-8px_rgba(4,43,68,0.45)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-10px_rgba(4,43,68,0.55)] active:translate-y-0 active:scale-[0.98] disabled:cursor-wait disabled:hover:translate-y-0 ${focusRing}`;
+const primaryClass = `${primaryBase} w-full px-16 text-lg`;
+// Content-width variant, centred in its column (matches the landing "Get Started").
+const primaryCompactClass = `${primaryBase} self-center pl-6 pr-16 text-base`;
 
 const secondaryClass = `inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full px-6 text-sm font-medium text-white/85 ring-1 ring-inset ring-white/35 transition hover:bg-white/10 hover:text-white active:scale-[0.99] ${focusRing}`;
 
@@ -84,13 +87,14 @@ function ArrowBadge({ loading = false }: { loading?: boolean }) {
 
 export function PrimaryButton({
   loading = false,
+  compact = false,
   disabled,
   children,
   className = "",
   ...props
-}: ComponentProps<"button"> & { loading?: boolean }) {
+}: ComponentProps<"button"> & { loading?: boolean; compact?: boolean }) {
   return (
-    <button {...props} className={`${primaryClass} ${className}`} disabled={loading || disabled}>
+    <button {...props} className={`${compact ? primaryCompactClass : primaryClass} ${className}`} disabled={loading || disabled}>
       {children}
       <ArrowBadge loading={loading} />
     </button>

@@ -19,6 +19,7 @@ import {
   inputCls,
   useCollection,
 } from "./ui";
+import { HeaderButton, Loader, Pill, RowAction, RowActions, TableCard, TableMessage, TableTitle, tableClass } from "../AdminUI";
 
 const blankSubject = (): AdminSubject => ({
   slug: "",
@@ -58,79 +59,81 @@ export default function SubjectsPanel({ canEdit }: { canEdit: boolean }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-500">
-          Subjects appear on Discover. Disciplines, Featured, Trending and other sections are driven by the fields below.
-        </p>
-        {canEdit && (
-          <button type="button" className={btnPrimary} onClick={() => setEditing({ subject: { ...blankSubject(), sortOrder: items.length }, isNew: true })}>
-            + Add subject
-          </button>
-        )}
-      </div>
-
       <Banner feedback={feedback} />
 
-      <div className="overflow-x-auto rounded-4xl bg-white shadow ring-1 ring-slate-200">
+      <TableCard
+        toolbar={
+          <>
+            <TableTitle title="Subjects" count={loading ? undefined : items.length} />
+            {canEdit && (
+              <HeaderButton onClick={() => setEditing({ subject: { ...blankSubject(), sortOrder: items.length }, isNew: true })}>
+                Add subject
+              </HeaderButton>
+            )}
+          </>
+        }
+      >
         {loading ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">Loading subjects…</div>
+          <Loader label="Loading subjects…" />
         ) : items.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">No subjects yet.</div>
+          <TableMessage>No subjects yet.</TableMessage>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+          <table className={tableClass.table}>
+            <thead className={tableClass.thead}>
               <tr>
-                {["Subject", "Discipline", "Highlights", "Status", ""].map((h) => (
-                  <th key={h} scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">{h}</th>
-                ))}
+                <th scope="col" className={tableClass.th}>Subject</th>
+                <th scope="col" className={tableClass.th}>Discipline</th>
+                <th scope="col" className={tableClass.th}>Highlights</th>
+                <th scope="col" className={tableClass.th}>Status</th>
+                <th scope="col" className={tableClass.thRight}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-white">
+            <tbody className={tableClass.tbody}>
               {items.map((s) => (
-                <tr key={s.slug} className="transition hover:bg-slate-50">
-                  <td className="px-4 py-3 sm:px-6">
+                <tr key={s.slug} className={tableClass.tr}>
+                  <td className={tableClass.td}>
                     <div className="flex items-center gap-3">
-                      <SubjectVisual motif={s.motif} theme={s.theme} className="h-10 w-14 shrink-0 rounded-xl" />
+                      <SubjectVisual motif={s.motif} theme={s.theme} className="h-8 w-11 shrink-0 rounded-md" />
                       <div>
-                        <div className="text-sm font-semibold text-slate-950">{s.title}</div>
+                        <div className="font-semibold text-slate-900">{s.title}</div>
                         <div className="text-xs text-slate-500">{s.slug}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 sm:px-6">
+                  <td className={tableClass.td}>
                     {s.discipline}
                     <div className="text-xs capitalize text-slate-400">{s.difficulty}</div>
                   </td>
-                  <td className="px-4 py-3 sm:px-6">
+                  <td className={tableClass.td}>
                     <div className="flex max-w-56 flex-wrap gap-1">
-                      {s.status === "coming-soon" && <Chip>Coming soon</Chip>}
-                      {s.featured && <Chip>Featured</Chip>}
-                      {s.trending && <Chip>Trending</Chip>}
-                      {s.emerging && <Chip>Emerging</Chip>}
-                      {s.beginnerFriendly && <Chip>Beginner</Chip>}
-                      {s.universityLevel && <Chip>University</Chip>}
+                      {s.status === "coming-soon" && <Pill tone="amber">Coming soon</Pill>}
+                      {s.featured && <Pill>Featured</Pill>}
+                      {s.trending && <Pill>Trending</Pill>}
+                      {s.emerging && <Pill>Emerging</Pill>}
+                      {s.beginnerFriendly && <Pill tone="slate">Beginner</Pill>}
+                      {s.universityLevel && <Pill tone="slate">University</Pill>}
                     </div>
                   </td>
-                  <td className="px-4 py-3 sm:px-6"><StatusBadge published={s.isPublished} /></td>
-                  <td className="px-4 py-3 text-right text-xs font-medium text-slate-600 sm:px-6">
-                    <div className="flex justify-end gap-3 whitespace-nowrap">
+                  <td className={tableClass.td}><StatusBadge published={s.isPublished} /></td>
+                  <td className={tableClass.tdRight}>
+                    <RowActions>
                       {canEdit ? (
                         <>
-                          <button type="button" onClick={() => setToggling(s)} className="cursor-pointer hover:text-slate-950">{s.isPublished ? "Hide" : "Publish"}</button>
-                          <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="cursor-pointer hover:text-slate-950">Edit</button>
-                          <button type="button" onClick={() => setDeleting(s)} className="cursor-pointer text-red-500 hover:text-red-700">Delete</button>
+                          <RowAction variant={s.isPublished ? "hide" : "publish"} onClick={() => setToggling(s)} />
+                          <RowAction variant="edit" onClick={() => setEditing({ subject: s, isNew: false })} />
+                          <RowAction variant="delete" onClick={() => setDeleting(s)} />
                         </>
                       ) : (
-                        <button type="button" onClick={() => setEditing({ subject: s, isNew: false })} className="cursor-pointer hover:text-slate-950">View</button>
+                        <RowAction variant="view" onClick={() => setEditing({ subject: s, isNew: false })} />
                       )}
-                    </div>
+                    </RowActions>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
+      </TableCard>
 
       {editing && (
         <SubjectEditor
@@ -169,10 +172,6 @@ export default function SubjectsPanel({ canEdit }: { canEdit: boolean }) {
       )}
     </div>
   );
-}
-
-function Chip({ children }: { children: React.ReactNode }) {
-  return <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">{children}</span>;
 }
 
 function SubjectEditor({

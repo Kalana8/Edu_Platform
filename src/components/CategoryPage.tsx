@@ -5,6 +5,7 @@ import { slugToLabel } from "@/lib/slug";
 import EmojiPicker from "./EmojiPicker";
 import {
   HeaderButton,
+  Loader,
   RowAction,
   RowActions,
   StatusBadge,
@@ -278,7 +279,7 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
           }
         >
           {isLoading ? (
-            <TableMessage>Loading categories…</TableMessage>
+            <Loader label="Loading categories…" />
           ) : (
           <table className={tableClass.table}>
             <thead className={tableClass.thead}>

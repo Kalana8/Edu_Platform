@@ -10,6 +10,7 @@ import {
   StatRow,
   StatusBadge,
   TableCard,
+  TableLoader,
   TableMessage,
   TableTitle,
   tableClass,
@@ -221,7 +222,7 @@ export default function StudentsPage({ basePath = "/admin", students: initialStu
               </thead>
               <tbody className={tableClass.tbody}>
                 {isLoading ? (
-                  <TableMessage colSpan={6}>Loading students…</TableMessage>
+                  <TableLoader colSpan={6} label="Loading students…" />
                 ) : filteredStudents.length === 0 ? (
                   <TableMessage colSpan={6}>{search ? "No students match your search." : "No students yet."}</TableMessage>
                 ) : filteredStudents.map((student) => (

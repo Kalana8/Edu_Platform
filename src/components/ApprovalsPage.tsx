@@ -1,6 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Avatar,
+  Card,
+  Loader,
+  Pill,
+  SegmentedTabs,
+  TableCard,
+  TableMessage,
+  TableTitle,
+  tableClass,
+  type PillTone,
+} from "./AdminUI";
+
+const statusTone = (status: string): PillTone =>
+  status === "pending" ? "amber" : status === "approved" ? "emerald" : "rose";
 
 type ApprovalRequest = {
   id: string;
@@ -219,12 +234,7 @@ export default function ApprovalsPage() {
     return totalCount;
   };
 
-  const tabs: { label: TabName; icon: string }[] = [
-    { label: "Pending", icon: "⏳" },
-    { label: "Approved", icon: "✅" },
-    { label: "Rejected", icon: "❌" },
-    { label: "All", icon: "📂" },
-  ];
+  const tabs: TabName[] = ["Pending", "Approved", "Rejected", "All"];
 
   const resetPendingCount = resetRequests.filter((r) => r.status === "pending").length;
   const resetApprovedCount = resetRequests.filter((r) => r.status === "approved").length;
@@ -242,23 +252,12 @@ export default function ApprovalsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Approvals Manager</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Review and resolve change requests</h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-500">
-              Audit moderator requests to create, update, or delete category and school data. Approving changes immediately commits them to the database.
-            </p>
-          </div>
-        </div>
-
+    <div className="text-slate-950">
+      <div className="mx-auto max-w-7xl px-1 py-1 sm:px-2">
         {/* Feedback Alert */}
         {feedback && (
           <div
-            className={`mb-4 rounded-2xl border px-4 py-2.5 text-sm flex items-center justify-between ${
+            className={`mb-3 rounded-lg border px-4 py-2.5 text-sm flex items-center justify-between ${
               feedback.type === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                 : "border-rose-200 bg-rose-50 text-rose-700"
@@ -275,100 +274,50 @@ export default function ApprovalsPage() {
         )}
 
         {/* Tab Filters */}
-        <div className="mb-4 rounded-[2rem] bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200 sm:px-5">
-          <div className="flex flex-wrap items-center gap-3">
-            {tabs.map((tab) => {
-              const count = getTabCount(tab.label);
-              const isActive = activeTab === tab.label;
-              return (
-                <button
-                  key={tab.label}
-                  onClick={() => setActiveTab(tab.label)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition cursor-pointer ${
-                    isActive
-                      ? "border-amber-400 bg-amber-50 text-amber-700 shadow-sm"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <span>{tab.icon}</span>
-                  <span>{tab.label}</span>
-                  <span
-                    className={`inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold ${
-                      isActive ? "bg-amber-200 text-amber-800" : "bg-slate-200 text-slate-700"
-                    }`}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <TableTitle title="Change requests" />
+          <SegmentedTabs
+            label="Filter change requests"
+            tabs={tabs.map((t) => ({ id: t, label: t, count: getTabCount(t) }))}
+            active={activeTab}
+            onChange={setActiveTab}
+          />
         </div>
 
         {/* Approvals List */}
         {isLoading ? (
-          <div className="rounded-[2rem] bg-white p-12 text-center text-slate-500 shadow ring-1 ring-slate-200">
-            <span className="inline-block animate-spin text-2xl mr-2">⚙️</span> Loading requests...
-          </div>
+          <Card>
+            <Loader label="Loading requests…" />
+          </Card>
         ) : error ? (
-          <div className="rounded-[2rem] bg-white p-12 text-center text-rose-600 shadow ring-1 ring-slate-200 border border-rose-100">
-            <span className="text-2xl block mb-2">⚠️</span>
-            <p className="font-semibold">{error}</p>
+          <Card className="px-4 py-8 text-center">
+            <p className="text-sm font-semibold text-rose-600">{error}</p>
             <button
               onClick={fetchApprovals}
-              className="mt-4 rounded-xl bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800 font-semibold"
+              className="mt-3 rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
             >
-              Retry Load
+              Retry
             </button>
-          </div>
+          </Card>
         ) : filteredApprovals.length === 0 ? (
-          <div className="rounded-[2rem] bg-white p-8 shadow ring-1 ring-slate-200">
-            <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-2xl text-slate-500">
-                📭
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-slate-950">No {activeTab.toLowerCase()} requests</h2>
-                <p className="mt-2 max-w-xl text-sm text-slate-500">
-                  There are no requests matching the current status filter. New requests will appear here when moderators submit changes.
-                </p>
-              </div>
-            </div>
-          </div>
+          <Card className="px-4 py-8 text-center">
+            <h2 className="text-sm font-semibold text-slate-900">No {activeTab.toLowerCase()} requests</h2>
+            <p className="mt-1 text-sm text-slate-500">New requests will appear here when moderators submit changes.</p>
+          </Card>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-3">
             {filteredApprovals.map((req) => {
               const requestDate = new Date(req.created_at).toLocaleString();
-              const actionBadgeColor =
-                req.action_type === "create"
-                  ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                  : req.action_type === "update"
-                  ? "bg-sky-100 text-sky-800 border-sky-200"
-                  : "bg-rose-100 text-rose-800 border-rose-200";
-
-              const targetBadgeColor =
-                req.target_type === "category"
-                  ? "bg-indigo-100 text-indigo-800 border-indigo-200"
-                  : "bg-amber-100 text-amber-800 border-amber-200";
-
-              const statusBadgeColor =
-                req.status === "pending"
-                  ? "bg-yellow-100 text-yellow-800 border-yellow-200"
-                  : req.status === "approved"
-                  ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                  : "bg-rose-100 text-rose-800 border-rose-200";
+              const actionTone: PillTone =
+                req.action_type === "create" ? "emerald" : req.action_type === "update" ? "brand" : "rose";
+              const targetTone: PillTone = req.target_type === "category" ? "brand" : req.target_type === "school" ? "amber" : "slate";
 
               return (
-                <div
-                  key={req.id}
-                  className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 transition hover:shadow-md sm:p-5"
-                >
+                <Card key={req.id} className="p-4">
                   {/* Card Header Info */}
-                  <div className="flex flex-col gap-4 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-2 border-b border-slate-100 pb-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
-                        👤
-                      </div>
+                      <Avatar name={req.users?.name || "Moderator"} />
                       <div>
                         <div className="text-sm font-semibold text-slate-900">
                           {req.users?.name || "Moderator"}
@@ -378,25 +327,21 @@ export default function ApprovalsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${targetBadgeColor}`}>
-                        {req.target_type}
-                      </span>
-                      <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${actionBadgeColor}`}>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Pill tone={targetTone}>{req.target_type}</Pill>
+                      <Pill tone={actionTone}>
                         {req.action_type === "create" ? "Add" : req.action_type === "update" ? "Edit" : "Delete"}
-                      </span>
-                      <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${statusBadgeColor}`}>
-                        {req.status}
-                      </span>
+                      </Pill>
+                      <Pill tone={statusTone(req.status)}>{req.status}</Pill>
                     </div>
                   </div>
 
                   {/* Change details grid */}
-                  <div className="py-4 space-y-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Proposed Data changes:</p>
+                  <div className="py-3 space-y-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Proposed changes</p>
 
                     {req.target_type === "content" && (
-                      <div className="rounded-2xl bg-white border border-slate-200 p-4 space-y-3">
+                      <div className="rounded-md bg-white border border-slate-200 p-3 space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {req.change_data?.category_id && (
                             <div>
@@ -423,7 +368,7 @@ export default function ApprovalsPage() {
                     )}
 
                     {req.target_type !== "content" && (
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 rounded-md bg-slate-50 p-3 border border-slate-100">
                         {req.target_id && (
                           <div className="col-span-1 sm:col-span-2 lg:col-span-3 border-b border-slate-200 pb-2 mb-1">
                             <span className="text-xs text-slate-500 font-semibold block">Target Identifier (ID / Slug):</span>
@@ -435,8 +380,8 @@ export default function ApprovalsPage() {
                           const displayVal =
                             typeof val === "boolean"
                               ? val
-                                ? "✅ Yes/Active"
-                                : "❌ No/Inactive"
+                                ? "Yes / Active"
+                                : "No / Inactive"
                               : String(val);
                           return (
                             <div key={key} className="flex flex-col">
@@ -454,13 +399,13 @@ export default function ApprovalsPage() {
                       );
                       if (pageItems.length === 0) return null;
                       return (
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                          <span className="text-xs text-slate-400 uppercase tracking-wider block mb-3">Pages ({pageItems.length})</span>
+                        <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                          <span className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Pages ({pageItems.length})</span>
                           <div className="space-y-2">
                             {pageItems.slice(0, 3).map((page: any, index: number) => {
                               const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
                               return (
-                                <div key={index} className="rounded-xl border border-slate-200 bg-white p-3">
+                                <div key={index} className="rounded-md border border-slate-200 bg-white p-2.5">
                                   <p className="text-sm font-semibold text-slate-900">{pageTitle}</p>
                                   <p className="mt-1 text-xs text-slate-500 line-clamp-2">
                                     {typeof page.content === "string" ? page.content.trim() : ""}
@@ -475,7 +420,7 @@ export default function ApprovalsPage() {
                           <button
                             type="button"
                             onClick={() => setModalRequest(req)}
-                            className="mt-3 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300"
+                            className="mt-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand transition hover:bg-blue-50"
                           >
                             View all content
                           </button>
@@ -486,41 +431,40 @@ export default function ApprovalsPage() {
 
                   {/* Resolution comment and buttons */}
                   {req.status === "pending" ? (
-                    <div className="mt-4 border-t border-slate-100 pt-4 flex flex-col gap-4">
-                      <div className="w-full">
-                        <textarea
-                          value={comments[req.id] || ""}
-                          onChange={(e) =>
-                            setComments((prev) => ({ ...prev, [req.id]: e.target.value }))
-                          }
-                          placeholder="Optional: Add a comment describing the approval or rejection reason..."
-                          className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                          rows={2}
-                        />
-                      </div>
-                      <div className="flex justify-end gap-3">
+                    <div className="border-t border-slate-100 pt-3 flex flex-col gap-2 sm:flex-row sm:items-start">
+                      <textarea
+                        value={comments[req.id] || ""}
+                        onChange={(e) =>
+                          setComments((prev) => ({ ...prev, [req.id]: e.target.value }))
+                        }
+                        placeholder="Optional comment explaining the approval or rejection…"
+                        aria-label="Review comment"
+                        className="w-full flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm placeholder-slate-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                        rows={1}
+                      />
+                      <div className="flex shrink-0 justify-end gap-2">
                         <button
                           type="button"
                           disabled={isSubmitting !== null}
                           onClick={() => handleResolve(req.id, "rejected")}
-                          className="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+                          className="rounded-lg border border-rose-200 bg-white px-3.5 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                         >
-                          {isSubmitting === req.id ? "Processing..." : "Reject Request"}
+                          {isSubmitting === req.id ? "Processing..." : "Reject"}
                         </button>
                         <button
                           type="button"
                           disabled={isSubmitting !== null}
                           onClick={() => handleResolve(req.id, "approved")}
-                          className="rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+                          className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                         >
-                          {isSubmitting === req.id ? "Processing..." : "Approve Request"}
+                          {isSubmitting === req.id ? "Processing..." : "Approve"}
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-4 border-t border-slate-100 pt-4 bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Review log:</p>
-                      <div className="mt-2 text-sm text-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="border-t border-slate-100 pt-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Review log</p>
+                      <div className="mt-1 text-sm text-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-1">
                         <div>
                           <span className="font-semibold text-slate-500">Reviewed At:</span>{" "}
                           {req.reviewed_at ? new Date(req.reviewed_at).toLocaleString() : "N/A"}
@@ -534,100 +478,64 @@ export default function ApprovalsPage() {
                       </div>
                     </div>
                   )}
-                </div>
+                </Card>
               );
             })}
           </div>
         )}
 
         {/* Password Reset Requests Section */}
-        <div className="mt-6 rounded-[2rem] bg-white p-5 shadow ring-1 ring-slate-200">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset Requests</p>
-              <h2 className="mt-2 text-xl font-semibold text-slate-950">Student password reset requests</h2>
-              <p className="mt-1 text-sm text-slate-500">Review and process student password reset requests.</p>
-            </div>
-          </div>
-
-          {/* Reset Request Tab Filters */}
-          <div className="mb-4 flex flex-wrap items-center gap-3">
-            {(["Pending", "All"] as const).map((tab) => {
-              const count = getResetTabCount(tab);
-              const isActive = activeResetTab === tab;
-              return (
-                <button
-                  key={tab}
-                  onClick={() => setActiveResetTab(tab)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-semibold transition cursor-pointer ${
-                    isActive
-                      ? "border-amber-400 bg-amber-50 text-amber-700 shadow-sm"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <span>{tab === "Pending" ? "⏳" : "📂"}</span>
-                  <span>{tab}</span>
-                  <span
-                    className={`inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 text-xs font-semibold ${
-                      isActive ? "bg-amber-200 text-amber-800" : "bg-slate-200 text-slate-700"
-                    }`}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {filteredResetRequests.length === 0 ? (
-            <div className="rounded-[1.75rem] bg-white p-8 text-center text-sm text-slate-500 shadow-sm border border-slate-200">
-              No password reset requests found.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredResetRequests.map((req) => {
-                const statusBadgeColor =
-                  req.status === "pending"
-                    ? "bg-yellow-100 text-yellow-800 border-yellow-200"
-                    : req.status === "approved"
-                    ? "bg-emerald-100 text-emerald-800 border-emerald-200"
-                    : "bg-rose-100 text-rose-800 border-rose-200";
-
-                return (
-                  <div
-                    key={req.id}
-                    className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-4 shadow-sm transition hover:shadow-md"
-                  >
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
-                          🔑
-                        </div>
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900">
-                            {req.studentName || "Unknown Student"}
+        <div className="mt-4">
+          <TableCard
+            toolbar={
+              <>
+                <TableTitle title="Password reset requests" />
+                <SegmentedTabs
+                  label="Filter password reset requests"
+                  tabs={(["Pending", "All"] as const).map((t) => ({ id: t, label: t, count: getResetTabCount(t) }))}
+                  active={activeResetTab}
+                  onChange={setActiveResetTab}
+                />
+              </>
+            }
+          >
+            <table className={tableClass.table}>
+              <thead className={tableClass.thead}>
+                <tr>
+                  <th scope="col" className={tableClass.th}>Student</th>
+                  <th scope="col" className={tableClass.th}>School</th>
+                  <th scope="col" className={tableClass.th}>Date</th>
+                  <th scope="col" className={tableClass.th}>Status</th>
+                  <th scope="col" className={tableClass.thRight}>Action</th>
+                </tr>
+              </thead>
+              <tbody className={tableClass.tbody}>
+                {filteredResetRequests.length === 0 ? (
+                  <TableMessage colSpan={5}>No password reset requests found.</TableMessage>
+                ) : (
+                  filteredResetRequests.map((req) => (
+                    <tr key={req.id} className={tableClass.tr}>
+                      <td className={tableClass.td}>
+                        <div className="flex items-center gap-3">
+                          <Avatar name={req.studentName || "Unknown Student"} />
+                          <div>
+                            <div className="font-semibold text-slate-900">{req.studentName || "Unknown Student"}</div>
+                            <div className="text-xs text-slate-500">{req.studentId}</div>
+                            {req.comment && <div className="text-xs italic text-slate-500">&ldquo;{req.comment}&rdquo;</div>}
                           </div>
-                          <div className="text-xs text-slate-500">
-                            {req.studentId} · {req.schoolName}
-                          </div>
-                          {req.comment && (
-                            <div className="mt-1 text-xs text-slate-600 italic">"{req.comment}"</div>
-                          )}
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${statusBadgeColor}`}>
-                          {req.status}
-                        </span>
-                      </div>
-                    </div>
-
-                    {req.status === "pending" && (
-                      <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="text-xs text-slate-500">
-                          Submitted {new Date(req.createdAt).toLocaleString()}
-                        </div>
-                        <div className="flex gap-2">
+                      </td>
+                      <td className={tableClass.td}>{req.schoolName}</td>
+                      <td className={`${tableClass.td} whitespace-nowrap text-xs`}>
+                        {req.status === "pending"
+                          ? `Submitted ${new Date(req.createdAt).toLocaleString()}`
+                          : `Reviewed ${req.reviewedAt ? new Date(req.reviewedAt).toLocaleString() : "N/A"}`}
+                      </td>
+                      <td className={tableClass.td}>
+                        <Pill tone={statusTone(req.status)}>{req.status}</Pill>
+                      </td>
+                      <td className={tableClass.tdRight}>
+                        {req.status === "pending" ? (
                           <button
                             type="button"
                             onClick={() => {
@@ -635,31 +543,27 @@ export default function ApprovalsPage() {
                               setResetNewPassword("");
                               setResetFeedback(null);
                             }}
-                            className="rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+                            className="whitespace-nowrap rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700"
                           >
-                            Approve & Set Password
+                            Approve &amp; set password
                           </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {req.status !== "pending" && (
-                      <div className="mt-2 text-xs text-slate-500 border-t border-slate-100 pt-2">
-                        Reviewed {req.reviewedAt ? new Date(req.reviewedAt).toLocaleString() : "N/A"}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                        ) : (
+                          <span className="text-xs text-slate-400">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </TableCard>
         </div>
       </div>
 
       {/* Password Reset Modal */}
       {resetModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4" onClick={() => setResetModal(null)}>
-          <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset</p>

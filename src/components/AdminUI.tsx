@@ -5,6 +5,38 @@
  */
 import type { ReactNode } from "react";
 
+/* ---------- Loader ---------- */
+
+export function Spinner({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg className={`animate-spin text-brand ${className}`} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" className="opacity-20" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Centered spinner with a label. Announced to screen readers. */
+export function Loader({ label = "Loading…", className = "py-10" }: { label?: string; className?: string }) {
+  return (
+    <div role="status" aria-live="polite" className={`flex flex-col items-center justify-center gap-2.5 ${className}`}>
+      <Spinner className="h-7 w-7" />
+      <span className="text-sm text-slate-500">{label}</span>
+    </div>
+  );
+}
+
+/** Loader that fits inside a <tbody>. */
+export function TableLoader({ colSpan, label }: { colSpan: number; label?: string }) {
+  return (
+    <tr>
+      <td colSpan={colSpan}>
+        <Loader label={label} />
+      </td>
+    </tr>
+  );
+}
+
 /* ---------- Stat tiles shown above a page's table ---------- */
 
 export function StatRow({ children }: { children: ReactNode }) {
@@ -29,17 +61,77 @@ export function ToolbarActions({ children }: { children: ReactNode }) {
 }
 
 /** Primary call-to-action button (e.g. "Add School"). */
-export function HeaderButton({ children, onClick }: { children: ReactNode; onClick?: () => void }) {
+export function HeaderButton({
+  children,
+  onClick,
+  disabled,
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+      disabled={disabled}
+      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto"
     >
       <PlusIcon />
       {children}
     </button>
   );
+}
+
+/* ---------- Tabs ---------- */
+
+export function SegmentedTabs<T extends string>({
+  tabs,
+  active,
+  onChange,
+  label,
+}: {
+  tabs: { id: T; label: string; count?: number }[];
+  active: T;
+  onChange: (id: T) => void;
+  label: string;
+}) {
+  return (
+    <div role="tablist" aria-label={label} className="inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-white p-1 ring-1 ring-slate-200/80">
+      {tabs.map((t) => {
+        const isActive = t.id === active;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => onChange(t.id)}
+            className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+              isActive ? "bg-brand text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            {t.label}
+            {t.count !== undefined ? (
+              <span
+                className={`rounded-full px-1.5 text-xs font-semibold ${
+                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+                }`}
+              >
+                {t.count}
+              </span>
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---------- Plain card ---------- */
+
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`rounded-lg bg-white shadow-sm ring-1 ring-slate-200/80 ${className}`}>{children}</div>;
 }
 
 /* ---------- Table card ---------- */
@@ -134,15 +226,18 @@ export function StatusBadge({ active, label }: { active: boolean; label?: string
   );
 }
 
-export function Pill({ children, tone = "brand" }: { children: ReactNode; tone?: "brand" | "emerald" | "amber" | "slate" }) {
-  const tones = {
+export type PillTone = "brand" | "emerald" | "amber" | "rose" | "slate";
+
+export function Pill({ children, tone = "brand" }: { children: ReactNode; tone?: PillTone }) {
+  const tones: Record<PillTone, string> = {
     brand: "bg-blue-50 text-blue-700 ring-blue-600/20",
     emerald: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
     amber: "bg-amber-50 text-amber-700 ring-amber-600/20",
+    rose: "bg-rose-50 text-rose-700 ring-rose-600/20",
     slate: "bg-slate-100 text-slate-600 ring-slate-500/20",
   };
   return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${tones[tone]}`}>
+    <span className={`inline-flex whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold capitalize ring-1 ring-inset ${tones[tone]}`}>
       {children}
     </span>
   );
@@ -176,7 +271,7 @@ export function RowAction({
   onClick,
   label,
 }: {
-  variant: "view" | "edit" | "delete";
+  variant: "view" | "edit" | "delete" | "publish" | "hide";
   onClick: () => void;
   label?: string;
 }) {
@@ -184,15 +279,24 @@ export function RowAction({
     view: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
     edit: "text-brand hover:bg-blue-50",
     delete: "text-rose-600 hover:bg-rose-50",
+    publish: "text-emerald-700 hover:bg-emerald-50",
+    hide: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
   };
-  const text = label ?? { view: "View", edit: "Edit", delete: "Delete" }[variant];
+  const icons = {
+    view: <EyeIcon />,
+    edit: <PencilIcon />,
+    delete: <TrashIcon />,
+    publish: <CheckIcon />,
+    hide: <EyeOffIcon />,
+  };
+  const text = label ?? { view: "View", edit: "Edit", delete: "Delete", publish: "Publish", hide: "Hide" }[variant];
   return (
     <button
       type="button"
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold transition ${styles[variant]}`}
     >
-      {variant === "view" ? <EyeIcon /> : variant === "edit" ? <PencilIcon /> : <TrashIcon />}
+      {icons[variant]}
       <span className="hidden sm:inline">{text}</span>
       <span className="sr-only sm:hidden">{text}</span>
     </button>
@@ -233,6 +337,25 @@ function EyeIcon() {
     <svg {...icon} className="h-3.5 w-3.5">
       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
       <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function EyeOffIcon() {
+  return (
+    <svg {...icon} className="h-3.5 w-3.5">
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3 3.9" />
+      <path d="M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg {...icon} className="h-3.5 w-3.5">
+      <path d="M20 6 9 17l-5-5" />
     </svg>
   );
 }

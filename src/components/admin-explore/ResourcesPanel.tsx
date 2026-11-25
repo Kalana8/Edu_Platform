@@ -3,6 +3,18 @@
 import { useMemo, useState } from "react";
 import { RESOURCE_TYPES, type AdminResource, type AdminSubject } from "@/lib/explore/admin";
 import { Banner, ConfirmDelete, Field, Modal, StatusBadge, btnPrimary, btnSecondary, inputCls, useCollection } from "./ui";
+import {
+  HeaderButton,
+  Loader,
+  RowAction,
+  RowActions,
+  SearchInput,
+  TableCard,
+  TableMessage,
+  TableTitle,
+  ToolbarActions,
+  tableClass,
+} from "../AdminUI";
 
 const blankResource = (sortOrder: number): AdminResource => ({
   id: "",
@@ -31,70 +43,68 @@ export default function ResourcesPanel({ canEdit }: { canEdit: boolean }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search resources"
-          aria-label="Search resources"
-          className={`${inputCls} max-w-xs`}
-        />
-        {canEdit && (
-          <button type="button" className={btnPrimary} onClick={() => setEditing({ resource: blankResource(items.length), isNew: true })}>
-            + Add resource
-          </button>
-        )}
-      </div>
-
       <Banner feedback={feedback} />
 
-      <div className="overflow-x-auto rounded-4xl bg-white shadow ring-1 ring-slate-200">
+      <TableCard
+        toolbar={
+          <>
+            <TableTitle title="Resources" count={loading ? undefined : shown.length} />
+            <ToolbarActions>
+              <SearchInput value={query} onChange={setQuery} placeholder="Search resources" />
+              {canEdit && (
+                <HeaderButton onClick={() => setEditing({ resource: blankResource(items.length), isNew: true })}>Add resource</HeaderButton>
+              )}
+            </ToolbarActions>
+          </>
+        }
+      >
         {loading ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">Loading resources…</div>
+          <Loader label="Loading resources…" />
         ) : shown.length === 0 ? (
-          <div className="px-6 py-8 text-center text-sm text-slate-500">{items.length ? "No resources match." : "No resources yet."}</div>
+          <TableMessage>{items.length ? "No resources match." : "No resources yet."}</TableMessage>
         ) : (
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-50">
+          <table className={tableClass.table}>
+            <thead className={tableClass.thead}>
               <tr>
-                {["Resource", "Type", "Subjects", "Status", ""].map((h) => (
-                  <th key={h} scope="col" className="px-4 py-3 text-left text-xs font-semibold text-slate-600 sm:px-6">{h}</th>
-                ))}
+                <th scope="col" className={tableClass.th}>Resource</th>
+                <th scope="col" className={tableClass.th}>Type</th>
+                <th scope="col" className={tableClass.thRight}>Subjects</th>
+                <th scope="col" className={tableClass.th}>Status</th>
+                <th scope="col" className={tableClass.thRight}>Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-white">
+            <tbody className={tableClass.tbody}>
               {shown.map((r) => (
-                <tr key={r.id} className="transition hover:bg-slate-50">
-                  <td className="max-w-md px-4 py-3 sm:px-6">
-                    <div className="text-sm font-semibold text-slate-950">{r.title}</div>
+                <tr key={r.id} className={tableClass.tr}>
+                  <td className={`${tableClass.td} max-w-md`}>
+                    <div className="font-semibold text-slate-900">{r.title}</div>
                     <div className="text-xs text-slate-500">{r.author}{r.year ? ` · ${r.year}` : ""}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 sm:px-6">
+                  <td className={tableClass.td}>
                     {r.type}
                     <div className="text-xs text-slate-400">{r.access === "edumate" ? "EduMate" : "External link"}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 sm:px-6">{r.subjectSlugs.length}</td>
-                  <td className="px-4 py-3 sm:px-6"><StatusBadge published={r.isPublished} /></td>
-                  <td className="px-4 py-3 text-right text-xs font-medium text-slate-600 sm:px-6">
-                    <div className="flex justify-end gap-3 whitespace-nowrap">
+                  <td className={`${tableClass.tdRight} tabular-nums`}>{r.subjectSlugs.length}</td>
+                  <td className={tableClass.td}><StatusBadge published={r.isPublished} /></td>
+                  <td className={tableClass.tdRight}>
+                    <RowActions>
                       {canEdit ? (
                         <>
-                          <button type="button" onClick={() => togglePublished(r)} className="hover:text-slate-950">{r.isPublished ? "Hide" : "Publish"}</button>
-                          <button type="button" onClick={() => setEditing({ resource: r, isNew: false })} className="hover:text-slate-950">Edit</button>
-                          <button type="button" onClick={() => setDeleting(r)} className="text-red-500 hover:text-red-700">Delete</button>
+                          <RowAction variant={r.isPublished ? "hide" : "publish"} onClick={() => togglePublished(r)} />
+                          <RowAction variant="edit" onClick={() => setEditing({ resource: r, isNew: false })} />
+                          <RowAction variant="delete" onClick={() => setDeleting(r)} />
                         </>
                       ) : (
-                        <button type="button" onClick={() => setEditing({ resource: r, isNew: false })} className="hover:text-slate-950">View</button>
+                        <RowAction variant="view" onClick={() => setEditing({ resource: r, isNew: false })} />
                       )}
-                    </div>
+                    </RowActions>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-      </div>
+      </TableCard>
 
       {editing && (
         <ResourceEditor
