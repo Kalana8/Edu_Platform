@@ -113,7 +113,9 @@ export default async function StudentHomeScreen() {
     });
   }
 
-  const firstName = studentName.split(" ")[0];
+  // Sign-up saves "Student <number>" when no name is given; treat that as no name.
+  const trimmedName = studentName.trim();
+  const displayName = /^Student \S+$/.test(trimmedName) ? "" : trimmedName;
   const initial = (studentName.trim()[0] ?? "S").toUpperCase();
   const continueCourse = courses.find((c) => c.percent < 100);
 
@@ -123,7 +125,7 @@ export default async function StudentHomeScreen() {
         {/* Header */}
         <header className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-slate-500">Hello{firstName ? `, ${firstName}` : ""} 👋</p>
+            <p className="text-sm text-slate-500">Hello{displayName ? `, ${displayName}` : ""}</p>
             <h1 className="text-xl font-semibold">Let&apos;s keep learning</h1>
           </div>
           <Link

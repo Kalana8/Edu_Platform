@@ -55,9 +55,9 @@ export default function ChooseCategoryPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 pb-24">
       <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col gap-2 px-4 py-6">
-        <PageHeader title="Choose Your Category" subtitle="Select a subject to begin reading" rounded={false} className="-mx-4 -mt-6" />
+        <PageHeader title="Choose Your Category" rounded={false} className="-mx-4 -mt-6" />
 
-        <div className="mt-2 px-3">
+        <div className="mt-2">
           <DiscoverEntryCard />
         </div>
 
@@ -83,7 +83,6 @@ export default function ChooseCategoryPage() {
                   {category.icon}
                 </div>
                 <div className="px-1.5 pb-1 pt-3">
-                  <p className="text-[11px] text-slate-400">Category</p>
                   <p className="text-sm font-semibold leading-snug text-slate-900">{category.label}</p>
                 </div>
               </Link>
