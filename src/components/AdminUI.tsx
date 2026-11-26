@@ -4,6 +4,7 @@
  * (The gradient banner is reserved for the dashboard.)
  */
 import type { ReactNode } from "react";
+import { titleCase } from "@/lib/titleCase";
 
 /* ---------- Loader ---------- */
 
@@ -152,8 +153,8 @@ export function TableCard({ toolbar, children }: { toolbar?: ReactNode; children
 export const tableClass = {
   table: "min-w-full text-sm",
   thead: "bg-slate-50/80",
-  th: "whitespace-nowrap px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500",
-  thRight: "whitespace-nowrap px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-500",
+  th: "whitespace-nowrap px-4 py-2 text-left text-[11px] font-semibold text-slate-500",
+  thRight: "whitespace-nowrap px-4 py-2 text-right text-[11px] font-semibold text-slate-500",
   tbody: "divide-y divide-slate-100",
   tr: "transition-colors hover:bg-blue-50/40",
   td: "px-4 py-2 align-middle text-slate-600",
@@ -177,7 +178,7 @@ export function TableMessage({ children, colSpan }: { children: ReactNode; colSp
 export function TableTitle({ title, count }: { title: string; count?: number }) {
   return (
     <div className="flex items-center gap-2">
-      <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+      <h2 className="text-sm font-semibold text-slate-900">{titleCase(title)}</h2>
       {count !== undefined ? (
         <span className="rounded-full bg-brand-tint px-2 py-0.5 text-xs font-semibold text-blue-800">{count}</span>
       ) : null}

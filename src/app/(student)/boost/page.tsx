@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import MobileLoader from "@/components/MobileLoader";
+import Icon from "@/components/Icon";
 import BottomBar from "@/components/BottomBar";
 
 type WalletData = {
@@ -116,7 +117,7 @@ export default function BoostPage() {
 
         <div className="flex flex-col gap-2 px-4 py-6">
           <div className="rounded-[1.75rem] bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)] transition hover:shadow-lg">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Available Credits</p>
+            <p className="text-xs font-semibold text-slate-500">Available Credits</p>
             <p className="mt-3 text-4xl font-bold text-slate-950 tracking-tight">{data?.availableCredits.toLocaleString() ?? 0}</p>
           </div>
 
@@ -125,7 +126,7 @@ export default function BoostPage() {
               <div key={item.title} className="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-sm transition hover:shadow-lg hover:-translate-y-0.5">
                 <div className="flex items-start gap-4">
                   <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl transition ${item.color}`}>
-                    <span className="text-2xl">⚡</span>
+                    <Icon name="bolt" className="h-6 w-6" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-semibold text-slate-950">{item.title}</p>

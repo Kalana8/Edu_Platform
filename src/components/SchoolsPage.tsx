@@ -305,8 +305,8 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">New school</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add a school</h2>
+                <p className="text-sm font-semibold text-slate-500">New School</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add A School</h2>
               </div>
               <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
@@ -357,7 +357,7 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">School details</p>
+                <p className="text-sm font-semibold text-slate-500">School Details</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedSchool.name}</h2>
               </div>
               <button type="button" onClick={() => setSelectedSchool(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -366,26 +366,26 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
             <div className="mt-6 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Code</p>
+                  <p className="text-xs font-semibold text-slate-400">Code</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedSchool.code}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Location</p>
+                  <p className="text-xs font-semibold text-slate-400">Location</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedSchool.location}</p>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Tier</p>
+                  <p className="text-xs font-semibold text-slate-400">Tier</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedSchool.tier}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Status</p>
+                  <p className="text-xs font-semibold text-slate-400">Status</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedSchool.isActive ? "Active" : "Inactive"}</p>
                 </div>
               </div>
               <div className="rounded-2xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Students / Points</p>
+                <p className="text-xs font-semibold text-slate-400">Students / Points</p>
                 <p className="mt-2 text-sm font-semibold text-slate-900">{selectedSchool.students} students · {selectedSchool.points.toLocaleString()} points</p>
               </div>
             </div>
@@ -398,7 +398,7 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Edit school</p>
+                <p className="text-sm font-semibold text-slate-500">Edit School</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{editingSchool.name}</h2>
               </div>
               <button type="button" onClick={() => setEditingSchool(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -450,7 +450,7 @@ export default function SchoolsPage({ basePath = "/admin" }: SchoolsPageProps) {
           <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Confirm delete</p>
+                <p className="text-sm font-semibold text-slate-500">Confirm Delete</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">Delete {deletingSchool.name}?</h2>
               </div>
               <button type="button" onClick={() => setDeletingSchool(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>

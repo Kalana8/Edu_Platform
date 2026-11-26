@@ -15,9 +15,6 @@ type CategoryItem = {
   label: string;
 };
 
-// Soft tiles for category thumbnails, drawn from the palette.
-const TILE_COLORS = ["bg-brand-soft/60", "bg-brand-tint", "bg-blue-100", "bg-slate-100"];
-
 export default function ChooseCategoryPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,26 +63,22 @@ export default function ChooseCategoryPage() {
           <div className="rounded-[1.75rem] bg-rose-50 p-5 text-sm text-rose-700 shadow-sm border border-rose-100">{error}</div>
         ) : null}
 
-        <h2 className="mt-4 px-3 text-lg font-semibold">All Categories</h2>
+        <h2 className="mt-3 px-1 text-base font-semibold">All Categories</h2>
 
-        <div className="grid grid-cols-2 gap-4 px-3">
+        <div className="grid grid-cols-2 gap-3">
           {isLoading ? (
             <MobileLoader label="Loading categories…" className="col-span-2 py-12" />
           ) : categories.length === 0 ? (
             <div className="col-span-2 rounded-3xl bg-white p-6 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-200/70">No categories available yet.</div>
           ) : (
-            categories.map((category, i) => (
+            categories.map((category) => (
               <Link
                 key={category.slug}
                 href={`/category/${category.slug}`}
-                className="group flex flex-col rounded-3xl bg-white p-2.5 shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg"
+                className="group flex flex-col items-center gap-1 rounded-2xl bg-white px-2 py-3 text-center shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg"
               >
-                <div className={`flex aspect-[4/3] items-center justify-center rounded-2xl text-5xl transition group-hover:scale-[1.02] ${TILE_COLORS[i % TILE_COLORS.length]}`}>
-                  {category.icon}
-                </div>
-                <div className="px-1.5 pb-1 pt-3">
-                  <p className="text-sm font-semibold leading-snug text-slate-900">{category.label}</p>
-                </div>
+                <span className="text-4xl leading-none transition group-hover:scale-105">{category.icon}</span>
+                <p className="text-[13px] font-semibold leading-snug text-slate-900">{category.label}</p>
               </Link>
             ))
           )}

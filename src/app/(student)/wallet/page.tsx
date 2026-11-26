@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import MobileLoader from "@/components/MobileLoader";
 import BottomBar from "@/components/BottomBar";
+import { titleCase } from "@/lib/titleCase";
 
 type WalletData = {
   availableCredits: number;
@@ -102,7 +103,7 @@ function WalletPage() {
             <div aria-hidden className="absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/10" />
             <div className="relative flex items-center justify-between gap-4">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-100">Available Credits</p>
+                <p className="text-[11px] font-semibold text-blue-100">Available Credits</p>
                 <p className="mt-1 text-4xl font-bold leading-none">{data.availableCredits.toLocaleString()}</p>
                 <p className="mt-2 text-xs text-blue-100">Earn credits by completing quizzes.</p>
               </div>
@@ -140,7 +141,7 @@ function StatCard({ label, value, hint, children }: { label: string; value: numb
             {children}
           </svg>
         </span>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{label}</p>
+        <p className="text-[11px] font-semibold text-slate-500">{titleCase(label)}</p>
       </div>
       <p className="mt-2 text-2xl font-bold leading-none text-slate-900">{value.toLocaleString()}</p>
       <p className="mt-1 text-xs text-slate-500">{hint}</p>

@@ -5,6 +5,7 @@ import type { LabProject } from "@/lib/explore/types";
 import { useProjectState } from "@/lib/explore/store";
 import SimulationSlot from "./simulations";
 import { Card, ProgressBar, btn, formatDate, inputCls } from "./ui";
+import Icon from "@/components/Icon";
 
 export default function ProjectWorkspace({ project }: { project: LabProject }) {
   const { state, start, toggleStep, submit, withdraw, reset } = useProjectState(project.id);
@@ -40,7 +41,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
     <div className="mt-3 space-y-3">
       {/* Objectives */}
       <Card>
-        <h2 className="font-bold text-slate-900">🎯 Learning objectives</h2>
+        <h2 className="flex items-center gap-2 font-bold text-slate-900"><Icon name="target" className="h-4 w-4 text-brand" /> Learning Objectives</h2>
         <ul className="mt-3 space-y-2">
           {project.objectives.map((o) => (
             <li key={o} className="flex gap-2.5 text-sm text-slate-700">
@@ -55,7 +56,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
 
       {/* Steps */}
       <Card>
-        <h2 className="font-bold text-slate-900">📋 Instructions</h2>
+        <h2 className="flex items-center gap-2 font-bold text-slate-900"><Icon name="clipboard" className="h-4 w-4 text-brand" /> Instructions</h2>
         <div className="mt-3">
           <ProgressBar value={(done / total) * 100} label={`${done} of ${total} steps`} />
         </div>
@@ -96,7 +97,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
 
       {/* Criteria */}
       <Card>
-        <h2 className="font-bold text-slate-900">📊 Assessment criteria</h2>
+        <h2 className="flex items-center gap-2 font-bold text-slate-900"><Icon name="chart" className="h-4 w-4 text-brand" /> Assessment Criteria</h2>
         <ul className="mt-3 space-y-3">
           {project.criteria.map((c) => (
             <li key={c.criterion}>
@@ -115,7 +116,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
 
       {/* Submission */}
       <Card>
-        <h2 className="font-bold text-slate-900">📤 Submit your work</h2>
+        <h2 className="flex items-center gap-2 font-bold text-slate-900"><Icon name="upload" className="h-4 w-4 text-brand" /> Submit Your Work</h2>
         <p className="mt-1 text-xs text-slate-600">{project.deliverable}</p>
 
         {state.submission ? (
@@ -125,7 +126,7 @@ export default function ProjectWorkspace({ project }: { project: LabProject }) {
             }`}
           >
             <p className={`text-sm font-semibold ${review === "returned" ? "text-amber-800" : "text-emerald-800"}`}>
-              {verified ? "🏅 Verified" : review === "returned" ? "↩️ Returned for changes" : "✅ Submitted"}{" "}
+              <Icon name={verified ? "medal" : review === "returned" ? "undo" : "check-circle"} className="mr-1 inline h-4 w-4 align-[-2px]" />{verified ? "Verified" : review === "returned" ? "Returned for changes" : "Submitted"}{" "}
               {formatDate(state.submission.submittedAt.slice(0, 10))}
             </p>
             <p className={`text-xs ${review === "returned" ? "text-amber-700" : "text-emerald-700"}`}>

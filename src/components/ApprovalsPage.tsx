@@ -338,14 +338,14 @@ export default function ApprovalsPage() {
 
                   {/* Change details grid */}
                   <div className="py-3 space-y-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Proposed changes</p>
+                    <p className="text-[11px] font-semibold text-slate-400">Proposed Changes</p>
 
                     {req.target_type === "content" && (
                       <div className="rounded-md bg-white border border-slate-200 p-3 space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {req.change_data?.category_id && (
                             <div>
-                              <span className="text-xs text-slate-400 uppercase tracking-wider">Category</span>
+                              <span className="text-xs text-slate-400">Category</span>
                               <p className="mt-1 text-sm font-semibold text-slate-900 break-words">
                                 {categoryMap[req.change_data.category_id as string] ?? String(req.change_data.category_id)}
                               </p>
@@ -353,14 +353,14 @@ export default function ApprovalsPage() {
                           )}
                           {req.change_data?.level && (
                             <div>
-                              <span className="text-xs text-slate-400 uppercase tracking-wider">Level</span>
+                              <span className="text-xs text-slate-400">Level</span>
                               <p className="mt-1 text-sm font-semibold text-slate-900">{req.change_data.level}</p>
                             </div>
                           )}
                         </div>
                         {req.change_data?.description && (
                           <div>
-                            <span className="text-xs text-slate-400 uppercase tracking-wider">Description</span>
+                            <span className="text-xs text-slate-400">Description</span>
                             <p className="mt-1 text-sm text-slate-700">{req.change_data.description}</p>
                           </div>
                         )}
@@ -400,7 +400,7 @@ export default function ApprovalsPage() {
                       if (pageItems.length === 0) return null;
                       return (
                         <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                          <span className="text-xs text-slate-400 uppercase tracking-wider block mb-2">Pages ({pageItems.length})</span>
+                          <span className="text-xs text-slate-400 block mb-2">Pages ({pageItems.length})</span>
                           <div className="space-y-2">
                             {pageItems.slice(0, 3).map((page: any, index: number) => {
                               const pageTitle = typeof page.title === "string" && page.title.trim() ? page.title.trim() : `Page ${index + 1}`;
@@ -463,7 +463,7 @@ export default function ApprovalsPage() {
                     </div>
                   ) : (
                     <div className="border-t border-slate-100 pt-3">
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Review log</p>
+                      <p className="text-[11px] font-semibold text-slate-400">Review Log</p>
                       <div className="mt-1 text-sm text-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-1">
                         <div>
                           <span className="font-semibold text-slate-500">Reviewed At:</span>{" "}
@@ -566,7 +566,7 @@ export default function ApprovalsPage() {
           <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Password Reset</p>
+                <p className="text-sm font-semibold text-slate-500">Password Reset</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">Set New Password</h2>
                 <p className="mt-1 text-sm text-slate-500">
                   {resetModal.studentName} ({resetModal.studentId})

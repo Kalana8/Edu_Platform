@@ -1,16 +1,18 @@
 import Link from "next/link";
 import type { AcademicResource } from "@/lib/explore/types";
 import { resourceTypeLabels } from "@/lib/explore/data/resources";
+import Icon, { type IconName } from "@/components/Icon";
+import { titleCase } from "@/lib/titleCase";
 
-const typeIcon: Record<AcademicResource["type"], string> = {
-  "unit-outline": "🗂️",
-  lecture: "🎓",
-  paper: "📄",
-  article: "📰",
-  textbook: "📘",
-  video: "🎥",
-  oer: "🌐",
-  documentation: "🛠️",
+const typeIcon: Record<AcademicResource["type"], IconName> = {
+  "unit-outline": "folder",
+  lecture: "graduation",
+  paper: "file-text",
+  article: "newspaper",
+  textbook: "book-closed",
+  video: "video",
+  oer: "globe",
+  documentation: "wrench",
 };
 
 export default function ResourceCard({ resource, compact = false }: { resource: AcademicResource; compact?: boolean }) {
@@ -24,12 +26,12 @@ export default function ResourceCard({ resource, compact = false }: { resource: 
       className="group block rounded-[1.5rem] border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-md"
     >
       <div className="flex items-start gap-3">
-        <div aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-xl">
-          {typeIcon[resource.type]}
+        <div aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-tint text-brand">
+          <Icon name={typeIcon[resource.type]} className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-blue-600">
-            {resourceTypeLabels[resource.type]}
+          <p className="text-[10px] font-semibold text-blue-600">
+            {titleCase(resourceTypeLabels[resource.type])}
             {resource.year && <span className="text-slate-400"> · {resource.year}</span>}
           </p>
           <h3 className="mt-0.5 text-sm font-bold leading-snug text-slate-900">{resource.title}</h3>

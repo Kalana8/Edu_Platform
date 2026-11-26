@@ -200,7 +200,7 @@ export default function QuizPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-6 px-4 py-6">
           <div className="w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-6 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">Quiz Result</p>
+            <p className="text-xs font-semibold text-slate-400">Quiz Result</p>
             <h2 className="mt-2 text-2xl font-bold text-slate-950 tracking-tight">
               {result.total > 0 ? `${result.score} / ${result.total}` : "Completed"}
             </h2>
@@ -208,15 +208,15 @@ export default function QuizPage() {
               {result.passed ? "You passed!" : "Keep trying! You need at least 3 correct answers to unlock the next chapter."}
             </p>
             <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Credits Earned</p>
+              <p className="text-xs font-semibold text-slate-400">Credits Earned</p>
               <p className="mt-2 text-3xl font-bold text-blue-600">+{result.earnedCredits}</p>
               <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl bg-emerald-50 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Available</p>
+                  <p className="text-xs font-semibold text-emerald-700">Available</p>
                   <p className="mt-1 text-lg font-semibold text-emerald-700">+{result.availableEarned}</p>
                 </div>
                 <div className="rounded-xl bg-amber-50 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Withhold</p>
+                  <p className="text-xs font-semibold text-amber-700">Withhold</p>
                   <p className="mt-1 text-lg font-semibold text-amber-700">+{result.withheldEarned}</p>
                 </div>
               </div>
@@ -302,7 +302,7 @@ export default function QuizPage() {
 
         <div className="mt-4 rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Time left</p>
+            <p className="text-xs font-semibold text-slate-400">Time Left</p>
             <p className={`text-lg font-bold tabular-nums ${timeLeft <= 10 ? "text-rose-600" : "text-slate-950"}`}>
               {timeLeft}s
             </p>

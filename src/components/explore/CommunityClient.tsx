@@ -6,14 +6,15 @@ import type { CommunityPost, PostKind, SubjectSummary } from "@/lib/explore/type
 import { postKindLabels } from "@/lib/explore/data/community";
 import { exploreRoutes } from "@/lib/explore/routes";
 import { useCommunityState } from "@/lib/explore/store";
+import Icon, { type IconName } from "@/components/Icon";
 import type { NewPostInput } from "@/lib/explore/store-types";
 import { ChipButton, EmptyState, Section, SectionHeading, SwipeRow, btn, formatDate, inputCls } from "./ui";
 
-const kindStyle: Record<PostKind, { cls: string; icon: string; short: string }> = {
-  showcase: { cls: "bg-blue-50 text-blue-700", icon: "🚀", short: "Projects" },
-  discovery: { cls: "bg-emerald-50 text-emerald-700", icon: "💡", short: "Discoveries" },
-  explanation: { cls: "bg-violet-50 text-violet-700", icon: "🧠", short: "Explanations" },
-  discussion: { cls: "bg-amber-50 text-amber-800", icon: "💬", short: "Discussions" },
+const kindStyle: Record<PostKind, { cls: string; icon: IconName; short: string }> = {
+  showcase: { cls: "bg-blue-50 text-blue-700", icon: "rocket", short: "Projects" },
+  discovery: { cls: "bg-emerald-50 text-emerald-700", icon: "lightbulb", short: "Discoveries" },
+  explanation: { cls: "bg-violet-50 text-violet-700", icon: "brain", short: "Explanations" },
+  discussion: { cls: "bg-amber-50 text-amber-800", icon: "chat", short: "Discussions" },
 };
 
 const safety = [
@@ -64,14 +65,14 @@ export default function CommunityClient({
           aria-expanded={safetyOpen}
           className="flex w-full items-center gap-3 p-4 text-left"
         >
-          <span aria-hidden className="text-xl">🛡️</span>
+          <Icon name="shield" className="h-5 w-5 text-emerald-700" />
           <span className="flex-1 text-sm font-semibold text-emerald-900">A safe, moderated community</span>
           <span className="text-xs font-semibold text-emerald-700">{safetyOpen ? "Hide" : "How?"}</span>
         </button>
         {safetyOpen && (
           <ul className="space-y-2 px-4 pb-4 text-xs text-emerald-900">
             {safety.map((s) => (
-              <li key={s} className="flex gap-2"><span aria-hidden>✓</span>{s}</li>
+              <li key={s} className="flex gap-2"><Icon name="check" className="mt-0.5 h-3.5 w-3.5 shrink-0" />{s}</li>
             ))}
           </ul>
         )}
@@ -84,7 +85,7 @@ export default function CommunityClient({
           <SwipeRow label="Learner achievements">
             {achievements.map((p) => (
               <div key={p.id} className="w-56 shrink-0 snap-start rounded-2xl bg-white p-4 shadow-sm">
-                <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-lg">🏆</span>
+                <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700"><Icon name="trophy" className="h-5 w-5" /></span>
                 <p className="mt-2 text-sm font-bold text-slate-900">{p.authorDisplay}</p>
                 <p className="text-[11px] leading-snug text-slate-500">{p.achievement}</p>
               </div>
@@ -122,7 +123,7 @@ export default function CommunityClient({
               <div key={p.id} className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${kindStyle[p.kind].cls}`}>
-                    {kindStyle[p.kind].icon} {postKindLabels[p.kind]}
+                    <Icon name={kindStyle[p.kind].icon} className="h-3.5 w-3.5" /> {postKindLabels[p.kind]}
                   </span>
                   {p.moderation === "rejected" ? (
                     <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-semibold text-rose-700">Not approved</span>
@@ -174,7 +175,7 @@ export default function CommunityClient({
             <ChipButton active={kind === "all"} onClick={() => setKind("all")}>Everything</ChipButton>
             {(Object.keys(kindStyle) as PostKind[]).map((k) => (
               <ChipButton key={k} active={kind === k} onClick={() => setKind(k)}>
-                {kindStyle[k].icon} {kindStyle[k].short}
+                <Icon name={kindStyle[k].icon} className="h-3.5 w-3.5" /> {kindStyle[k].short}
               </ChipButton>
             ))}
           </SwipeRow>
@@ -219,7 +220,7 @@ export default function CommunityClient({
                       <p className="text-slate-500">{p.region ? `${p.region} · ` : ""}{formatDate(p.createdAt)}</p>
                     </div>
                     <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold ${kindStyle[p.kind].cls}`}>
-                      {kindStyle[p.kind].icon} {kindStyle[p.kind].short}
+                      <Icon name={kindStyle[p.kind].icon} className="h-3.5 w-3.5" /> {kindStyle[p.kind].short}
                     </span>
                   </div>
                   <h3 className="mt-3 font-bold leading-snug text-slate-900">{p.title}</h3>
@@ -231,7 +232,7 @@ export default function CommunityClient({
                   )}
                   {p.achievement && (
                     <p className="mt-2 flex w-fit items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-semibold text-amber-800">
-                      🏆 {p.achievement}
+                      <Icon name="trophy" className="h-3 w-3" /> {p.achievement}
                     </p>
                   )}
                   <div className="mt-3 flex items-center gap-1 border-t border-slate-100 pt-3 text-xs">
@@ -241,9 +242,9 @@ export default function CommunityClient({
                       aria-pressed={appreciated}
                       className={`rounded-full px-3 py-1.5 font-semibold transition ${appreciated ? "bg-rose-50 text-rose-600" : "text-slate-600"}`}
                     >
-                      {appreciated ? "♥" : "♡"} {community.appreciationCount(p)}
+                      <span className="inline-flex items-center gap-1"><Icon name="heart" className={`h-3.5 w-3.5 ${appreciated ? "fill-current" : ""}`} /> {community.appreciationCount(p)}</span>
                     </button>
-                    <span className="px-2 text-slate-500">💬 {p.replies}</span>
+                    <span className="inline-flex items-center gap-1 px-2 text-slate-500"><Icon name="chat" className="h-3.5 w-3.5" /> {p.replies}</span>
                     <button
                       type="button"
                       onClick={() => community.report(p.id)}
@@ -299,7 +300,7 @@ function Composer({
 
   return (
     <form onSubmit={submit} className="space-y-3 rounded-[1.75rem] border border-slate-200/80 bg-white p-4 shadow-sm" noValidate>
-      <h2 className="font-bold text-slate-900">Share with the community</h2>
+      <h2 className="font-bold text-slate-900">Share With The Community</h2>
       <select value={kind} onChange={(e) => setKind(e.target.value as PostKind)} aria-label="Contribution type" className={inputCls}>
         {(Object.keys(postKindLabels) as PostKind[]).map((k) => <option key={k} value={k}>{postKindLabels[k]}</option>)}
       </select>

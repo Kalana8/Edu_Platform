@@ -15,7 +15,6 @@ export default async function DiscoverPage({
     <>
       <ScreenHeader
         title="Discover & Explore"
-        subtitle="What are you curious about today?"
         back={{ href: exploreRoutes.entry(), label: "Categories" }}
       />
       <DiscoverClient subjects={subjects} />

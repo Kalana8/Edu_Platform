@@ -36,7 +36,7 @@ export default function StudentLogoutButton() {
           setError(null);
           setConfirming(true);
         }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-3xl bg-white px-5 py-3.5 text-sm font-semibold text-rose-600 shadow-sm ring-1 ring-slate-200/70 transition hover:bg-rose-50 active:scale-[0.98]"
+        className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-rose-600 shadow-sm ring-1 ring-slate-200/70 transition hover:bg-rose-50 active:scale-[0.98]"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -58,9 +58,15 @@ export default function StudentLogoutButton() {
             className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-2xl">👋</div>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
+              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </div>
             <h2 id="logout-title" className="mt-4 text-lg font-semibold text-slate-900">
-              Log out?
+              Log Out?
             </h2>
             <p className="mt-1 text-sm text-slate-500">
               You&apos;ll need your Student ID to sign back in.

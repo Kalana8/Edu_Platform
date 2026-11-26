@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, type FormEvent } from "react";
 import { slugToLabel } from "@/lib/slug";
 import { Loader } from "./AdminUI";
+import Icon from "@/components/Icon";
 
 export type CategoryItem = {
   id: string;
@@ -296,8 +297,8 @@ export default function ContentManagementPage() {
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Content Management</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Add and manage reading content for each category and tier</h1>
+            <p className="text-sm font-semibold text-slate-500">Content Management</p>
+            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Add And Manage Reading Content For Each Category And Tier</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-500">Select a category from the left to manage its content and page listings.</p>
           </div>
         </div>
@@ -311,7 +312,7 @@ export default function ContentManagementPage() {
 
         <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
           <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Categories</h2>
+            <h2 className="mb-4 text-sm font-semibold text-slate-500">Categories</h2>
             {loadingCategories ? (
               <Loader label="Loading categories…" />
             ) : categories.length === 0 ? (
@@ -336,7 +337,7 @@ export default function ContentManagementPage() {
                         <div className="font-semibold text-slate-950">{category.label}</div>
                         <div className="text-xs text-slate-500">{category.code}</div>
                           {category.status === "Active" && (
-                      <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+                      <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
                         Active
                       </span>
                     )}
@@ -353,10 +354,10 @@ export default function ContentManagementPage() {
           <div className="space-y-4">
             {!selectedCategory ? (
               <div className="rounded-[2rem] bg-white p-8 text-center shadow ring-1 ring-slate-200">
-                <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-slate-100 text-4xl">
-                  📖
+                <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                  <Icon name="book" className="h-10 w-10" />
                 </div>
-                <h2 className="mt-8 text-xl font-semibold text-slate-950">Select a category</h2>
+                <h2 className="mt-8 text-xl font-semibold text-slate-950">Select A Category</h2>
                 <p className="mt-3 max-w-xl text-sm text-slate-500">
                   Choose a category from the left to manage its content and page listings.
                 </p>
@@ -366,7 +367,7 @@ export default function ContentManagementPage() {
                   <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 sm:p-5">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
+                      <p className="text-sm font-semibold text-slate-500">
                         {selectedCategory.label}
                       </p>
                       <h2 className="mt-2 text-2xl font-semibold text-slate-950">
@@ -442,7 +443,7 @@ export default function ContentManagementPage() {
                         {form.pages.map((page, index) => (
                           <div key={index} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
                             <div className="mb-2 flex items-center justify-between">
-                              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                              <span className="text-xs font-semibold text-slate-500">
                                 Page {index + 1}
                               </span>
                               <div className="flex items-center gap-1">
@@ -513,7 +514,7 @@ export default function ContentManagementPage() {
 
                 <div className="rounded-[2rem] bg-white p-4 shadow ring-1 ring-slate-200 sm:p-5">
                   <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">
+                    <h3 className="text-sm font-semibold text-slate-500">
                       Content ({contents.length + pendingItems.filter((p) => p.category_id === selectedCategory?.id).length})
                     </h3>
                   </div>
@@ -540,7 +541,7 @@ export default function ContentManagementPage() {
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                   <span
-                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold ${
                                       item.level === "Essential"
                                         ? "bg-sky-100 text-sky-700"
                                         : item.level === "Intermediate"
@@ -551,11 +552,11 @@ export default function ContentManagementPage() {
                                     {item.level}
                                   </span>
                                   {item.is_published ? (
-                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700">
                                       Published
                                     </span>
                                   ) : (
-                                    <span className="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                                    <span className="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-semibold text-slate-600">
                                       Draft
                                     </span>
                                   )}
@@ -590,7 +591,7 @@ export default function ContentManagementPage() {
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                   <span
-                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                                    className={`rounded-full px-2 py-1 text-[10px] font-semibold ${
                                       pending.level === "Essential"
                                         ? "bg-sky-100 text-sky-700"
                                         : pending.level === "Intermediate"
@@ -600,7 +601,7 @@ export default function ContentManagementPage() {
                                   >
                                     {pending.level}
                                   </span>
-                                  <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-700">
+                                  <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-700">
                                     {pending.action_type === "create" ? "Pending Approval" : pending.action_type === "update" ? "Update Pending" : "Delete Pending"}
                                   </span>
                                 </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { setUser as saveUser } from "@/lib/session";
+import Icon from "@/components/Icon";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -55,12 +56,12 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-slate-900 text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col items-center justify-center px-4 py-10">
         <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-slate-900 shadow-[0_35px_60px_-35px_rgba(0,0,0,0.5)]">
-          <span className="text-3xl">🔒</span>
+          <Icon name="lock" className="h-8 w-8" />
         </div>
 
         <div className="w-full rounded-[2rem] bg-slate-950 p-6 shadow-2xl shadow-slate-950/30">
           <div className="space-y-3 text-center">
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Admin Portal</p>
+            <p className="text-sm text-slate-400">Admin Portal</p>
             <h1 className="text-2xl font-semibold tracking-tight text-white">Educational Platform Management</h1>
           </div>
 

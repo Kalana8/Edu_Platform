@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { AcademicResource, CurriculumModule as Module } from "@/lib/explore/types";
 import { exploreRoutes } from "@/lib/explore/routes";
 import { existingRoutes } from "@/lib/explore/integration";
+import Icon from "@/components/Icon";
 
 type RefMap = Record<string, Pick<AcademicResource, "id" | "title" | "url" | "access">>;
 
@@ -127,10 +128,10 @@ export default function CurriculumModules({
                   </ul>
 
                   <div className="mt-4 space-y-3">
-                    <RefList title="🎥 Lecture references" ids={m.lectureRefs} resources={resources} />
-                    <RefList title="📖 Recommended readings" ids={m.readings} resources={resources} />
+                    <RefList title="Lecture References" ids={m.lectureRefs} resources={resources} />
+                    <RefList title="Recommended Readings" ids={m.readings} resources={resources} />
                     <div>
-                      <p className="text-xs font-bold text-slate-700">🧪 Practical activity</p>
+                      <p className="flex items-center gap-1.5 text-xs font-bold text-slate-700"><Icon name="flask" className="h-3.5 w-3.5" /> Practical Activity</p>
                       {m.practicalId ? (
                         <Link
                           href={exploreRoutes.project(m.practicalId)}

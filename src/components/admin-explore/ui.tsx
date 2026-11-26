@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import type { ContentKind } from "@/lib/explore/admin";
 import { StatusBadge as AdminStatusBadge } from "../AdminUI";
+import { titleCase } from "@/lib/titleCase";
 
 // ── Styles (match the existing admin pages) ─────────────────────────────────
 
@@ -47,8 +48,8 @@ export function Modal({
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{eyebrow}</p>
-            <h2 className="mt-0.5 text-lg font-semibold text-slate-950">{title}</h2>
+            <p className="text-xs font-semibold text-slate-400">{titleCase(eyebrow)}</p>
+            <h2 className="mt-0.5 text-lg font-semibold text-slate-950">{titleCase(title)}</h2>
           </div>
           <button type="button" onClick={onClose} aria-label="Close" className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
             ✕
@@ -73,7 +74,7 @@ export function Field({ label, hint, children, className = "" }: { label: string
 export function FormSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <fieldset className="space-y-3 rounded-lg border border-slate-200 p-4">
-      <legend className="px-2 text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</legend>
+      <legend className="px-2 text-xs font-semibold text-slate-500">{titleCase(title)}</legend>
       {children}
     </fieldset>
   );

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import PageHeader from "@/components/PageHeader";
 import type { Difficulty } from "@/lib/explore/types";
+import { titleCase } from "@/lib/titleCase";
 
 // ── Header (reuses the existing student PageHeader) ─────────────────────────
 
@@ -11,21 +11,18 @@ export function ScreenHeader({
   back,
 }: {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   back?: { href: string; label: string };
 }) {
   return (
-    <>
-      <PageHeader title={title} subtitle={subtitle} rounded={false} className="-mx-4" />
-      {back && (
-        <Link
-          href={back.href}
-          className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:text-blue-700"
-        >
-          <span aria-hidden>←</span> {back.label}
-        </Link>
-      )}
-    </>
+    <PageHeader
+      title={title}
+      subtitle={subtitle}
+      backHref={back?.href}
+      backLabel={back ? `Back to ${back.label}` : undefined}
+      rounded={false}
+      className="-mx-4"
+    />
   );
 }
 
@@ -77,7 +74,7 @@ export function SectionHeading({
     <div className="mb-3 flex items-end justify-between gap-3">
       <div className="min-w-0">
         <h2 id={id} className="text-lg font-bold text-slate-900">
-          {title}
+          {titleCase(title)}
         </h2>
         {subtitle && <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>}
       </div>
@@ -171,7 +168,7 @@ export function EmptyState({ title, message, action }: { title: string; message:
       <div aria-hidden className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl text-slate-400">
         ∅
       </div>
-      <p className="mt-4 font-semibold text-slate-900">{title}</p>
+      <p className="mt-4 font-semibold text-slate-900">{titleCase(title)}</p>
       <p className="mt-1 text-sm text-slate-500">{message}</p>
       {action && <div className="mt-5">{action}</div>}
     </div>

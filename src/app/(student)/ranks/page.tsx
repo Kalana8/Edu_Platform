@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import MobileLoader from "@/components/MobileLoader";
+import Icon from "@/components/Icon";
 import BottomBar from "@/components/BottomBar";
 
 type SchoolRank = {
@@ -131,7 +132,8 @@ export default function RanksPage() {
                   activeTab === "tier" ? "bg-white text-blue-600 shadow" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                🏫 <div className="mt-0.5">Tier</div>
+                <Icon name="school" className="mx-auto h-4 w-4" />
+                <div className="mt-0.5">Tier</div>
               </button>
               <button
                 onClick={() => setActiveTab("national")}
@@ -139,7 +141,8 @@ export default function RanksPage() {
                   activeTab === "national" ? "bg-white text-blue-600 shadow" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                🌍 <div className="mt-0.5">National</div>
+                <Icon name="globe" className="mx-auto h-4 w-4" />
+                <div className="mt-0.5">National</div>
               </button>
               <button
                 onClick={() => setActiveTab("students")}
@@ -147,13 +150,16 @@ export default function RanksPage() {
                   activeTab === "students" ? "bg-white text-blue-600 shadow" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                👨‍🎓 <div className="mt-0.5">Students</div>
+                <Icon name="users" className="mx-auto h-4 w-4" />
+                <div className="mt-0.5">Students</div>
               </button>
             </div>
 
           {items.length === 0 ? (
             <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 text-center shadow-sm">
-              <div className="text-4xl">🏆</div>
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-tint text-brand">
+                <Icon name="trophy" className="h-6 w-6" />
+              </span>
               <h3 className="mt-3 text-base font-semibold text-slate-900">No Rankings Yet</h3>
               <p className="mt-1 text-xs text-slate-500">{emptyText}</p>
             </div>
@@ -181,19 +187,13 @@ export default function RanksPage() {
                       <div
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${getRankBadge(index)}`}
                       >
-                        {index === 0
-                          ? "🥇"
-                          : index === 1
-                            ? "🥈"
-                            : index === 2
-                              ? "🥉"
-                              : `#${rank}`}
+                        {index < 3 ? <Icon name="medal" className="h-5 w-5" label={`Rank ${rank}`} /> : `#${rank}`}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
                           {isCurrent && (
-                            <span className="shrink-0 rounded-full bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            <span className="shrink-0 rounded-full bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
                               You
                             </span>
                           )}

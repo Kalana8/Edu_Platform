@@ -1,7 +1,9 @@
 import Link from "next/link";
+import SplashGate from "@/components/SplashSlides";
 
 export default function Home() {
   return (
+    <SplashGate>
     <div className="min-h-screen bg-brand text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-20 px-6 py-24 text-center">
         <div className="space-y-2">
@@ -30,5 +32,6 @@ export default function Home() {
         </div>
       </main>
     </div>
+    </SplashGate>
   );
 }

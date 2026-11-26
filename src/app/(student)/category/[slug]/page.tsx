@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import BottomBar from "@/components/BottomBar";
+import Icon, { type IconName } from "@/components/Icon";
 import { notFound } from "next/navigation";
 import { slugToLabel } from "@/lib/slug";
 
@@ -48,7 +49,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       pages: essential?.totalPages ?? 0,
       count: essential?.count ?? 0,
       color: "bg-emerald-100 text-emerald-700",
-      icon: "📗",
+      icon: "book-closed" as IconName,
     },
     {
       title: "Intermediate",
@@ -56,7 +57,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       pages: intermediate?.totalPages ?? 0,
       count: intermediate?.count ?? 0,
       color: "bg-sky-100 text-sky-700",
-      icon: "🎓",
+      icon: "graduation" as IconName,
     },
     {
       title: "Advanced",
@@ -64,7 +65,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       pages: advanced?.totalPages ?? 0,
       count: advanced?.count ?? 0,
       color: "bg-fuchsia-100 text-fuchsia-700",
-      icon: "🏆",
+      icon: "trophy" as IconName,
     },
   ];
 
@@ -77,7 +78,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           backHref="/choose-category"
           backLabel="Back to Categories"
           title={label}
-          subtitle="Choose your learning level"
+          subtitle="Choose Your Learning Level"
           rounded={false}
           className="-mx-4 -mt-6"
         />
@@ -98,9 +99,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
                 {/* Level Icon */}
                 <div
-                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl text-3xl transition-transform duration-300 group-hover:scale-110 ${level.color}`}
+                  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl transition-transform duration-300 group-hover:scale-110 ${level.color}`}
                 >
-                  {level.icon}
+                  <Icon name={level.icon} className="h-7 w-7" />
                 </div>
 
 
@@ -120,7 +121,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   </div>
 
 
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
+                  <p className="mt-1 text-xs font-semibold text-blue-600">
                     {level.subtitle}
                   </p>
 

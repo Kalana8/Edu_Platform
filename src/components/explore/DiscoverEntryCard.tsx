@@ -21,7 +21,7 @@ export default function DiscoverEntryCard() {
           </svg>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-bold leading-tight">Discover Advanced Subjects</p>
+          <p className="text-[15px] font-bold leading-tight">Master Advanced Subjects</p>
         </div>
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 transition group-hover:bg-white group-hover:text-brand">
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round" aria-hidden>

@@ -239,7 +239,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
                 <tr>
                   <th scope="col" className={tableClass.th}>Moderator</th>
                   <th scope="col" className={tableClass.th}>Status</th>
-                  <th scope="col" className={tableClass.th}>Last login</th>
+                  <th scope="col" className={tableClass.th}>Last Login</th>
                   <th scope="col" className={tableClass.thRight}>Actions</th>
                 </tr>
               </thead>
@@ -286,8 +286,8 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">New moderator</p>
-                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add a moderator</h2>
+                <p className="text-sm font-semibold text-slate-500">New Moderator</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-950">Add A Moderator</h2>
               </div>
               <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
@@ -324,7 +324,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Moderator details</p>
+                <p className="text-sm font-semibold text-slate-500">Moderator Details</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedModerator.name}</h2>
               </div>
               <button type="button" onClick={() => setSelectedModerator(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -333,16 +333,16 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
             <div className="mt-6 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Email</p>
+                  <p className="text-xs font-semibold text-slate-400">Email</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedModerator.email}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Status</p>
+                  <p className="text-xs font-semibold text-slate-400">Status</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedModerator.status}</p>
                 </div>
               </div>
               <div className="rounded-2xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Last Login</p>
+                <p className="text-xs font-semibold text-slate-400">Last Login</p>
                 <p className="mt-2 text-sm font-semibold text-slate-900">{selectedModerator.lastLogin}</p>
               </div>
             </div>
@@ -356,7 +356,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Edit moderator</p>
+                <p className="text-sm font-semibold text-slate-500">Edit Moderator</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{editingModerator.name}</h2>
               </div>
               <button type="button" onClick={() => setEditingModerator(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -389,7 +389,7 @@ export default function ModeratorManagementPage({ basePath = "/admin" }: Moderat
           <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Confirm delete</p>
+                <p className="text-sm font-semibold text-slate-500">Confirm Delete</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">Delete {deletingModerator.name}?</h2>
               </div>
               <button type="button" onClick={() => setDeletingModerator(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>

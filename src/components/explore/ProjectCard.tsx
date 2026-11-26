@@ -5,14 +5,16 @@ import type { LabProject } from "@/lib/explore/types";
 import { exploreRoutes } from "@/lib/explore/routes";
 import { useProjectState } from "@/lib/explore/store";
 import { activityLabels } from "@/lib/explore/labels";
+import Icon, { type IconName } from "@/components/Icon";
 import { DifficultyBadge, ProgressBar } from "./ui";
+import { titleCase } from "@/lib/titleCase";
 
-const typeIcon: Record<LabProject["type"], string> = {
-  simulation: "🎛️",
-  coding: "💻",
-  challenge: "🏗️",
-  experiment: "🔬",
-  project: "🚀",
+const typeIcon: Record<LabProject["type"], IconName> = {
+  simulation: "sliders",
+  coding: "code",
+  challenge: "building",
+  experiment: "microscope",
+  project: "rocket",
 };
 
 export default function ProjectCard({ project, subjectTitle }: { project: LabProject; subjectTitle?: string }) {
@@ -27,12 +29,12 @@ export default function ProjectCard({ project, subjectTitle }: { project: LabPro
       className="group block rounded-[1.75rem] border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-lg"
     >
       <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-slate-100 text-2xl transition group-hover:scale-105">
-          {typeIcon[project.type]}
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl bg-brand-tint text-brand transition group-hover:scale-105">
+          <Icon name={typeIcon[project.type]} className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-blue-600">{activityLabels[project.type]}</p>
+            <p className="text-[10px] font-semibold text-blue-600">{titleCase(activityLabels[project.type])}</p>
             <span
               className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
                 state.submission

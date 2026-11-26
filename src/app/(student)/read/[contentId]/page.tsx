@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import MobileLoader from "@/components/MobileLoader";
+import Icon from "@/components/Icon";
 
 type PageData = {
   id: string;
@@ -175,8 +176,10 @@ export default function ReadingPage() {
       <div className="min-h-screen bg-slate-50 text-slate-950">
         <main className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col items-center justify-center gap-6 px-4">
           <div className="w-full rounded-[1.75rem] border border-slate-200/80 bg-white p-8 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-500 text-3xl text-white shadow-lg shadow-emerald-500/20">✅</div>
-            <h2 className="mt-5 text-xl font-bold text-slate-950 tracking-tight">You&apos;ve finished this content!</h2>
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+              <Icon name="check" className="h-8 w-8" strokeWidth={2.5} />
+            </div>
+            <h2 className="mt-5 text-xl font-bold text-slate-950 tracking-tight">You&apos;ve Finished This Content!</h2>
             <p className="mt-2 text-sm text-slate-500">
               You have read all {readingState.totalPages} pages. Review with a quiz or pick another topic.
             </p>

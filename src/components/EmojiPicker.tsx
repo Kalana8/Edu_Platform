@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { titleCase } from "@/lib/titleCase";
 
 interface EmojiPickerProps {
   value: string;
@@ -121,8 +122,8 @@ export default function EmojiPicker({ value, onChange, label = "Icon" }: EmojiPi
                 return (
                   <div key={group.name} className="mb-3 last:mb-0">
                     {!search && (
-                      <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                        {group.name}
+                      <p className="mb-1.5 px-1 text-xs font-semibold text-slate-400">
+                        {titleCase(group.name)}
                       </p>
                     )}
                     <div className="grid grid-cols-8 gap-1">

@@ -16,11 +16,13 @@ import {
 import { getResourcesByIds, getSubject, listLabProjects } from "@/lib/explore/api";
 import { academyToLevel, existingRoutes } from "@/lib/explore/integration";
 import { exploreRoutes } from "@/lib/explore/routes";
+import Icon, { type IconName } from "@/components/Icon";
+import { titleCase } from "@/lib/titleCase";
 
 const academyStyle = {
-  Foundation: { badge: "bg-emerald-100 text-emerald-700", icon: "📗" },
-  Advanced: { badge: "bg-sky-100 text-sky-700", icon: "🎓" },
-  "Elite Mastery": { badge: "bg-fuchsia-100 text-fuchsia-700", icon: "🏆" },
+  Foundation: { badge: "bg-emerald-100 text-emerald-700", icon: "book-closed" },
+  Advanced: { badge: "bg-sky-100 text-sky-700", icon: "graduation" },
+  "Elite Mastery": { badge: "bg-fuchsia-100 text-fuchsia-700", icon: "trophy" },
 } as const;
 
 export default async function SubjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -56,12 +58,12 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
 
           <div className="mt-4 grid grid-cols-2 gap-2">
             {[
-              ["⏱️", "Duration", `~${subject.estimatedHours} hrs`],
-              ["🗂️", "Modules", c ? `${c.modules.length} modules` : "Coming soon"],
+              ["clock", "Duration", `~${subject.estimatedHours} hrs`],
+              ["folder", "Modules", c ? `${c.modules.length} modules` : "Coming soon"],
             ].map(([icon, k, v]) => (
               <div key={k} className="rounded-2xl bg-slate-50 p-3">
-                <p className="text-[11px] text-slate-500">
-                  <span aria-hidden>{icon}</span> {k}
+                <p className="flex items-center gap-1 text-[11px] text-slate-500">
+                  <Icon name={icon as IconName} className="h-3.5 w-3.5" /> {k}
                 </p>
                 <p className="text-sm font-bold text-slate-900">{v}</p>
               </div>
@@ -92,20 +94,20 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
         <SectionHeading id="go-deeper" title="Explore this subject" />
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon: "🗂️", title: "Curriculum", desc: c ? `${c.modules.length} modules` : "Coming soon", href: c ? exploreRoutes.curriculum(slug) : null },
-            { icon: "🧪", title: "Labs", desc: `${projects.length} activities`, href: exploreRoutes.labs(slug) },
-            { icon: "📚", title: "Resources", desc: `${references.length} curated`, href: exploreRoutes.resources(slug) },
-            { icon: "🌍", title: "Community", desc: "Learner projects", href: exploreRoutes.community(slug) },
+            { icon: "folder" as IconName, title: "Curriculum", desc: c ? `${c.modules.length} modules` : "Coming soon", href: c ? exploreRoutes.curriculum(slug) : null },
+            { icon: "flask" as IconName, title: "Labs", desc: `${projects.length} activities`, href: exploreRoutes.labs(slug) },
+            { icon: "book" as IconName, title: "Resources", desc: `${references.length} curated`, href: exploreRoutes.resources(slug) },
+            { icon: "globe" as IconName, title: "Community", desc: "Learner projects", href: exploreRoutes.community(slug) },
           ].map((x) =>
             x.href ? (
               <Link key={x.title} href={x.href} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-lg">
-                <span aria-hidden className="text-2xl">{x.icon}</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-tint text-brand"><Icon name={x.icon} className="h-5 w-5" /></span>
                 <p className="mt-2 text-sm font-bold text-slate-900">{x.title}</p>
                 <p className="text-[11px] text-slate-500">{x.desc}</p>
               </Link>
             ) : (
               <div key={x.title} className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 opacity-70">
-                <span aria-hidden className="text-2xl grayscale">{x.icon}</span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-200 text-slate-500"><Icon name={x.icon} className="h-5 w-5" /></span>
                 <p className="mt-2 text-sm font-bold text-slate-500">{x.title}</p>
                 <p className="text-[11px] text-slate-400">{x.desc}</p>
               </div>
@@ -122,15 +124,15 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
             {subject.stages.map((s, i) => (
               <li key={s.id} className="rounded-[1.75rem] border border-slate-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl text-2xl ${academyStyle[s.academy].badge}`}>
-                    {academyStyle[s.academy].icon}
+                  <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-3xl ${academyStyle[s.academy].badge}`}>
+                    <Icon name={academyStyle[s.academy].icon} className="h-6 w-6" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="font-bold text-slate-900">{s.title}</h3>
                       <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-600">Stage {i + 1}</span>
                     </div>
-                    <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600">{s.academy} · ~{s.weeks} weeks</p>
+                    <p className="mt-0.5 text-[10px] font-semibold text-blue-600">{titleCase(s.academy)} · ~{s.weeks} Weeks</p>
                   </div>
                 </div>
                 <p className="mt-3 text-sm text-slate-600">{s.summary}</p>
@@ -165,7 +167,7 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
       {/* Why + outcomes */}
       <Section>
         <Card>
-          <h2 className="font-bold text-slate-900">Why this subject matters</h2>
+          <h2 className="font-bold text-slate-900">Why This Subject Matters</h2>
           <ul className="mt-3 space-y-2.5">
             {subject.whyItMatters.map((w) => (
               <li key={w} className="flex gap-3 text-sm text-slate-700">
@@ -176,11 +178,11 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
           </ul>
         </Card>
         <Card className="mt-3">
-          <h2 className="font-bold text-slate-900">What you will achieve</h2>
+          <h2 className="font-bold text-slate-900">What You Will Achieve</h2>
           <ul className="mt-3 space-y-2.5">
             {subject.outcomes.map((o) => (
               <li key={o} className="flex gap-3 text-sm text-slate-700">
-                <span aria-hidden className="text-emerald-600">✓</span>
+                <Icon name="check" className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                 {o}
               </li>
             ))}
@@ -192,11 +194,11 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
       <Section aria-labelledby="foundations">
         <SectionHeading id="foundations" title="Start from zero" subtitle="No university knowledge required" />
         <Card>
-          <h3 className="text-sm font-bold text-slate-900">Helpful to know</h3>
+          <h3 className="text-sm font-bold text-slate-900">Helpful To Know</h3>
           <div className="mt-2 flex flex-wrap gap-2">
             {subject.foundationalKnowledge.map((f) => <Chip key={f}>{f}</Chip>)}
           </div>
-          <h3 className="mt-5 text-sm font-bold text-slate-900">Prerequisite subjects</h3>
+          <h3 className="mt-5 text-sm font-bold text-slate-900">Prerequisite Subjects</h3>
           <ul className="mt-1 divide-y divide-slate-100">
             {subject.prerequisites.map((p) => (
               <li key={p.title} className="py-3">

@@ -1,4 +1,5 @@
 "use client";
+import { titleCase } from "@/lib/titleCase";
 
 interface AdminTopbarProps {
   name?: string;
@@ -25,7 +26,7 @@ export default function AdminTopbar({ name = "Admin User", role = "Admin", onMen
           </button>
         )}
         <div>
-          <h2 className="text-lg font-semibold text-slate-900 sm:text-xl">{pageTitle || "Dashboard"}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 sm:text-xl">{titleCase(pageTitle || "Dashboard")}</h2>
           <p className="text-sm text-slate-500">Welcome back, {name}</p>
         </div>
       </div>

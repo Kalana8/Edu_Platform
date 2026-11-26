@@ -6,6 +6,7 @@ import { useAllProjectStates } from "@/lib/explore/store";
 import { activityLabels } from "@/lib/explore/labels";
 import ProjectCard from "./ProjectCard";
 import { ChipButton, EmptyState, SwipeRow, btn } from "./ui";
+import Icon, { type IconName } from "@/components/Icon";
 
 type Tab = "all" | "in-progress" | "completed";
 
@@ -61,12 +62,12 @@ export default function LabsClient({
       {/* Progress summary */}
       <div className="mt-4 grid grid-cols-3 gap-2">
         {[
-          ["🧪", projects.length, "Available"],
-          ["⏳", counts.started, "In progress"],
-          ["✅", counts.submitted, "Completed"],
+          ["flask", projects.length, "Available"],
+          ["hourglass", counts.started, "In Progress"],
+          ["check-circle", counts.submitted, "Completed"],
         ].map(([icon, v, k]) => (
           <div key={k as string} className="rounded-2xl bg-white p-3 text-center shadow-sm">
-            <p aria-hidden className="text-lg">{icon}</p>
+            <Icon name={icon as IconName} className="mx-auto h-5 w-5 text-brand" />
             <p className="text-xl font-bold text-slate-900">{v}</p>
             <p className="text-[10px] text-slate-500">{k}</p>
           </div>

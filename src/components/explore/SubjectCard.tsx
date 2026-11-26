@@ -3,16 +3,36 @@ import type { SubjectSummary } from "@/lib/explore/types";
 import { exploreRoutes } from "@/lib/explore/routes";
 import SubjectVisual from "./SubjectVisual";
 import { DifficultyBadge } from "./ui";
+import { titleCase } from "@/lib/titleCase";
 
 export default function SubjectCard({
   subject,
   variant = "default",
+  caption,
 }: {
   subject: SubjectSummary;
-  variant?: "default" | "compact";
+  variant?: "default" | "compact" | "tile";
+  /** Small line under the title (tile variant only). */
+  caption?: string;
 }) {
   const href = exploreRoutes.subject(subject.slug);
   const comingSoon = subject.status === "coming-soon";
+
+  // Centred card matching the category grid on the Choose Category screen.
+  if (variant === "tile") {
+    return (
+      <Link
+        href={href}
+        className="group flex flex-col items-center gap-1.5 rounded-2xl bg-white px-2 py-3 text-center shadow-sm ring-1 ring-slate-200/70 transition hover:-translate-y-0.5 hover:shadow-lg"
+      >
+        <SubjectVisual motif={subject.motif} theme={subject.theme} className="h-12 w-16 rounded-xl transition group-hover:scale-105" />
+        <p className="line-clamp-2 text-[13px] font-semibold leading-snug text-slate-900">{subject.title}</p>
+        {(caption || comingSoon) && (
+          <p className="-mt-1 text-[11px] text-slate-500">{caption ?? "In development"}</p>
+        )}
+      </Link>
+    );
+  }
 
   if (variant === "compact") {
     return (
@@ -44,8 +64,8 @@ export default function SubjectCard({
         </div>
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: subject.theme.ink }}>
-          {subject.discipline}
+        <p className="text-[10px] font-semibold" style={{ color: subject.theme.ink }}>
+          {titleCase(subject.discipline)}
         </p>
         <h3 className="mt-1 font-bold leading-snug text-slate-900">{subject.title}</h3>
         <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{subject.description}</p>

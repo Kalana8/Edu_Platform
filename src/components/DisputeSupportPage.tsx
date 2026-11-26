@@ -93,8 +93,8 @@ export default function DisputeSupportPage() {
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="mb-4 flex flex-col gap-3 rounded-[2rem] bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Dispute & Support</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage student disputes and support requests</h1>
+            <p className="text-sm font-semibold text-slate-500">Dispute & Support</p>
+            <h1 className="mt-3 text-3xl font-semibold text-slate-950">Manage Student Disputes And Support Requests</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-500">Review and resolve ticket requests from students across the platform.</p>
           </div>
         </div>

@@ -269,7 +269,7 @@ export default function StudentsPage({ basePath = "/admin", students: initialStu
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Student details</p>
+                <p className="text-sm font-semibold text-slate-500">Student Details</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{selectedStudent.name}</h2>
               </div>
               <button type="button" onClick={() => setSelectedStudent(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -278,26 +278,26 @@ export default function StudentsPage({ basePath = "/admin", students: initialStu
             <div className="mt-6 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Email</p>
+                  <p className="text-xs font-semibold text-slate-400">Email</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedStudent.email}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Student ID</p>
+                  <p className="text-xs font-semibold text-slate-400">Student ID</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedStudent.studentId}</p>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">School</p>
+                  <p className="text-xs font-semibold text-slate-400">School</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedStudent.school}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Status</p>
+                  <p className="text-xs font-semibold text-slate-400">Status</p>
                   <p className="mt-2 text-sm font-semibold text-slate-900">{selectedStudent.isActive ? "Active" : "Inactive"}</p>
                 </div>
               </div>
               <div className="rounded-2xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Credits</p>
+                <p className="text-xs font-semibold text-slate-400">Credits</p>
                 <p className="mt-2 text-sm font-semibold text-slate-900">{selectedStudent.availableCredits.toLocaleString()} available / {selectedStudent.totalCredits.toLocaleString()} total</p>
               </div>
             </div>
@@ -310,7 +310,7 @@ export default function StudentsPage({ basePath = "/admin", students: initialStu
           <div className="w-full max-w-xl rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Edit student</p>
+                <p className="text-sm font-semibold text-slate-500">Edit Student</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">{editingStudent.name}</h2>
               </div>
               <button type="button" onClick={() => setEditingStudent(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -367,7 +367,7 @@ export default function StudentsPage({ basePath = "/admin", students: initialStu
           <div className="w-full max-w-md rounded-4xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Confirm delete</p>
+                <p className="text-sm font-semibold text-slate-500">Confirm Delete</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-950">Delete {deletingStudent.name}?</h2>
               </div>
               <button type="button" onClick={() => setDeletingStudent(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>

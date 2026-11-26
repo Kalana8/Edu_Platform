@@ -25,14 +25,13 @@ export default async function ConfirmSchool({
       <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-6 pt-16 pb-32">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">Confirm Your School</h1>
-          <p className="text-white/75">Make sure these details are correct</p>
         </div>
 
         {/* School card: illustration breaks out of the top edge, CTA sits in a notch cut from the bottom-right corner */}
         <div className="relative mt-20 rounded-[2rem] bg-blue-50 px-6 pb-24 pt-20 text-slate-900 shadow-[0_24px_48px_-20px_rgba(4,43,68,0.55)]">
           <BooksIllustration className="absolute -top-14 left-4 h-32 w-36 drop-shadow-[0_10px_12px_rgba(4,43,68,0.25)]" />
 
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Your school</p>
+          <p className="text-xs font-medium text-slate-500">Your School</p>
           <h2 className="mt-1 text-3xl font-bold leading-tight tracking-tight [overflow-wrap:anywhere]">{schoolName}</h2>
 
           <div className="mt-5 flex flex-wrap gap-2">

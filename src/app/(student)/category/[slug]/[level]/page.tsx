@@ -3,25 +3,26 @@ import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
+import Icon, { type IconName } from "@/components/Icon";
 
-const LEVEL_LABELS: Record<string, { title: string; subtitle: string; color: string; icon: string }> = {
+const LEVEL_LABELS: Record<string, { title: string; subtitle: string; color: string; icon: IconName }> = {
   "essential": {
     title: "Essential",
     subtitle: "Foundation Level",
     color: "bg-emerald-100 text-emerald-700",
-    icon: "📗",
+    icon: "book-closed",
   },
   "intermediate": {
     title: "Intermediate",
     subtitle: "Building Level",
     color: "bg-sky-100 text-sky-700",
-    icon: "🎓",
+    icon: "graduation",
   },
   "advanced": {
     title: "Advanced",
     subtitle: "Mastery Level",
     color: "bg-fuchsia-100 text-fuchsia-700",
-    icon: "🏆",
+    icon: "trophy",
   },
 };
 
@@ -79,10 +80,10 @@ export default async function CategoryLevelPage({
           />
 
           <div className="mt-6 flex flex-1 flex-col items-center justify-center gap-4 rounded-[1.75rem] bg-white p-6 text-center shadow-[0_24px_48px_-24px_rgba(15,23,42,0.20)]">
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-3xl">
-              {levelInfo.icon}
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-600">
+              <Icon name={levelInfo.icon} className="h-7 w-7" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-950">No content yet</h2>
+            <h2 className="text-xl font-semibold text-slate-950">No Content Yet</h2>
             <p className="text-sm text-slate-500">
               There are no published reading materials for this level right now. Please check back later.
             </p>

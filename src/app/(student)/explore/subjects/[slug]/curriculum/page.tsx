@@ -5,6 +5,8 @@ import ResourceCard from "@/components/explore/ResourceCard";
 import { Card, EmptyState, IllustrativeNotice, ScreenHeader, Section, SectionHeading, btn } from "@/components/explore/ui";
 import { getResourcesByIds, getSubject, listLabProjects } from "@/lib/explore/api";
 import { exploreRoutes } from "@/lib/explore/routes";
+import Icon from "@/components/Icon";
+import { titleCase } from "@/lib/titleCase";
 
 export default async function CurriculumPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -41,7 +43,7 @@ export default async function CurriculumPage({ params }: { params: Promise<{ slu
 
       {/* Reference unit card */}
       <Card className="mt-3">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600">University-informed</p>
+        <p className="text-[10px] font-semibold text-blue-600">University-Informed</p>
         <h2 className="mt-1 text-lg font-bold text-slate-900">{c.referenceUnitTitle}</h2>
         <p className="mt-0.5 font-mono text-xs text-slate-500">{c.referenceUnitCode ?? "Unit code not available"}</p>
         <p className="mt-3 text-sm leading-relaxed text-slate-700">{c.description}</p>
@@ -70,7 +72,7 @@ export default async function CurriculumPage({ params }: { params: Promise<{ slu
       {/* Outcomes */}
       <Section>
         <Card>
-          <h2 className="font-bold text-slate-900">Learning outcomes</h2>
+          <h2 className="font-bold text-slate-900">Learning Outcomes</h2>
           <ol className="mt-3 space-y-2.5">
             {c.outcomes.map((o, i) => (
               <li key={o} className="flex gap-3 text-sm text-slate-700">
@@ -117,7 +119,7 @@ export default async function CurriculumPage({ params }: { params: Promise<{ slu
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-slate-900">{a.title}</p>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-blue-600">{a.type}</p>
+                <p className="text-[10px] font-semibold text-blue-600">{titleCase(a.type)}</p>
                 <p className="mt-0.5 text-xs text-slate-600">{a.description}</p>
               </div>
             </div>
@@ -135,7 +137,7 @@ export default async function CurriculumPage({ params }: { params: Promise<{ slu
 
       <Section>
         <Link href={exploreRoutes.labs(slug)} className={`${btn.primary} w-full`}>
-          🧪 Go to practical labs
+          <Icon name="flask" className="h-4 w-4" /> Go to Practical Labs
         </Link>
       </Section>
     </>

@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import type { SimulationKind } from "@/lib/explore/types";
+import Icon from "@/components/Icon";
 
 /**
  * SIMULATION INTEGRATION SLOT
@@ -24,7 +25,7 @@ export default function SimulationSlot({ kind }: { kind: SimulationKind }) {
   return (
     <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-sm">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
-        <p className="font-bold text-slate-900">🎛️ Simulation</p>
+        <p className="flex items-center gap-2 font-bold text-slate-900"><Icon name="sliders" className="h-4 w-4 text-brand" /> Simulation</p>
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-500">
           {Sim ? "Simplified demo model" : "Integration slot"}
         </span>

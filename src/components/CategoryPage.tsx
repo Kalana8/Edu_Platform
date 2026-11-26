@@ -332,8 +332,8 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
           <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">New category</p>
-                <h2 className="mt-1 text-xl font-semibold text-slate-950">Add a curriculum category</h2>
+                <p className="text-sm font-semibold text-slate-500">New Category</p>
+                <h2 className="mt-1 text-xl font-semibold text-slate-950">Add A Curriculum Category</h2>
               </div>
               <button type="button" onClick={() => setIsModalOpen(false)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
             </div>
@@ -395,7 +395,7 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
           <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Category details</p>
+                <p className="text-sm font-semibold text-slate-500">Category Details</p>
                 <h2 className="mt-1 text-xl font-semibold text-slate-950">{selectedCategory.label}</h2>
               </div>
               <button type="button" onClick={() => setSelectedCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -404,20 +404,20 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Code</p>
+                  <p className="text-xs font-semibold text-slate-400">Code</p>
                   <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.code}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Status</p>
+                  <p className="text-xs font-semibold text-slate-400">Status</p>
                   <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.status}</p>
                 </div>
               </div>
               <div className="rounded-2xl border border-slate-200 p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Icon</p>
+                <p className="text-xs font-semibold text-slate-400">Icon</p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.icon}</p>
               </div>
               <div className="rounded-2xl border border-slate-200 p-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Slug</p>
+                <p className="text-xs font-semibold text-slate-400">Slug</p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">{selectedCategory.slug}</p>
               </div>
             </div>
@@ -430,7 +430,7 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
           <div className="w-full max-w-md rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Confirm delete</p>
+                <p className="text-sm font-semibold text-slate-500">Confirm Delete</p>
                 <h2 className="mt-1 text-xl font-semibold text-slate-950">Delete {deletingCategory.label}?</h2>
               </div>
               <button type="button" onClick={() => setDeletingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
@@ -453,7 +453,7 @@ export default function CategoryPage({ basePath = "/admin" }: CategoryPageProps)
           <div className="w-full max-w-xl rounded-4xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-slate-500">Edit category</p>
+                <p className="text-sm font-semibold text-slate-500">Edit Category</p>
                 <h2 className="mt-1 text-xl font-semibold text-slate-950">{editingCategory.label}</h2>
               </div>
               <button type="button" onClick={() => setEditingCategory(null)} className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">✕</button>
