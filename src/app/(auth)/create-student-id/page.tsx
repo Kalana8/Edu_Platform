@@ -15,6 +15,7 @@ export default async function CreateStudentId({
 }) {
   const params = await Promise.resolve(searchParams ?? {});
   const schoolCode = pickValue(params.code);
+  const initialMode = pickValue(params.mode) === "signin" ? "signIn" : "signUp";
 
-  return <CreateStudentIdClient schoolCode={schoolCode} />;
+  return <CreateStudentIdClient schoolCode={schoolCode} initialMode={initialMode} />;
 }

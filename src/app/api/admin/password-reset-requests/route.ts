@@ -160,12 +160,16 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        let { data: authUsers, error: authListError } = await supabase.auth.admin.listUsers();
+        // Email sign-ups share their login id with the student profile.
+        const { data: linkedAuth } = await supabase.auth.admin.getUserById(student.id);
+        let { data: authUsers, error: authListError } = linkedAuth?.user
+          ? { data: { users: [linkedAuth.user] }, error: null }
+          : await supabase.auth.admin.listUsers();
 
         if (authListError || !authUsers?.users) {
           console.error('Supabase Auth list users error:', authListError);
         } else {
-          const authUser = authUsers.users.find((u) => u.email?.toLowerCase() === trimmedEmail.toLowerCase());
+          const authUser = linkedAuth?.user ?? authUsers.users.find((u) => u.email?.toLowerCase() === trimmedEmail.toLowerCase());
           if (authUser) {
             const { error: authUpdateError } = await supabase.auth.admin.updateUserById(authUser.id, {
               password: newPassword,

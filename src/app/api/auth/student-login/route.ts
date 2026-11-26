@@ -4,20 +4,25 @@ import { verifyPassword } from '@/lib/password';
 
 export async function POST(request: NextRequest) {
   try {
-    const { studentId, password } = await request.json();
+    const { email, studentId, password } = await request.json();
+
+    if (typeof email === 'string' && email.trim()) {
+      return loginWithEmail(email, password);
+    }
 
     if (!studentId || !password) {
       return NextResponse.json(
-        { error: 'Student ID and password are required.' },
+        { error: 'Email and password are required.' },
         { status: 400 }
       );
     }
 
+    // Older accounts made before email sign-up log in with their Student ID.
     const supabase = createAdminClient();
 
     const { data: student, error: studentError } = await supabase
       .from('students')
-      .select('id, student_id, name, school_id, total_credits, available_credits, withheld_credits')
+      .select(STUDENT_FIELDS)
       .eq('student_id', studentId.trim())
       .maybeSingle();
 
@@ -85,43 +90,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { data: school, error: schoolError } = await supabase
-      .from('schools')
-      .select('name, tier')
-      .eq('id', student.school_id)
-      .maybeSingle();
-
-    if (schoolError) {
-      console.error('School fetch error:', schoolError);
-    }
-
-    const sessionUser = {
-      id: student.id,
-      role: 'student',
-      studentId: student.student_id,
-      name: user?.name || user?.email || student.name,
-      schoolId: student.school_id,
-      schoolName: school?.name ?? 'Unassigned School',
-      schoolTier: school?.tier ?? 'N/A',
-      totalCredits: student.total_credits ?? 0,
-      availableCredits: student.available_credits ?? 0,
-      withheldCredits: student.withheld_credits ?? 0,
-    };
-
-    const response = NextResponse.json(
-      { success: true, user: sessionUser },
-      { status: 200 }
-    );
-
-    response.cookies.set('session_user', JSON.stringify(sessionUser), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    });
-
-    return response;
+    return startSession(supabase, student, user?.name || user?.email || student.name);
   } catch (error) {
     console.error('Student login error:', error);
     return NextResponse.json(
@@ -129,4 +98,104 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+const STUDENT_FIELDS = 'id, student_id, name, school_id, total_credits, available_credits, withheld_credits';
+
+type StudentRow = {
+  id: string;
+  student_id: string;
+  name: string | null;
+  school_id: string;
+  total_credits: number | null;
+  available_credits: number | null;
+  withheld_credits: number | null;
+};
+
+async function loginWithEmail(email: string, password: unknown) {
+  if (typeof password !== 'string' || !password) {
+    return NextResponse.json({ error: 'Email and password are required.' }, { status: 400 });
+  }
+
+  const supabase = createAdminClient();
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    email: email.trim().toLowerCase(),
+    password,
+  });
+
+  if (authError || !authData?.user) {
+    return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
+  }
+
+  const authUser = authData.user;
+
+  // New accounts share their id with the student profile. Fall back to the
+  // Student ID saved on the login, in case the profile was made differently.
+  let { data: student } = await supabase
+    .from('students')
+    .select(STUDENT_FIELDS)
+    .eq('id', authUser.id)
+    .maybeSingle();
+
+  const metadataStudentId = authUser.user_metadata?.student_id;
+  if (!student && typeof metadataStudentId === 'string') {
+    ({ data: student } = await supabase
+      .from('students')
+      .select(STUDENT_FIELDS)
+      .eq('student_id', metadataStudentId)
+      .maybeSingle());
+  }
+
+  if (!student) {
+    return NextResponse.json(
+      { error: 'No student profile is linked to this email.' },
+      { status: 404 }
+    );
+  }
+
+  return startSession(supabase, student, student.name ?? '');
+}
+
+async function startSession(
+  supabase: ReturnType<typeof createAdminClient>,
+  student: StudentRow,
+  name: string | null,
+) {
+  const { data: school, error: schoolError } = await supabase
+    .from('schools')
+    .select('name, tier')
+    .eq('id', student.school_id)
+    .maybeSingle();
+
+  if (schoolError) {
+    console.error('School fetch error:', schoolError);
+  }
+
+  const sessionUser = {
+    id: student.id,
+    role: 'student',
+    studentId: student.student_id,
+    name,
+    schoolId: student.school_id,
+    schoolName: school?.name ?? 'Unassigned School',
+    schoolTier: school?.tier ?? 'N/A',
+    totalCredits: student.total_credits ?? 0,
+    availableCredits: student.available_credits ?? 0,
+    withheldCredits: student.withheld_credits ?? 0,
+  };
+
+  const response = NextResponse.json(
+    { success: true, user: sessionUser },
+    { status: 200 }
+  );
+
+  response.cookies.set('session_user', JSON.stringify(sessionUser), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7,
+    path: '/',
+  });
+
+  return response;
 }

@@ -28,7 +28,12 @@ export default function Home() {
               </svg>
             </span>
           </Link>
-         
+          <p className="text-sm text-white/75">
+            Already have an account?{" "}
+            <Link href="/create-student-id?mode=signin" className="font-semibold text-white underline-offset-4 hover:underline">
+              Sign In
+            </Link>
+          </p>
         </div>
       </main>
     </div>
